@@ -13,6 +13,8 @@ const config = defineConfig([
       },
     ],
     plugins: [
+      // resolve(),//如果要引入node_modules里的第三方库，需要这个插件
+      commonjs(),
       esbuild({
         // All options are optional
         include: /\.[jt]sx?$/, // default, inferred from `loaders` option
@@ -37,7 +39,6 @@ const config = defineConfig([
           '.js': 'jsx',
         },
       }),
-      commonjs(),
     ],
   },
 ])

@@ -17,6 +17,12 @@
     "name": "mudssky",
     "email": "mudssky@gmail.com"
   },
+  "contributors": [
+    {
+      "name": "mudssky",
+      "email": "mudssky@gmail.com"
+    }
+  ],
   "license": "MIT",
   "files": [
     "dist"
