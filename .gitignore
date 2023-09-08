@@ -3,5 +3,6 @@ dist
 # typedoc生成的文档
 typedoc
 docs
-etc
+etc/
+!etc/
 temp
