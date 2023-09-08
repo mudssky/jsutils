@@ -10,7 +10,12 @@
     "lint": "eslint --ext .js,.ts ./",
     "dev": "rollup -c rollup.config.dev.js --watch",
     "build": "rollup -c",
-    "test": "vitest"
+    "test": "vitest",
+    "typedoc:gen": "typedoc src/index.ts --out typedoc",
+    "typedoc:json": "typedoc src/index.ts --json typedoc/typedoc.json",
+    "doc": "api-extractor run --local --verbose && api-documenter markdown -i temp -o docs",
+    "doc:debug": "api-extractor run --local --verbose --diagnostics && api-documenter markdown -i temp -o docs",
+    "trace": "tsc dist/types/index.d.ts --traceResolution > trace.log"
   },
   "keywords": [],
   "author": {
@@ -38,6 +43,8 @@
   "devDependencies": {
     "@babel/core": "^7.22.15",
     "@babel/preset-env": "^7.22.15",
+    "@microsoft/api-documenter": "^7.22.33",
+    "@microsoft/api-extractor": "^7.36.4",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^25.0.4",
     "@rollup/plugin-node-resolve": "^15.2.1",
@@ -55,6 +62,7 @@
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-typescript2": "^0.35.0",
     "tslib": "^2.6.2",
+    "typedoc": "^0.25.1",
     "typescript": "^5.2.2",
     "vitest": "^0.34.3"
   }
