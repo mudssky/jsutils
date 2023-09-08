@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 // 直接把根目录作为一个npm包引入
-import { range } from '../'
+import { range } from '@mudssky/jsutil'
 
 describe('range', () => {
   test('returns an empty array for zero range', () => {
