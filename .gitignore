@@ -2,6 +2,6 @@ node_modules
 dist
 # typedoc生成的文档
 typedoc
-
+docs
 etc
 temp
