@@ -24,6 +24,12 @@
   "keywords": [],
   "author": {
     "name": "mudssky",
+    "email": "mudssky@gmail.com",
+    "url": "https://github.com/mudssky/jsutils"
+  },
+  "homepage": "https://github.com/mudssky/jsutils",
+  "bugs": {
+    "url": "https://github.com/mudssky/jsutils/issues",
     "email": "mudssky@gmail.com"
   },
   "contributors": [
