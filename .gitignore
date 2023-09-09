@@ -6,3 +6,4 @@ docs
 etc/
 !etc/
 temp
+coverage

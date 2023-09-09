@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest'
 // 直接把根目录作为一个npm包引入
 import { range } from '@mudssky/jsutil'
+// import { range } from '../src/index'
 
 describe('range', () => {
   test('returns an empty array for zero range', () => {
@@ -26,6 +27,7 @@ describe('range', () => {
   test('returns an empty array if end is greater than start with negative step', () => {
     expect(range(1, 5, -1)).toEqual([])
   })
+  // range(0.5, 5)
 
   test('test invalid param', () => {
     expect(() => range(0.5, 5)).toThrowError('unsupport decimal number')

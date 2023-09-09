@@ -10,7 +10,12 @@ param(
 switch ($JobType) {
 	# 监控src目录,自动生成文档
 	'WatchTypedoc' {
+		# 5秒后打开html在浏览器，方便查看
+		Start-Job -ScriptBlock {
+			Start-Sleep -Seconds 5;	Start-Process ./typedoc/index.html
+		}
 		watchexec.exe -w src --restart --clear  --exts ts  pnpm typedoc:gen
+		
 	}
 	'CleanDist' {
 		Write-Debug 'Run CleanDist...'
