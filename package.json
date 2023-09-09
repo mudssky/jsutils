@@ -21,7 +21,9 @@
     "trace": "tsc dist/types/index.d.ts --traceResolution > trace.log",
     "clean:dist": "pwsh -File scripts.ps1 -JobType CleanDist"
   },
-  "keywords": [],
+  "keywords": [
+    "util"
+  ],
   "author": {
     "name": "mudssky",
     "email": "mudssky@gmail.com",
