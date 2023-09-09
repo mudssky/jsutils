@@ -41,6 +41,15 @@ const config = defineConfig([
       }),
     ],
   },
+  {
+    input: 'src/index.ts',
+    output: {
+      dir: 'dist/types',
+      format: 'esm',
+      preserveModules: true,
+    },
+    plugins: [dts()],
+  },
 ])
 
 export default config

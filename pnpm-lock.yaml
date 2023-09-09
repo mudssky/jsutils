@@ -50,6 +50,9 @@ devDependencies:
   eslint:
     specifier: ^8.49.0
     version: 8.49.0
+  eslint-plugin-tsdoc:
+    specifier: ^0.2.17
+    version: 0.2.17
   npm-run-all:
     specifier: ^4.1.5
     version: 4.1.5
@@ -2951,6 +2954,13 @@ packages:
   /escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
+    dev: true
+
+  /eslint-plugin-tsdoc@0.2.17:
+    resolution: {integrity: sha512-xRmVi7Zx44lOBuYqG8vzTXuL6IdGOeF9nHX17bjJ8+VE6fsxpdGem0/SBTmAwgYMKYB1WBkqRJVQ+n8GK041pA==}
+    dependencies:
+      '@microsoft/tsdoc': 0.14.2
+      '@microsoft/tsdoc-config': 0.16.2
     dev: true
 
   /eslint-scope@7.2.2:
