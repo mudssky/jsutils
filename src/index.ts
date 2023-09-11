@@ -1,3 +1,5 @@
 export * from './modules/array'
 export * from './modules/enum'
 export * from './modules/error'
+export * from './modules/bytes'
+export * from './modules/string'
