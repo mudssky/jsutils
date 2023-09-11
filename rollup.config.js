@@ -34,7 +34,7 @@ const config = defineConfig([
       ts({
         tsconfig: './tsconfig.json',
       }),
-      babel(babelPluginConfig),
+      // babel(babelPluginConfig),
       commonjs(),
     ],
   },
