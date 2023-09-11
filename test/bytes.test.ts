@@ -17,6 +17,7 @@ function genTestCases(
   })
   return testCases
 }
+
 describe('Test byte parse function', function () {
   test('Should return null if input is invalid', function () {
     expect(bytesInstance.parse('foobar')).toBe(null)

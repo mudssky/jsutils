@@ -2,6 +2,12 @@
  * 传入字符串，返回字符串中每个字母不同大小写情况的列表
  * @param str 输入字符串
  * @returns 返回列表
+ * @example
+ * ```ts
+ * console.log(genAllCasesCombination('mb'))
+ * -> [ 'mb', 'mB', 'Mb', 'MB' ]
+ * ```
+ * @public
  */
 function genAllCasesCombination(str: string): string[] {
   const result: string[] = []
