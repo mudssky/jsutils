@@ -1,6 +1,6 @@
 {
   "name": "@mudssky/jsutils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "个人通用js库",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -45,7 +45,8 @@
     "dist"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "sideEffects": false,
   "exports": {
