@@ -8,7 +8,8 @@
   "types": "./dist/types/index.d.ts",
   "scripts": {
     "lint": "eslint --ext .js,.ts ./",
-    "dev": "rollup -c rollup.config.dev.js --watch",
+    "dev": "rollup -c rollup.config.dev.js",
+    "dev:watch": "rollup -c rollup.config.dev.js --watch",
     "prebuild": "pnpm clean:dist",
     "build": "rollup -c",
     "test": "vitest",
