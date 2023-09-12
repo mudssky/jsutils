@@ -10,7 +10,7 @@
     "lint": "eslint --ext .js,.ts ./",
     "dev": "rollup -c rollup.config.dev.js",
     "dev:watch": "rollup -c rollup.config.dev.js --watch",
-    "prebuild": "pnpm clean:dist",
+    "prebuild": "pnpm clean:dist&&pnpm copy:style",
     "build": "rollup -c",
     "test": "vitest",
     "coverage": "vitest run --coverage",
@@ -20,7 +20,8 @@
     "doc": "api-extractor run --local --verbose && api-documenter markdown -i temp -o docs",
     "doc:debug": "api-extractor run --local --verbose --diagnostics && api-documenter markdown -i temp -o docs",
     "trace": "tsc dist/types/index.d.ts --traceResolution > trace.log",
-    "clean:dist": "pwsh -File scripts.ps1 -JobType CleanDist"
+    "clean:dist": "pwsh -File scripts.ps1 -JobType CleanDist",
+    "copy:style": "pwsh -File scripts.ps1 -JobType CopyStyle"
   },
   "keywords": [
     "util"
