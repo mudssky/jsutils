@@ -1,0 +1,25 @@
+name: Test release
+
+on:
+  # 主分支提交后，执行单元测试看看有没有错误
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'checkout'
+        uses: actions/checkout@v3
+      - name: 'setup pnpm'
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: 'setup node'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm i
+      - run: pnpm test
