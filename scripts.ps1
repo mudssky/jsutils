@@ -19,7 +19,9 @@ switch ($JobType) {
 	}
 	'CleanDist' {
 		Write-Debug 'Run CleanDist...'
-		Remove-Item -Force -Recurse dist
+		if (Test-Path -Path dist) {
+			Remove-Item -Force -Recurse dist
+		}
 	}
 	'CopyStyle' {
 		Copy-Item -Force -Recurse ./src/style ./dist/style
