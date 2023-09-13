@@ -33,7 +33,11 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      - run: pnpm i
-      - run: pnpm publish
+      - name: install deps
+        run: pnpm i
+      - name: publish
+        # shell: pwsh
+        run: pnpm publish --no-git-checks
+
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
