@@ -1,0 +1,38 @@
+// 隐藏滚动条
+@mixin hide-scrollbar($overflow-x: hidden, $overflow-y: auto) {
+  &::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+  & {
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+    overflow-x: $overflow-x;
+    overflow-y: $overflow-y;
+  }
+}
+
+// 横向隐藏滚动条，需要设置当前文本不换行
+@mixin hide-scrollbarX() {
+  &::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+  & {
+    white-space: nowrap; //文本不换行
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+}
+
+@mixin hide-scrollbarY() {
+  &::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+  & {
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
