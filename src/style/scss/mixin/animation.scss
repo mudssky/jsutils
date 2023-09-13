@@ -1,0 +1,33 @@
+/*
+@example
+@include enable-button-throttle('ant-btn');
+@include enable-button-throttle('ant-btn',1000ms);
+*/
+@mixin enable-button-throttle($buttonClass, $delay: 500ms) {
+  .#{$buttonClass} {
+    animation: throttle $delay forwards;
+  }
+
+  .ant-btn:active {
+    animation: none;
+  }
+  // 点击后触发
+  @keyframes throttle {
+    from {
+      pointer-events: none;
+    }
+    to {
+      pointer-events: all;
+    }
+  }
+}
+
+/*
+@include disable-button-throttle('ant-btn');
+*/
+
+@mixin disable-button-throttle($buttonClass) {
+  [class*='#{$buttonClass}'] {
+    animation: none !important;
+  }
+}

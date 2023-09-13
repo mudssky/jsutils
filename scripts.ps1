@@ -1,7 +1,7 @@
 
 [CmdletBinding()]
 param(
-	[ValidateSet('WatchTypedoc', 'CleanDist', '')]
+	[ValidateSet('WatchTypedoc', 'CleanDist', 'CopyStyle', '')]
 	[string]$JobType = 'WatchTypedoc'
 
 )
@@ -20,6 +20,9 @@ switch ($JobType) {
 	'CleanDist' {
 		Write-Debug 'Run CleanDist...'
 		Remove-Item -Force -Recurse dist
+	}
+	'CopyStyle' {
+		Copy-Item -Force -Recurse ./src/style ./dist/style
 	}
 	Default {
 		Write-Host 'Please choose a Job Type'
