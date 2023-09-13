@@ -1,4 +1,4 @@
-name: Test release
+name: pull request test
 
 on:
   # 主分支提交后，执行单元测试看看有没有错误
