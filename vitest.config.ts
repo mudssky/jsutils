@@ -13,5 +13,9 @@ export default defineConfig({
       '@mudssky/jsutil': path.resolve(__dirname, './src/index.ts'),
       '@': path.resolve(__dirname, './src'),
     },
+    // reporters: ['html'],
+    coverage: {
+      enabled: true,
+    },
   },
 })
