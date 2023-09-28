@@ -35,6 +35,6 @@ jobs:
         run: pnpm i
       - name: release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: pnpm semantic-release
