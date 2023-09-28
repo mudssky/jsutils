@@ -14,6 +14,12 @@ module.exports = {
         sourceType: 'script',
       },
     },
+    {
+      files: ['src/**/*.ts'],
+      rules: {
+        'no-console': 'error',
+      },
+    },
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -21,5 +27,4 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'eslint-plugin-tsdoc'],
-  rules: {},
 }
