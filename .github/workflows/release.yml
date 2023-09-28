@@ -35,9 +35,12 @@ jobs:
           version: 8
       - name: install deps
         run: pnpm i
-      - name: publish
+      - name: release
         # shell: pwsh
-        run: pnpm publish --no-git-checks
+        # run: pnpm publish --no-git-checks
+        run: pnpm semantic-release
 
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
