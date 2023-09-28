@@ -43,7 +43,6 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
       // 这个情况不好测试，需要执行getStorageInfoSync函数的同时删掉localStorage的键值
       /* c8 ignore next 1 */
       const value = localStorage.getItem(key) ?? ''
-      // console.log({ key, value })
       keys.push(key)
       currentSize += (key.length + value.length) * 2 //因为JavaScript中字符串使用UTF-16编码，每个字符占用2个字节
     }
