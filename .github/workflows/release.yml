@@ -1,4 +1,4 @@
-name: npm publish
+name: release-and-publish-npm
 
 on:
   push:
@@ -9,23 +9,7 @@ permissions:
   contents: read # for checkout
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 'lts/*'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      - run: pnpm i
-      - run: pnpm test
-
-  publish-npm:
-    needs: build
+  release-and-publish-npm:
     runs-on: ubuntu-latest
     permissions:
       contents: write # to be able to publish a GitHub release
@@ -41,7 +25,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 'lts/*'
           registry-url: https://registry.npmjs.org/
       - name: setup pnpm
         uses: pnpm/action-setup@v2
@@ -51,6 +35,6 @@ jobs:
         run: pnpm i
       - name: release
         env:
-          GITHUB_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: pnpm semantic-release
