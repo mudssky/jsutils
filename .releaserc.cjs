@@ -14,7 +14,7 @@ module.exports = {
     [
       '@semantic-release/git',
       {
-        assets: ['dist/', 'CHANGELOG.md', 'package.json'], // 前面说到日志记录和版本好是新增修改的，需要 push 回 Git
+        assets: ['CHANGELOG.md', 'package.json'], // 前面说到日志记录和版本好是新增修改的，需要 push 回 Git
         message:
           'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
       },
