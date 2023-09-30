@@ -94,11 +94,15 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const Taro: any
+// declare const Taro: any
 /* c8 ignore start */
 class TaroStorage<T extends string = string> extends AbstractStorage {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(public Taro: any) {
+    super()
+  }
   getStorageInfoSync(): StorageInfo {
-    return Taro.getStorageInfoSync()
+    return this.Taro.getStorageInfoSync()
   }
 
   async getStorageInfo() {
@@ -109,10 +113,10 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
     this.clearStorageSync()
   }
   clearStorageSync() {
-    Taro.clearStorageSync()
+    this.Taro.clearStorageSync()
   }
   removeStorageSync(key: T): void {
-    Taro.removeStorageSync(key)
+    this.Taro.removeStorageSync(key)
   }
   async removeStorage(key: T) {
     this.removeStorageSync(key)
@@ -124,10 +128,10 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
     this.setStorageSync(key, data)
   }
   getStorageSync(key: T): unknown {
-    return Taro.getStorageSync(key)
+    return this.Taro.getStorageSync(key)
   }
   setStorageSync(key: T, data: unknown): void {
-    Taro.setStorageSync({ key, data })
+    this.Taro.setStorageSync({ key, data })
   }
 }
 
