@@ -1,15 +1,15 @@
-import { describe, expect, test, it, assert } from 'vitest'
 import {
   BytesUnitType,
+  bytes,
   bytesInstance,
   bytesUnitMap,
   genAllCasesCombination,
-  bytes,
 } from '@mudssky/jsutil'
+import { assert, describe, expect, it, test } from 'vitest'
 
 function genTestCases(
   num: number,
-  bytesType: BytesUnitType
+  bytesType: BytesUnitType,
 ): [string, number][] {
   const mbAllCases = genAllCasesCombination(bytesType)
   const testCases: [string, number][] = mbAllCases.map((item) => {
@@ -111,8 +111,8 @@ describe('Test byte parse function', function () {
 })
 
 describe('Test byte format function', function () {
-  var pb = Math.pow(1024, 5)
-  var tb = (1 << 30) * 1024,
+  const pb = Math.pow(1024, 5)
+  const tb = (1 << 30) * 1024,
     gb = 1 << 30,
     mb = 1 << 20,
     kb = 1 << 10
@@ -171,25 +171,25 @@ describe('Test byte format function', function () {
     assert.equal(bytesInstance.format(1000)?.toLowerCase(), '1000b')
     assert.equal(
       bytesInstance.format(1000, { thousandsSeparator: '' })?.toLowerCase(),
-      '1000b'
+      '1000b',
     )
     assert.equal(
       bytesInstance.format(1000, { thousandsSeparator: '.' })?.toLowerCase(),
-      '1.000b'
+      '1.000b',
     )
     assert.equal(
       bytesInstance.format(1000, { thousandsSeparator: ',' })?.toLowerCase(),
-      '1,000b'
+      '1,000b',
     )
     assert.equal(
       bytesInstance.format(1000, { thousandsSeparator: ' ' })?.toLowerCase(),
-      '1 000b'
+      '1 000b',
     )
     assert.equal(
       bytesInstance
         .format(1005.1005 * kb, { decimalPlaces: 4, thousandsSeparator: '_' })
         ?.toLowerCase(),
-      '1_005.1005kb'
+      '1_005.1005kb',
     )
   })
 
@@ -204,39 +204,39 @@ describe('Test byte format function', function () {
   it('Should support custom number of decimal places', function () {
     assert.equal(
       bytesInstance.format(kb - 1, { decimalPlaces: 0 })?.toLowerCase(),
-      '1023b'
+      '1023b',
     )
     assert.equal(
       bytesInstance.format(kb, { decimalPlaces: 0 })?.toLowerCase(),
-      '1kb'
+      '1kb',
     )
     assert.equal(
       bytesInstance.format(1.4 * kb, { decimalPlaces: 0 })?.toLowerCase(),
-      '1kb'
+      '1kb',
     )
     assert.equal(
       bytesInstance.format(1.5 * kb, { decimalPlaces: 0 })?.toLowerCase(),
-      '2kb'
+      '2kb',
     )
     assert.equal(
       bytesInstance.format(kb - 1, { decimalPlaces: 1 })?.toLowerCase(),
-      '1023b'
+      '1023b',
     )
     assert.equal(
       bytesInstance.format(kb, { decimalPlaces: 1 })?.toLowerCase(),
-      '1kb'
+      '1kb',
     )
     assert.equal(
       bytesInstance.format(1.04 * kb, { decimalPlaces: 1 })?.toLowerCase(),
-      '1kb'
+      '1kb',
     )
     assert.equal(
       bytesInstance.format(1.05 * kb, { decimalPlaces: 1 })?.toLowerCase(),
-      '1.1kb'
+      '1.1kb',
     )
     assert.equal(
       bytesInstance.format(1.1005 * kb, { decimalPlaces: 4 })?.toLowerCase(),
-      '1.1005kb'
+      '1.1005kb',
     )
   })
 
@@ -245,7 +245,7 @@ describe('Test byte format function', function () {
       bytesInstance
         .format(kb, { decimalPlaces: 3, fixedDecimals: true })
         ?.toLowerCase(),
-      '1.000kb'
+      '1.000kb',
     )
   })
 
@@ -258,27 +258,27 @@ describe('Test byte format function', function () {
   it('Should support custom unit', function () {
     assert.equal(
       bytesInstance.format(12 * mb, { unit: 'b' })?.toLowerCase(),
-      '12582912b'
+      '12582912b',
     )
     assert.equal(
       bytesInstance.format(12 * mb, { unit: 'kb' })?.toLowerCase(),
-      '12288kb'
+      '12288kb',
     )
     assert.equal(
       bytesInstance.format(12 * gb, { unit: 'mb' })?.toLowerCase(),
-      '12288mb'
+      '12288mb',
     )
     assert.equal(
       bytesInstance.format(12 * tb, { unit: 'gb' })?.toLowerCase(),
-      '12288gb'
+      '12288gb',
     )
     assert.equal(
       bytesInstance.format(12 * mb, { unit: '' })?.toLowerCase(),
-      '12mb'
+      '12mb',
     )
     assert.equal(
       bytesInstance.format(12 * mb, { unit: 'bb' })?.toLowerCase(),
-      '12mb'
+      '12mb',
     )
   })
 })
