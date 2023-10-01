@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/mudssky/jsutils/compare/v0.2.0...v0.2.1) (2023-09-30)
+
+
+### Bug Fixes
+
+* 🐛 TaroStorage Need Constructor ([f84b3b5](https://github.com/mudssky/jsutils/commit/f84b3b5eb240a94c3724cbd5d134aa10efbc15a4))
+
 # [0.2.0](https://github.com/mudssky/jsutils/compare/v0.1.0...v0.2.0) (2023-09-28)
 
 
