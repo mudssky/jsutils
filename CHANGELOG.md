@@ -1,3 +1,11 @@
+## [0.2.2](https://github.com/mudssky/jsutils/compare/v0.2.1...v0.2.2) (2023-10-01)
+
+
+### Bug Fixes
+
+* 🐛 taro  setStorageSync paramater fix ([2045dba](https://github.com/mudssky/jsutils/commit/2045dba471202b3f1ceef08b2a9d5e92e8e390a6))
+* 🐛 taro storage set fix ([cdbe86b](https://github.com/mudssky/jsutils/commit/cdbe86b73f34a8443bdd1322979cd08aa6c6fa18))
+
 ## [0.2.1](https://github.com/mudssky/jsutils/compare/v0.2.0...v0.2.1) (2023-09-30)
 
 
