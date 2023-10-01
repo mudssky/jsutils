@@ -125,7 +125,7 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
     return this.getStorageSync(key)
   }
   async setStorage(key: T, data: unknown) {
-    this.Taro.setStorageSync(key, data)
+    this.setStorageSync(key, data)
   }
   getStorageSync(key: T): unknown {
     return this.Taro.getStorageSync(key)
