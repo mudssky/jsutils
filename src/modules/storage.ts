@@ -135,12 +135,13 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const uni: any
-
 class UniStorage<T extends string = string> extends AbstractStorage {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(public Uni: any) {
+    super()
+  }
   getStorageInfoSync(): StorageInfo {
-    return uni.getStorageInfoSync()
+    return this.Uni.getStorageInfoSync()
   }
   async getStorageInfo() {
     return this.getStorageInfoSync()
@@ -149,11 +150,11 @@ class UniStorage<T extends string = string> extends AbstractStorage {
     this.clearStorageSync()
   }
   clearStorageSync() {
-    uni.clearStorageSync()
+    this.Uni.clearStorageSync()
   }
 
   removeStorageSync(key: T): void {
-    uni.removeStorageSync(key)
+    this.Uni.removeStorageSync(key)
   }
 
   async removeStorage(key: T) {
@@ -167,10 +168,10 @@ class UniStorage<T extends string = string> extends AbstractStorage {
     this.setStorageSync(key, data)
   }
   getStorageSync(key: T): unknown {
-    return uni.getStorageSync(key)
+    return this.Uni.getStorageSync(key)
   }
   setStorageSync(key: T, data: unknown): void {
-    uni.setStorageSync({ key, data })
+    this.Uni.setStorageSync(key, data)
   }
 }
 /* c8 ignore stop */
