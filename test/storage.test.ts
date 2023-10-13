@@ -79,7 +79,6 @@ describe('localStorage', () => {
     await globalStorage.setStorage('test', '1234')
     await globalStorage.setStorage('test2', null)
     res = await globalStorage.getStorageInfo()
-    console.log({ res })
 
     expect(res.keys).toEqual(['test', 'test2'])
     expect(res.limitSize).toEqual(5 << 20)
