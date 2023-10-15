@@ -24,17 +24,18 @@ function debounce(
   let isLeadingExecuted = false
   // 判断trailing是否执行过
   let isTrailingExcuted = false
-  let funcRes: unknown
 
   // 记录闭包函数的参数，用于在外层执行函数
   let lastArgs: unknown[]
   let lastThis: unknown
+  let funcRes: unknown = undefined
 
   function invokeFunc() {
     // 执行函数
     funcRes = func.apply(lastThis, lastArgs)
     // 重置状态
     resetState()
+    return funcRes
   }
   function resetState() {
     isLeadingExecuted = false
@@ -74,6 +75,10 @@ function debounce(
     // 防抖，若定时器启动时执行，则重新执行定时器
     if (timerId === undefined) {
       startTimer()
+      // 返回值，定时器结束后返回，每次返回的都是上次的计算结果
+      if (funcRes !== undefined) {
+        return funcRes
+      }
     } else {
       clearTimeout(timerId)
       timerId = undefined
@@ -105,4 +110,115 @@ function debounce(
   return debounced
 }
 
-export { debounce }
+// 基础版防抖
+// function debounce(
+//   func: (...args: unknown[]) => unknown,
+//   wait = 200,
+// ) {
+//   let timerId: ReturnType<typeof setTimeout> | null = null
+//   const debounced = function (this: unknown, ...args: unknown[]) {
+//     if (timerId) {
+//       clearTimeout(timerId)
+//     }
+
+//     timerId = setTimeout(() => {
+//       func.apply(this, args)
+//       timerId = null
+//     }, wait)
+//   }
+//   return debounced
+// }
+
+// 基础版节流
+// function throttle(func: (...args: unknown[]) => unknown, wait = 200) {
+//   let timerId: ReturnType<typeof setTimeout> | null = null
+//   const throttled = function (this: unknown, ...args: unknown[]) {
+//     if (!timerId) {
+//       timerId = setTimeout(() => {
+//         func.apply(this, args)
+//         timerId = null
+//       }, wait)
+//     }
+//   }
+
+//   return throttled
+// }
+function throttle(
+  func: (...args: unknown[]) => unknown,
+  wait: number = 200,
+  options: {
+    leading: boolean
+    trailing: boolean
+  } = {
+    leading: false,
+    trailing: true,
+  },
+) {
+  let timerId: ReturnType<typeof setTimeout> | null = null
+
+  // 记录闭包函数的参数，用于在外层执行函数
+  let lastArgs: unknown[]
+  let lastThis: unknown
+  let funcRes: unknown
+
+  // 判断leading是否执行过了
+  let isLeadingExecuted = false
+  // 判断trailing是否执行过
+  let isTrailingExcuted = false
+
+  function invokeFunc() {
+    funcRes = func.apply(lastThis, lastArgs)
+    return funcRes
+  }
+  function resetState() {
+    isLeadingExecuted = false
+    isTrailingExcuted = false
+  }
+  function throttled(this: unknown, ...args: unknown[]) {
+    lastArgs = args
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    lastThis = this
+
+    if (!timerId) {
+      if (options.leading && isLeadingExecuted === false) {
+        invokeFunc()
+        isLeadingExecuted = true
+      }
+      if (!options.leading && !options.trailing && isTrailingExcuted === true) {
+        invokeFunc()
+        // isLeadingExecuted = false
+        isTrailingExcuted = false
+      }
+      timerId = setTimeout(() => {
+        if (options.trailing) {
+          invokeFunc()
+        }
+        timerId = null
+        isLeadingExecuted = false
+        isTrailingExcuted = true
+      }, wait)
+    }
+  }
+
+  throttled.cancel = () => {
+    if (timerId) {
+      clearTimeout(timerId)
+      timerId = null
+      resetState()
+    }
+  }
+
+  throttled.flush = () => {
+    if (timerId === null) {
+      return funcRes
+    } else {
+      clearTimeout(timerId)
+      timerId = null
+      resetState()
+      return invokeFunc()
+    }
+  }
+  return throttled
+}
+
+export { debounce, throttle }
