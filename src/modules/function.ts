@@ -21,31 +21,84 @@ function debounce(
 ) {
   let timerId: ReturnType<typeof setTimeout> | undefined
   // 判断leading是否执行过了
-  let leadingExecuted = false
+  let isLeadingExecuted = false
+  // 判断trailing是否执行过
+  let isTrailingExcuted = false
+  let funcRes: unknown
 
-  function debounced(this: unknown, ...args: unknown[]) {
-    const execute = () => {
-      func.apply(this, args)
-      leadingExecuted = false
-    }
+  // 记录闭包函数的参数，用于在外层执行函数
+  let lastArgs: unknown[]
+  let lastThis: unknown
+
+  function invokeFunc() {
+    // 执行函数
+    funcRes = func.apply(lastThis, lastArgs)
+    // 重置状态
+    resetState()
+  }
+  function resetState() {
+    isLeadingExecuted = false
+    isTrailingExcuted = false
+  }
+  function startTimer() {
     // 定时器设置后，等待定时器执行完才能再次执行
-    if (!timerId) {
+    if (timerId === undefined) {
       // 需要leading，并且leading未执行，则执行
-      if (options.leading && !leadingExecuted) {
-        execute()
-        leadingExecuted = true
+      if (options.leading && !isLeadingExecuted) {
+        invokeFunc()
+        isLeadingExecuted = true
       }
-
+      // 都为false时，额可以在trailing执行完后手动调用。
+      if (!options.leading && !options.trailing && isTrailingExcuted === true) {
+        invokeFunc()
+        isTrailingExcuted = false
+      }
       // 如果需要 trailing，则在 wait 毫秒后执行
       timerId = setTimeout(() => {
-        timerId = undefined
-        leadingExecuted = false
         if (options.trailing) {
-          execute()
+          invokeFunc()
         }
+        // trailing结束后重置状态
+        isLeadingExecuted = false
+        // 这个只有trailing和leading都为false时判断会用到，其他时候无影响
+        isTrailingExcuted = true
+        timerId = undefined
       }, wait)
+    }
+  }
+  function debounced(this: unknown, ...args: unknown[]) {
+    // 记录函数参数
+    lastArgs = args
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    lastThis = this
+    // 防抖，若定时器启动时执行，则重新执行定时器
+    if (timerId === undefined) {
+      startTimer()
+    } else {
+      clearTimeout(timerId)
+      timerId = undefined
+      startTimer()
+    }
+  }
 
-      // trailing和leading都为false的清空，则
+  debounced.cancel = () => {
+    clearTimeout(timerId)
+    timerId = undefined
+    resetState()
+  }
+  // 定时器设置了，说明处于pending状态。
+  debounced.pending = () => {
+    return timerId !== undefined
+  }
+  debounced.flush = () => {
+    if (timerId === undefined) {
+      return funcRes
+    } else {
+      clearTimeout(timerId)
+      timerId = undefined
+      resetState()
+      invokeFunc()
+      return funcRes
     }
   }
 
