@@ -143,6 +143,17 @@ function debounce(
 
 //   return throttled
 // }
+
+/**
+ * 创建一个节流函数，每 wait 毫秒最多仅调用一次 func 。
+ * 附带一个cancel方法取消延迟的func调用，以及一个flash立刻调用。
+ * 提供 options 以指示是否应在 wait 超时的前缘和/或后沿调用 func 。 func 使用提供给节流函数的最后一个参数进行调用。
+ * 对节流函数的后续调用将返回上次 func 调用的结果。
+ * @param func
+ * @param wait
+ * @param options
+ * @returns
+ */
 function throttle(
   func: (...args: unknown[]) => unknown,
   wait: number = 200,
