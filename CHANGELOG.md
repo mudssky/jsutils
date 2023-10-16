@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/mudssky/jsutils/compare/v0.2.2...v0.2.3) (2023-10-08)
+
+
+### Bug Fixes
+
+* 🐛 update UniStorage ([8ea486c](https://github.com/mudssky/jsutils/commit/8ea486c8a1d7314dbf3f9c77dafd5e67c3d86da2))
+
 ## [0.2.2](https://github.com/mudssky/jsutils/compare/v0.2.1...v0.2.2) (2023-10-01)
 
 
