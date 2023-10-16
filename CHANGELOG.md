@@ -1,3 +1,13 @@
+# [0.3.0](https://github.com/mudssky/jsutils/compare/v0.2.3...v0.3.0) (2023-10-16)
+
+
+### Features
+
+* 🎸 add omit,omitBy ([1444eba](https://github.com/mudssky/jsutils/commit/1444eba913953a88f0db26165d2a8c4873de2bd1))
+* 🎸 add pick pickBy ([1a447fa](https://github.com/mudssky/jsutils/commit/1a447fa0d78d4aba6ccd10d4771015223134519d))
+* 🎸 add throttle v1 ([082398b](https://github.com/mudssky/jsutils/commit/082398b56e0c38b43e03b5678365f7daf6e5bd72))
+* 🎸 debouce v1 ([996b664](https://github.com/mudssky/jsutils/commit/996b664282ef2ddbc9084a6223f83a67e1457c3c))
+
 ## [0.2.3](https://github.com/mudssky/jsutils/compare/v0.2.2...v0.2.3) (2023-10-08)
 
 
