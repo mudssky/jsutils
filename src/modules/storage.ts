@@ -93,9 +93,30 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// declare const Taro: any
-/* c8 ignore start */
+/**
+ * 对Taro的Storage API进行封装，主要是为了提供ts类型提示。
+ * @example
+ * import { TaroStorage } from '@mudssky/jsutils'
+
+import {
+  clearStorageSync,
+  getStorageInfoSync,
+  getStorageSync,
+  removeStorageSync,
+  setStorageSync,
+} from '@tarojs/taro'
+
+export type StorageKey = 'USERINFO'
+
+export const GlobalStorage = new TaroStorage<StorageKey>({
+  getStorageSync,
+  setStorageSync,
+  clearStorageSync,
+  removeStorageSync,
+  getStorageInfoSync,
+})
+
+ */
 class TaroStorage<T extends string = string> extends AbstractStorage {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(public Taro: any) {
@@ -135,6 +156,22 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
   }
 }
 
+/**
+ * 对uniapp的Storage API进行封装，主要是为了提供ts类型提示。
+ * @example
+ * import { UniStorage } from '@mudssky/jsutils'
+
+export type GlobalStorageKey = 'userId'
+
+export const GlobalStorage = new UniStorage<GlobalStorageKey>({
+  getStorageSync: uni.getStorageSync,
+  setStorageSync: uni.setStorageSync,
+  clearStorageSync: uni.clearStorageSync,
+  removeStorageSync: uni.removeStorageSync,
+  getStorageInfoSync: uni.getStorageInfoSync,
+})
+
+ */
 class UniStorage<T extends string = string> extends AbstractStorage {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(public Uni: any) {
@@ -174,5 +211,5 @@ class UniStorage<T extends string = string> extends AbstractStorage {
     this.Uni.setStorageSync(key, data)
   }
 }
-/* c8 ignore stop */
+
 export { AbstractStorage, TaroStorage, UniStorage, WebLocalStorage }
