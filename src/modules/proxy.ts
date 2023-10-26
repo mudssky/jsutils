@@ -6,7 +6,10 @@
  * @public
  * @example
  * ```ts
- *
+ *	const singleDate = singletonProxy(Date)
+    const date1 = new singleDate()
+    const date2 = new singleDate()
+		date1 === date2
  * ```
  */
 export function singletonProxy<T extends object>(
