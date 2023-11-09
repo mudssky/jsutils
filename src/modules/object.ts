@@ -5,12 +5,12 @@
  * @returns
  */
 function pick<T extends object, K extends keyof T>(
-  obj: T | null | undefined,
+  obj: T | undefined,
   keys: K[],
 ) {
   const result: Partial<Pick<T, K>> = {}
   if (obj === null || obj === undefined) {
-    return result
+    return result as Pick<T, K>
   }
   for (const key of keys) {
     if (key in obj) {
@@ -28,7 +28,7 @@ function pick<T extends object, K extends keyof T>(
  * @returns
  */
 function pickBy<T extends object, K extends keyof T>(
-  obj: T | undefined | null,
+  obj: T | undefined,
   predicate: (value: T[K], key?: K) => boolean = (value: T[K]) => !!value,
 ) {
   const result: Partial<Pick<T, K>> = {}
@@ -62,7 +62,7 @@ function omit<T extends object, K extends keyof T>(
   const result: Partial<Omit<T, K>> = {}
 
   if (obj === null || obj === undefined) {
-    return result
+    return result as Omit<T, K>
   }
   for (const key in obj) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
