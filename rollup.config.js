@@ -1,13 +1,13 @@
 import { defineConfig } from 'rollup'
 // import ts from '@rollup/plugin-typescript'
-import ts from 'rollup-plugin-typescript2'
-import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
+import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
-import globals from 'rollup-plugin-node-globals'
-import builtins from 'rollup-plugin-node-builtins'
 import terser from '@rollup/plugin-terser'
 import dts from 'rollup-plugin-dts'
+import builtins from 'rollup-plugin-node-builtins'
+import globals from 'rollup-plugin-node-globals'
+import ts from 'rollup-plugin-typescript2'
 
 const babelPluginConfig = {
   babelHelpers: 'bundled',
