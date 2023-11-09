@@ -5,7 +5,7 @@
  * @returns
  */
 function pick<T extends object, K extends keyof T>(
-  obj: T | undefined,
+  obj: T | undefined | null,
   keys: K[],
 ) {
   const result: Partial<Pick<T, K>> = {}
@@ -28,7 +28,7 @@ function pick<T extends object, K extends keyof T>(
  * @returns
  */
 function pickBy<T extends object, K extends keyof T>(
-  obj: T | undefined,
+  obj: T | undefined | null,
   predicate: (value: T[K], key?: K) => boolean = (value: T[K]) => !!value,
 ) {
   const result: Partial<Pick<T, K>> = {}
