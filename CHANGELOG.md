@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/mudssky/jsutils/compare/v0.3.0...v0.4.0) (2023-10-26)
+
+
+### Features
+
+* 🎸 add singletonProxy ([5340408](https://github.com/mudssky/jsutils/commit/53404081d7d3c2368208523d8e34648e12f80ac3))
+
 # [0.3.0](https://github.com/mudssky/jsutils/compare/v0.2.3...v0.3.0) (2023-10-16)
 
 
