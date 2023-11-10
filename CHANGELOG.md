@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/mudssky/jsutils/compare/v0.5.0...v0.5.1) (2023-11-09)
+
+
+### Bug Fixes
+
+* 🐛 omit,pick return type fix ([f3c2cc5](https://github.com/mudssky/jsutils/commit/f3c2cc52d136c56b2e368b0c010eb1c9110ee9f1))
+
 # [0.5.0](https://github.com/mudssky/jsutils/compare/v0.4.0...v0.5.0) (2023-11-09)
 
 
