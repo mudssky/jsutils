@@ -41,7 +41,9 @@ class LocalStorageMock {
   }
 }
 
-const globalStorage = new WebLocalStorage()
+const globalStorage = new WebLocalStorage({
+  // enableCahce: true,
+})
 global.localStorage = new LocalStorageMock()
 
 describe('localStorage', () => {

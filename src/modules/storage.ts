@@ -2,6 +2,8 @@ interface StorageInfo {
   keys: string[]
   currentSize: number
   limitSize: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cacheInfo?: any
 }
 /**
  * Storage抽象类，提供小程序和web平台统一的接口实现。
@@ -34,6 +36,14 @@ abstract class AbstractStorage<T extends string = string> {
  * web端 localStorage的封装
  */
 class WebLocalStorage<T extends string = string> extends AbstractStorage {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private cache = new Map<T, any>()
+  private enableCahce: boolean
+  constructor(options?: { enableCahce?: boolean }) {
+    super()
+    const { enableCahce = false } = options || {}
+    this.enableCahce = enableCahce
+  }
   getStorageInfoSync(): StorageInfo {
     const keys = []
     let currentSize = 0
@@ -46,10 +56,13 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
       keys.push(key)
       currentSize += (key.length + value.length) * 2 //因为JavaScript中字符串使用UTF-16编码，每个字符占用2个字节
     }
+    const cacheInfo = this.cache.entries()
+
     return {
       keys,
       currentSize,
       limitSize,
+      cacheInfo,
     }
   }
   Keys() {
@@ -66,10 +79,19 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
   async clearStorage() {
     this.clearStorageSync()
   }
+  /**
+   * 清理localStorage，并清理缓存
+   */
   clearStorageSync() {
+    if (this.enableCahce) {
+      this.cache.clear()
+    }
     localStorage.clear()
   }
   removeStorageSync(key: T): void {
+    if (this.cache) {
+      this.cache.delete(key)
+    }
     localStorage.removeItem(key)
   }
   async removeStorage(key: T) {
@@ -83,9 +105,15 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
   }
 
   setStorageSync(key: T, value: unknown): void {
+    if (this.enableCahce) {
+      this.cache.set(key, value)
+    }
     localStorage.setItem(key, this.stringify(value))
   }
   getStorageSync(key: T) {
+    if (this.enableCahce && this.cache.has(key)) {
+      return this.cache.get(key)
+    }
     const item = localStorage.getItem(key)
     // 如果setItem设置undefined，结果会返回undefined的字符串
     if (item == null || item == 'undefined') return null
