@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>rangeIter | @mudssky/jsutils</title><meta name="description" content="Documentation for @mudssky/jsutils"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>RegexChecker | @mudssky/jsutils</title><meta name="description" content="Documentation for @mudssky/jsutils"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base="..">
 <div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="#icon-search"></use></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
@@ -13,40 +13,98 @@
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb">
 <li><a href="../modules.html">@mudssky/jsutils</a></li>
-<li><a href="rangeIter.html">rangeIter</a></li></ul>
-<h1>Function rangeIter</h1></div>
-<section class="tsd-panel">
+<li><a href="RegexChecker.html">RegexChecker</a></li></ul>
+<h1>Class RegexChecker</h1></div>
+<section class="tsd-panel tsd-hierarchy">
+<h4>Hierarchy</h4>
+<ul class="tsd-hierarchy">
+<li><span class="target">RegexChecker</span></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/mudssky/jsutils/blob/147b39d/src/modules/regex.ts#L1">src/modules/regex.ts:1</a></li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
+<h5 class="tsd-index-heading uppercase" role="button" aria-expanded="false" tabIndex=0><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="#icon-chevronSmall"></use></svg> Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Constructors</h3>
+<div class="tsd-index-list"><a href="RegexChecker.html#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Properties</h3>
+<div class="tsd-index-list"><a href="RegexChecker.html#emailPattern" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>email<wbr/>Pattern</span></a>
+<a href="RegexChecker.html#emailPatternCN" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>email<wbr/>PatternCN</span></a>
+<a href="RegexChecker.html#mobilePattern" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>mobile<wbr/>Pattern</span></a>
+<a href="RegexChecker.html#negativePattern" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>negative<wbr/>Pattern</span></a>
+<a href="RegexChecker.html#positivePattern" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>positive<wbr/>Pattern</span></a>
+<a href="RegexChecker.html#usernamePattern" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>username<wbr/>Pattern</span></a>
+</div></section></div></details></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Constructors</h2>
+<section class="tsd-panel tsd-member"><a id="constructor" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="rangeIter"><span class="tsd-kind-call-signature">range<wbr/>Iter</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">start</span>, <span class="tsd-kind-parameter">end</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">step</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Generator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><a href="#rangeIter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_RegexChecker"><span class="tsd-kind-constructor-signature">new <wbr/>Regex<wbr/>Checker</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="RegexChecker.html" class="tsd-signature-type tsd-kind-class">RegexChecker</a><a href="#constructor.new_RegexChecker" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>函数“range”返回一个数字数组，该数组从给定的起始值开始，按给定的步长值递增，并以给定的结束值结束（可选）。</p>
+<h4 class="tsd-returns-title">Returns <a href="RegexChecker.html" class="tsd-signature-type tsd-kind-class">RegexChecker</a></h4></li></ul></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Properties</h2>
+<section class="tsd-panel tsd-member"><a id="emailPattern" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>email<wbr/>Pattern</span><a href="#emailPattern" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">email<wbr/>Pattern</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">RegExp</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/mudssky/jsutils/blob/147b39d/src/modules/regex.ts#L29">src/modules/regex.ts:29</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="emailPatternCN" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>email<wbr/>PatternCN</span><a href="#emailPatternCN" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">email<wbr/>PatternCN</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">RegExp</span><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p>邮箱,允许中文邮箱</p>
 </div>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">start</span>: <span class="tsd-signature-type">number</span></h5>
-<div class="tsd-comment tsd-typography"><p>start 参数是范围的起始值</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
-<li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">end</span>: <span class="tsd-signature-type">number</span></h5>
-<div class="tsd-comment tsd-typography"><p>“end”参数是一个可选参数，用于指定范围的结束值。如果未提供，则范围将是[0,start）。</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li>
-<li>
-<h5><span class="tsd-kind-parameter">step</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1</span></h5>
-<div class="tsd-comment tsd-typography"><p>“step”参数是一个可选参数，用于指定范围内每个值之间的增量。如果未提供，则默认为 1。</p>
-</div>
-<div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Generator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><p>[start,end)范围的，按照step步长的整数生成器。</p>
-
 <div class="tsd-comment tsd-typography">
-<h4>Example</h4><pre><code class="language-ts"><span class="hl-3">for</span><span class="hl-1"> (</span><span class="hl-6">const</span><span class="hl-1"> </span><span class="hl-9">num</span><span class="hl-1"> </span><span class="hl-6">of</span><span class="hl-1"> </span><span class="hl-0">rangeIter</span><span class="hl-1">(</span><span class="hl-5">1</span><span class="hl-1">,</span><span class="hl-5">8</span><span class="hl-1">)){</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">num</span><span class="hl-1">)</span><br/><span class="hl-1">}</span>
-</code><button>Copy</button></pre>
+<h4>Memberof</h4><p>RegexChecker</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/mudssky/jsutils/blob/147b39d/src/modules/array.ts#L34">src/modules/array.ts:34</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/mudssky/jsutils/blob/147b39d/src/modules/regex.ts#L26">src/modules/regex.ts:26</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="mobilePattern" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>mobile<wbr/>Pattern</span><a href="#mobilePattern" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">mobile<wbr/>Pattern</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">RegExp</span><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p>手机号码</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>RegexChecker</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/mudssky/jsutils/blob/147b39d/src/modules/regex.ts#L37">src/modules/regex.ts:37</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="negativePattern" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>negative<wbr/>Pattern</span><a href="#negativePattern" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">negative<wbr/>Pattern</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">RegExp</span><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p>负数</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>RegexChecker</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/mudssky/jsutils/blob/147b39d/src/modules/regex.ts#L19">src/modules/regex.ts:19</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="positivePattern" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>positive<wbr/>Pattern</span><a href="#positivePattern" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">positive<wbr/>Pattern</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">RegExp</span><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p>正数</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>RegexChecker</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/mudssky/jsutils/blob/147b39d/src/modules/regex.ts#L12">src/modules/regex.ts:12</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="usernamePattern" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>username<wbr/>Pattern</span><a href="#usernamePattern" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">username<wbr/>Pattern</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">RegExp</span><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p>用户名正则
+数字字母，连接符，下划线</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>RegexChecker</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/mudssky/jsutils/blob/147b39d/src/modules/regex.ts#L7">src/modules/regex.ts:7</a></li></ul></aside></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -61,18 +119,29 @@
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><use href="#icon-checkbox"></use></svg><span>Inherited</span></label></li>
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><use href="#icon-checkbox"></use></svg><span>External</span></label></li></ul></form></div>
 <div class="tsd-theme-toggle">
-<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
+<li><a href="#emailPattern" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>email<wbr/>Pattern</span></a></li>
+<li><a href="#emailPatternCN" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>email<wbr/>PatternCN</span></a></li>
+<li><a href="#mobilePattern" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>mobile<wbr/>Pattern</span></a></li>
+<li><a href="#negativePattern" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>negative<wbr/>Pattern</span></a></li>
+<li><a href="#positivePattern" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>positive<wbr/>Pattern</span></a></li>
+<li><a href="#usernamePattern" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>username<wbr/>Pattern</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>@mudssky/jsutils</span></a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="..">
-<li><a href="../classes/AbstractStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>AbstractStorage</a></li>
-<li><a href="../classes/ArgumentError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>ArgumentError</a></li>
-<li><a href="../classes/Bytes.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Bytes</a></li>
-<li><a href="../classes/EnumArray.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>EnumArray</a></li>
-<li><a href="../classes/RegexChecker.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>RegexChecker</a></li>
-<li><a href="../classes/TaroStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>TaroStorage</a></li>
-<li><a href="../classes/UniStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>UniStorage</a></li>
-<li><a href="../classes/WebLocalStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>WebLocalStorage</a></li>
+<li><a href="AbstractStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>AbstractStorage</a></li>
+<li><a href="ArgumentError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>ArgumentError</a></li>
+<li><a href="Bytes.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>Bytes</a></li>
+<li><a href="EnumArray.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>EnumArray</a></li>
+<li><a href="RegexChecker.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>RegexChecker</a></li>
+<li><a href="TaroStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>TaroStorage</a></li>
+<li><a href="UniStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>UniStorage</a></li>
+<li><a href="WebLocalStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg>WebLocalStorage</a></li>
 <li><a href="../interfaces/EnumArrayObj.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>EnumArrayObj</a></li>
 <li><a href="../interfaces/TestCase.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg>TestCase</a></li>
 <li><a href="../types/BytesUnitType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2097152"></use></svg>BytesUnitType</a></li>
@@ -81,11 +150,11 @@
 <li><a href="../variables/bytesInstance.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-32"></use></svg>bytesInstance</a></li>
 <li><a href="../variables/bytesUnitMap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-32"></use></svg>bytesUnitMap</a></li>
 <li><a href="../variables/regexChecker-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-32"></use></svg>regexChecker</a></li>
-<li><a href="bytes-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>bytes</a></li>
-<li><a href="createEnum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>createEnum</a></li>
-<li><a href="debounce.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>debounce</a></li>
-<li><a href="genAllCasesCombination.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>genAllCasesCombination</a></li>
-<li><a href="omit.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>omit</a></li>
+<li><a href="../functions/bytes-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>bytes</a></li>
+<li><a href="../functions/createEnum.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>createEnum</a></li>
+<li><a href="../functions/debounce.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>debounce</a></li>
+<li><a href="../functions/genAllCasesCombination.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>genAllCasesCombination</a></li>
+<li><a href="../functions/omit.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg>omit</a></li>
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" rel="noopener" target="_blank">TypeDoc</a></p></div>
