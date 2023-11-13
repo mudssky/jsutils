@@ -1,3 +1,11 @@
+# [0.6.0](https://github.com/mudssky/jsutils/compare/v0.5.1...v0.6.0) (2023-11-10)
+
+
+### Features
+
+* 🎸 add regex patterns ([07591a9](https://github.com/mudssky/jsutils/commit/07591a94e4c788a503de754f2e801fb921f86012))
+* 🎸 webStorage add cache ([7f81d3b](https://github.com/mudssky/jsutils/commit/7f81d3bb7b6025e892e502f172583a2ec4db825a))
+
 ## [0.5.1](https://github.com/mudssky/jsutils/compare/v0.5.0...v0.5.1) (2023-11-09)
 
 
