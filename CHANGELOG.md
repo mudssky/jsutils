@@ -1,3 +1,15 @@
+# [0.7.0](https://github.com/mudssky/jsutils/compare/v0.6.0...v0.7.0) (2023-11-13)
+
+
+### Bug Fixes
+
+* 🐛 singletonProxy obj args use any ([64ebf52](https://github.com/mudssky/jsutils/commit/64ebf5273fa7113d95126908b2a516c802dd5444))
+
+
+### Features
+
+* 🎸 add rollup config ([c5f34a3](https://github.com/mudssky/jsutils/commit/c5f34a3ab20fe148ee503c74a9c0863595749653))
+
 # [0.6.0](https://github.com/mudssky/jsutils/compare/v0.5.1...v0.6.0) (2023-11-10)
 
 
