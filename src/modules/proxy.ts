@@ -13,7 +13,8 @@
  * ```
  */
 export function singletonProxy<T extends object>(
-  obj: new (...args: unknown[]) => T,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  obj: new (...args: any[]) => T,
 ) {
   let instance: T
   return new Proxy(obj, {
