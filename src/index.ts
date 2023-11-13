@@ -1,5 +1,6 @@
 export * from './modules/array'
 export * from './modules/bytes'
+export * from './modules/config/rollup'
 export * from './modules/enum'
 export * from './modules/error'
 export * from './modules/function'
