@@ -40,4 +40,15 @@ function genAllCasesCombination(str: string): string[] {
   return result
 }
 
-export { genAllCasesCombination }
+/**
+ * 使用随机数生成uuid
+ * @returns
+ */
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0 // 生成一个随机整数，范围在 0 到 15 之间
+    const v = c === 'x' ? r : (r & 0x3) | 0x8 // 如果字符是 'x'，则保持随机数的值；如果是 'y'，则根据规范设置为 4
+    return v.toString(16) // 将整数转换为十六进制字符串
+  })
+}
+export { genAllCasesCombination, generateUUID }
