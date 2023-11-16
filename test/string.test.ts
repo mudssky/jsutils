@@ -1,4 +1,5 @@
-import { genAllCasesCombination } from '@mudssky/jsutil'
+import { genAllCasesCombination, generateUUID, range } from '@mudssky/jsutil'
+
 import { describe, expect, test } from 'vitest'
 
 describe('genAllCasesCombination', () => {
@@ -7,10 +8,20 @@ describe('genAllCasesCombination', () => {
   })
   test('main func', () => {
     expect(genAllCasesCombination('kb').sort()).toEqual(
-      ['kb', 'Kb', 'kB', 'KB'].sort()
+      ['kb', 'Kb', 'kB', 'KB'].sort(),
     )
     expect(genAllCasesCombination('k1b').sort()).toEqual(
-      ['k1b', 'K1b', 'k1B', 'K1B'].sort()
+      ['k1b', 'K1b', 'k1B', 'K1B'].sort(),
     )
+  })
+})
+
+describe('generateUUID', () => {
+  test('check id unique ', () => {
+    const uuids = range(1, 100000).map(() => {
+      return generateUUID()
+    })
+    const uuidSet = new Set(uuids)
+    expect(uuids.length).toEqual(uuidSet.size)
   })
 })
