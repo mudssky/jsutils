@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/mudssky/jsutils/compare/v0.7.0...v0.8.0) (2023-11-16)
+
+
+### Features
+
+* 🎸 add generateUUID ([f794dd0](https://github.com/mudssky/jsutils/commit/f794dd0cf69b6367e192734ed4a23b076c271068))
+
 # [0.7.0](https://github.com/mudssky/jsutils/compare/v0.6.0...v0.7.0) (2023-11-13)
 
 
