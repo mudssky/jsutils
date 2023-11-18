@@ -28,6 +28,7 @@ const config = defineConfig([
         dir: 'dist/cjs',
         format: 'cjs',
         preserveModules: true,
+        entryFileNames: '[name].cjs', //使用cjs扩展名，避免兼容问题
       },
     ],
     plugins: [
@@ -61,11 +62,19 @@ const config = defineConfig([
   // 打包类型声明
   {
     input: 'src/index.ts',
-    output: {
-      dir: 'dist/types',
-      format: 'esm',
-      preserveModules: true,
-    },
+    output: [
+      {
+        dir: 'dist/types',
+        format: 'esm',
+        preserveModules: true,
+      },
+      {
+        dir: 'dist/typescts',
+        format: 'cjs',
+        preserveModules: true,
+        entryFileNames: '[name].d.cts',
+      },
+    ],
     plugins: [dts()],
   },
 ])
