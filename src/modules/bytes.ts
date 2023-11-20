@@ -21,7 +21,7 @@ type BytesUnitType = keyof typeof bytesUnitMap
  * 配置项
  */
 interface BytesOption {
-  unit?: string
+  unit?: BytesUnitType
   decimalPlaces?: number
   fixedDecimals?: boolean
   thousandsSeparator?: string
