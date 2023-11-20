@@ -55,14 +55,17 @@
     "typedoc:gen": "typedoc src/index.ts --out typedoc",
     "typedoc:json": "typedoc src/index.ts --json typedoc/typedoc.json",
     "typedoc:watch": "pwsh -File scripts.ps1 -JobType WatchTypedoc ",
-    "doc": "api-extractor run --local --verbose && api-documenter markdown -i temp -o docs",
+    "doc": "api-extractor run --local --verbose && api-documenter markdown -i temp -o vitedocs/docs",
     "doc:debug": "api-extractor run --local --verbose --diagnostics && api-documenter markdown -i temp -o docs",
     "trace": "tsc dist/types/index.d.ts --traceResolution > trace.log",
     "clean:dist": "pwsh -File scripts.ps1 -JobType CleanDist",
     "copy:style": "pwsh -File scripts.ps1 -JobType CopyStyle",
     "prepublishOnly": "pnpm build",
     "commit": "git add .&&git cz",
-    "push": "pnpm commit&&git push"
+    "push": "pnpm commit&&git push",
+    "docs:dev": "vitepress dev vitedocs",
+    "docs:build": "vitepress build vitedocs",
+    "docs:preview": "vitepress preview vitedocs"
   },
   "lint-staged": {
     "*.{md,json}": [
@@ -109,6 +112,7 @@
     "esbuild": "^0.19.5",
     "eslint": "^8.53.0",
     "eslint-plugin-tsdoc": "^0.2.17",
+    "fast-glob": "^3.3.2",
     "git-cz": "^4.9.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.0.2",
@@ -127,6 +131,7 @@
     "tslib": "^2.6.2",
     "typedoc": "^0.25.3",
     "typescript": "^5.2.2",
+    "vitepress": "1.0.0-rc.29",
     "vitest": "^0.34.6"
   },
   "publishConfig": {
