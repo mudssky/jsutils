@@ -32,10 +32,12 @@ function range(start: number, end?: number, step = 1) {
  * @public
  */
 function* rangeIter(start: number, end?: number, step = 1) {
+  let actualStart = start
+  let actualEnd = end
   // 判断只有一个参数的情况，区间从0到start
-  if (typeof end === 'undefined') {
-    end = start
-    start = 0
+  if (typeof actualEnd === 'undefined') {
+    actualEnd = start
+    actualStart = 0
   }
 
   // 进行参数检查
@@ -46,19 +48,19 @@ function* rangeIter(start: number, end?: number, step = 1) {
   // 参数需要都是整数
   if (
     !(
-      Number.isInteger(start) &&
-      Number.isInteger(end) &&
+      Number.isInteger(actualStart) &&
+      Number.isInteger(actualEnd) &&
       Number.isInteger(step)
     )
   ) {
     throw new ArgumentError('unsupport decimal number')
   }
   if (step > 0) {
-    for (let i = start; i < end; i += step) {
+    for (let i = actualStart; i < actualEnd; i += step) {
       yield i
     }
   } else {
-    for (let i = start; i > end; i += step) {
+    for (let i = actualStart; i > actualEnd; i += step) {
       yield i
     }
   }
