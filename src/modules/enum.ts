@@ -91,5 +91,5 @@ function createEnum<T extends readonly EnumArrayObj[]>(enumsTuple: T) {
   // return new EnumArray(enums)
 }
 
-export { createEnum, EnumArray }
+export { EnumArray, createEnum }
 export type { EnumArrayObj, LabelOf, ValueOf }
