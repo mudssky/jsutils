@@ -51,4 +51,16 @@ function generateUUID() {
     return v.toString(16) // 将整数转换为十六进制字符串
   })
 }
-export { genAllCasesCombination, generateUUID }
+
+/**
+ * 模糊匹配字符串，忽略大小写
+ * @param searchValue 用于匹配的字符串
+ * @param targetString 匹配的目标字符串
+ * @returns
+ */
+function fuzzyMatch(searchValue: string, targetString: string) {
+  const pattern = new RegExp(searchValue, 'i')
+  return pattern.test(targetString)
+}
+
+export { fuzzyMatch, genAllCasesCombination, generateUUID }
