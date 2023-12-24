@@ -1,3 +1,18 @@
+# [0.10.0](https://github.com/mudssky/jsutils/compare/v0.9.0...v0.10.0) (2023-12-24)
+
+
+### Bug Fixes
+
+* 🐛 fix bytes unit type ([0f5f03a](https://github.com/mudssky/jsutils/commit/0f5f03aa7b04b4548078a80539e2931435adabd7))
+
+
+### Features
+
+* 🎸 add fuzzyMatch ([beeb56e](https://github.com/mudssky/jsutils/commit/beeb56e86c08521ca2388ef3a0fb9014d0ebe760))
+* 🎸 add logger ([2838530](https://github.com/mudssky/jsutils/commit/283853082d9e5f89891c44962cab646cb4442ec4))
+* 🎸 add mapValues,mapKeys,update EnumArray ([651136f](https://github.com/mudssky/jsutils/commit/651136f657454cdc2d1594e8078cb0577f8877ef))
+* 🎸 add vitepress doc ([f9c401c](https://github.com/mudssky/jsutils/commit/f9c401cae22cb8f620144f1a7be2c09237b49d0a))
+
 # [0.9.0](https://github.com/mudssky/jsutils/compare/v0.8.0...v0.9.0) (2023-11-18)
 
 
