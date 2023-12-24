@@ -1,3 +1,5 @@
+import { mapKeys } from '..'
+
 // 枚举类型接口
 interface EnumArrayObj {
   value: number | string
@@ -14,6 +16,9 @@ type LabelOf<T extends readonly EnumArrayObj[]> = T[number]['label']
 class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   private readonly kvMap = new Map<unknown, ValueOf<T>>()
   private readonly vkMap = new Map<unknown, LabelOf<T>>()
+
+  private labelKey = 'label'
+  private valueKey = 'value'
 
   /**
    * 传入一个符合EnumArrayObj的元组
@@ -48,12 +53,14 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   }
   getItemByLabel(label: LabelOf<T>) {
     return this.find((item) => {
-      return item.label === label
+      // @ts-expect-error can not be key
+      return item[this.labelKey] === label
     })
   }
   getItemByValue(value: ValueOf<T>) {
     return this.find((item) => {
-      return item.value === value
+      // @ts-expect-error can not be key
+      return item[this.valueKey] === value
     })
   }
   getDisplayTextByLabel(label: LabelOf<T>) {
@@ -63,6 +70,40 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   getDisplayTextByValue(value: ValueOf<T>) {
     const item = this.getItemByValue(value)
     return item?.displayText ?? item?.label
+  }
+
+  /**
+   * 使用映射字典改变枚举类的键
+   * @param mapDictionary
+   * @returns
+   */
+  getKeyMappedIter(mapDictionary: Record<string, string>) {
+    return this.map((item) => {
+      return mapKeys(item, (value, key) => {
+        if (key in mapDictionary) {
+          return mapDictionary[key]!
+        }
+        return key
+      })
+    }).values()
+  }
+  getKeyMappedList(mapDictionary: Record<string, string>) {
+    return [...this.getKeyMappedIter(mapDictionary)]
+  }
+  /**
+   * 使value和label用相同的值
+   * @returns
+   */
+  getAllLabelList() {
+    return this.toList().map((item) => {
+      return {
+        ...item,
+        value: item.label,
+      }
+    })
+  }
+  toList() {
+    return [...this.values()]
   }
 }
 
