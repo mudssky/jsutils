@@ -1,4 +1,4 @@
-import { omit, omitBy, pick, pickBy } from '@mudssky/jsutil'
+import { mapKeys, mapValues, omit, omitBy, pick, pickBy } from '@mudssky/jsutil'
 import { describe, expect, test } from 'vitest'
 
 describe('pick', () => {
@@ -221,6 +221,68 @@ describe('omitBy', () => {
       expect(omitBy(caseItem.input[0], caseItem.input[1])).toEqual(
         caseItem.output,
       )
+    }
+  })
+})
+
+describe('mapKeys', () => {
+  test('normal usage', () => {
+    const testCases = [
+      {
+        input: [
+          {
+            a: 1,
+            b: 2,
+            c: 3,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (value: any, key: any) => {
+            return key + value
+          },
+        ],
+        output: {
+          a1: 1,
+          b2: 2,
+          c3: 3,
+        },
+      },
+    ] as const
+
+    for (const caseItem of testCases) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      expect(mapKeys(...caseItem.input)).toEqual(caseItem.output)
+    }
+  })
+})
+
+describe('mapValues', () => {
+  test('normal usage', () => {
+    const testCases = [
+      {
+        input: [
+          {
+            a: 1,
+            b: 2,
+            c: 3,
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (value: any, key: any) => {
+            return key + value
+          },
+        ],
+        output: {
+          a: 'a1',
+          b: 'b2',
+          c: 'c3',
+        },
+      },
+    ] as const
+
+    for (const caseItem of testCases) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      expect(mapValues(...caseItem.input)).toEqual(caseItem.output)
     }
   })
 })

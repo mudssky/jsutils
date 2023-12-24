@@ -61,4 +61,21 @@ describe('EnumArray', () => {
   test('extends EnumArray', () => {
     expect(customSexEnum.hello()).toBe('hello')
   })
+  test('getMappedList', () => {
+    expect(
+      sexEnum.getKeyMappedList({
+        label: 'key',
+      }),
+    ).toEqual([
+      { key: '男', value: 1, displayText: '性别男' },
+      { key: '女', value: 2 },
+    ])
+  })
+
+  test('getAllLabelList', () => {
+    expect(sexEnum.getAllLabelList()).toEqual([
+      { label: '男', value: '男', displayText: '性别男' },
+      { label: '女', value: '女' },
+    ])
+  })
 })
