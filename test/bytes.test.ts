@@ -273,11 +273,13 @@ describe('Test byte format function', function () {
       '12288gb',
     )
     assert.equal(
-      bytesInstance.format(12 * mb, { unit: '' })?.toLowerCase(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      bytesInstance.format(12 * mb, { unit: '' as any })?.toLowerCase(),
       '12mb',
     )
     assert.equal(
-      bytesInstance.format(12 * mb, { unit: 'bb' })?.toLowerCase(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      bytesInstance.format(12 * mb, { unit: 'bb' as any })?.toLowerCase(),
       '12mb',
     )
   })

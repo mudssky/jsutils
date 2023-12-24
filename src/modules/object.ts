@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ObjectIterator } from 'src/types/global'
+
 /**
  *  从obj中选取属性，返回一个新的对象
  * @param obj
@@ -91,4 +94,33 @@ function omitBy<T extends object, K extends keyof T>(
   // @ts-ignore
   return pickBy(obj, (value, key) => !predicate(value, key))
 }
-export { omit, omitBy, pick, pickBy }
+
+function mapKeys<T extends object>(
+  obj: T,
+  iteratee: ObjectIterator<T, string>,
+) {
+  const result: Record<string, T[keyof T]> = {}
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const transformedKey = iteratee(obj[key], key, obj)
+      result[transformedKey] = obj[key]
+    }
+  }
+  return result
+}
+
+function mapValues<T extends object, U = any>(
+  obj: T,
+  iteratee: ObjectIterator<T, U>,
+) {
+  const result: { [key in keyof T]?: U } = {}
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const transformedValue = iteratee(obj[key], key, obj)
+      result[key] = transformedValue
+    }
+  }
+  return result as Record<keyof T, U>
+}
+
+export { mapKeys, mapValues, omit, omitBy, pick, pickBy }

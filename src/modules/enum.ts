@@ -1,3 +1,5 @@
+import { mapKeys } from '..'
+
 // 枚举类型接口
 interface EnumArrayObj {
   value: number | string
@@ -64,6 +66,40 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
     const item = this.getItemByValue(value)
     return item?.displayText ?? item?.label
   }
+
+  /**
+   * 使用映射字典改变枚举类的键
+   * @param mapDictionary
+   * @returns
+   */
+  getKeyMappedIter(mapDictionary: Record<string, string>) {
+    return this.map((item) => {
+      return mapKeys(item, (value, key) => {
+        if (key in mapDictionary) {
+          return mapDictionary[key]!
+        }
+        return key
+      })
+    }).values()
+  }
+  getKeyMappedList(mapDictionary: Record<string, string>) {
+    return [...this.getKeyMappedIter(mapDictionary)]
+  }
+  /**
+   * 使value和label用相同的值
+   * @returns
+   */
+  getAllLabelList() {
+    return this.toList().map((item) => {
+      return {
+        ...item,
+        value: item.label,
+      }
+    })
+  }
+  toList() {
+    return [...this.values()]
+  }
 }
 
 /**
@@ -91,5 +127,5 @@ function createEnum<T extends readonly EnumArrayObj[]>(enumsTuple: T) {
   // return new EnumArray(enums)
 }
 
-export { createEnum, EnumArray }
+export { EnumArray, createEnum }
 export type { EnumArrayObj, LabelOf, ValueOf }

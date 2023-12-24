@@ -15,7 +15,7 @@ module.exports = {
       },
     },
     {
-      files: ['src/**/*.ts'],
+      files: ['src/**/*.ts','test'],
       rules: {
         'no-console': 'error',
       },
