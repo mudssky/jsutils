@@ -1,4 +1,4 @@
-import { mapKeys } from '..'
+import { mapKeys } from '@/modules/object'
 
 // 枚举类型接口
 interface EnumArrayObj {
