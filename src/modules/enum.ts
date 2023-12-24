@@ -17,9 +17,6 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   private readonly kvMap = new Map<unknown, ValueOf<T>>()
   private readonly vkMap = new Map<unknown, LabelOf<T>>()
 
-  private labelKey = 'label'
-  private valueKey = 'value'
-
   /**
    * 传入一个符合EnumArrayObj的元组
    * @param list
@@ -53,14 +50,12 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   }
   getItemByLabel(label: LabelOf<T>) {
     return this.find((item) => {
-      // @ts-expect-error can not be key
-      return item[this.labelKey] === label
+      return item.label === label
     })
   }
   getItemByValue(value: ValueOf<T>) {
     return this.find((item) => {
-      // @ts-expect-error can not be key
-      return item[this.valueKey] === value
+      return item.value === value
     })
   }
   getDisplayTextByLabel(label: LabelOf<T>) {
