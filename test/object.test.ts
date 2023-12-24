@@ -91,23 +91,10 @@ describe('pickBy', () => {
           a: 1,
         },
       },
-
-      // {
-      //   input: [
-      //     {
-      //       a: 1,
-      //       b: 2,
-      //       c: 3,
-      //     },
-      //     ['f', 'e'],
-      //   ],
-      //   output: {},
-      // },
-
-      // {
-      //   input: [{}, ['f', 'e']],
-      //   output: {},
-      // },
+      {
+        input: [undefined, (value: unknown) => value === 1],
+        output: {},
+      },
     ] as const
 
     for (const caseItem of testCases) {
