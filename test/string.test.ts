@@ -1,4 +1,11 @@
-import { genAllCasesCombination, generateUUID, range } from '@mudssky/jsutil'
+import {
+  TestCase,
+  fuzzyMatch,
+  genAllCasesCombination,
+  generateUUID,
+  range,
+  tableTest,
+} from '@mudssky/jsutil'
 
 import { describe, expect, test } from 'vitest'
 
@@ -23,5 +30,25 @@ describe('generateUUID', () => {
     })
     const uuidSet = new Set(uuids)
     expect(uuids.length).toEqual(uuidSet.size)
+  })
+})
+
+describe('fuzzyMatch table', () => {
+  test('email', () => {
+    const testCases: TestCase<[string, string]>[] = [
+      { input: ['jk', 'jkl;djaksl'], expect: true },
+      { input: ['jkk', 'jkl;djaksl'], expect: false },
+      { input: ['jK', 'jkl;djaksl'], expect: true },
+      { input: ['Jk', 'jkl;djaksl'], expect: true },
+    ]
+    tableTest(testCases, (tcase) => {
+      try {
+        expect(fuzzyMatch(...tcase.input)).toBe(tcase.expect)
+      } catch (e) {
+        console.log(tcase)
+        // console.log({ e })
+        throw e
+      }
+    })
   })
 })

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 // 直接把根目录作为一个npm包引入
-import { createEnum } from '@mudssky/jsutil'
+import { EnumArray, EnumArrayObj, createEnum } from '@mudssky/jsutil'
 
 describe('EnumArray', () => {
   const sexList = [
@@ -15,6 +15,15 @@ describe('EnumArray', () => {
     },
   ] as const
   const sexEnum = createEnum(sexList)
+
+  class CustomEnumArray<
+    T extends readonly EnumArrayObj[],
+  > extends EnumArray<T> {
+    hello() {
+      return 'hello'
+    }
+  }
+  const customSexEnum = new CustomEnumArray(sexList)
 
   test('should return a enum array', () => {
     expect([...sexEnum]).toEqual(sexList)
@@ -48,5 +57,25 @@ describe('EnumArray', () => {
     expect(sexEnum.getDisplayTextByValue(1)).toEqual(sexList[0].displayText)
     expect(sexEnum.getDisplayTextByLabel('女')).toEqual(sexList[1].label)
     expect(sexEnum.getDisplayTextByValue(2)).toEqual(sexList[1].label)
+  })
+  test('extends EnumArray', () => {
+    expect(customSexEnum.hello()).toBe('hello')
+  })
+  test('getMappedList', () => {
+    expect(
+      sexEnum.getKeyMappedList({
+        label: 'key',
+      }),
+    ).toEqual([
+      { key: '男', value: 1, displayText: '性别男' },
+      { key: '女', value: 2 },
+    ])
+  })
+
+  test('getAllLabelList', () => {
+    expect(sexEnum.getAllLabelList()).toEqual([
+      { label: '男', value: '男', displayText: '性别男' },
+      { label: '女', value: '女' },
+    ])
   })
 })
