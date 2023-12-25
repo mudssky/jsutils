@@ -97,6 +97,14 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
       }
     })
   }
+  /**
+   * 获取所有label的列表
+   */
+  getLabelList() {
+    return this.toList().map((item) => {
+      return item.label
+    }) as LabelOf<T>[]
+  }
   toList() {
     return [...this.values()]
   }
