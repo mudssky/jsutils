@@ -21,11 +21,11 @@ pnpm add @mudssky/jsutil
 ## 使用方法
 
 和lodash-es类似  
-推荐使用esm的方式按需引入，这样可以借由tree shaking，减少最后的打包体积  
+推荐使用esm的方式按需引入，这样可以借由tree shaking，减少最后的打包体积
 
 ```ts
 import { range } from '@mudssky/jsutil'
 console.log(range(1, 10))
 ```
 
-详细文档地址 <https://mudssky.github.io/jsutils/index.html>
+[详细文档地址](https://mudssky.github.io/jsutils/index.html)
