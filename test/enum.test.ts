@@ -78,4 +78,7 @@ describe('EnumArray', () => {
       { label: '女', value: '女' },
     ])
   })
+  test('getLabelList', () => {
+    expect(sexEnum.getLabelList()).toEqual(['男', '女'])
+  })
 })
