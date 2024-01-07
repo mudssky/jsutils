@@ -105,6 +105,14 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
       return item.label
     }) as LabelOf<T>[]
   }
+  getLabels() {
+    return this.getLabelList()
+  }
+  getValues() {
+    return this.toList().map((item) => {
+      return item.value
+    }) as ValueOf<T>[]
+  }
   toList() {
     return [...this.values()]
   }
