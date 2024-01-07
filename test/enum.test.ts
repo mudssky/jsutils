@@ -81,4 +81,12 @@ describe('EnumArray', () => {
   test('getLabelList', () => {
     expect(sexEnum.getLabelList()).toEqual(['男', '女'])
   })
+
+  test('getLabels', () => {
+    expect(sexEnum.getLabels()).toEqual(['男', '女'])
+  })
+
+  test('getValues', () => {
+    expect(sexEnum.getValues()).toEqual([1, 2])
+  })
 })
