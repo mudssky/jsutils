@@ -116,6 +116,18 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   toList() {
     return [...this.values()]
   }
+
+  /**
+   * 判断枚举值是否在列表中
+   * @param labels
+   * @param value
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isLabelsContainValue(labels: LabelOf<T>[], value?: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return labels.includes(this.getLabelByValue(value) as any)
+  }
 }
 
 /**
