@@ -90,7 +90,7 @@ describe('EnumArray', () => {
     expect(sexEnum.getValues()).toEqual([1, 2])
   })
   test('isLabelsContainValue', () => {
-    expect(sexEnum.isLabelsContainValue(['女'], 2)).toEqual(true)
-    expect(sexEnum.isLabelsContainValue(['女'], 1)).toEqual(false)
+    expect(sexEnum.isLabelsMatchValue(['女'], 2)).toEqual(true)
+    expect(sexEnum.isLabelsMatchValue(['女'], 1)).toEqual(false)
   })
 })

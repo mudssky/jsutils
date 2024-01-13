@@ -118,13 +118,13 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   }
 
   /**
-   * 判断枚举值是否在列表中
+   * 判断枚举值匹配label列表中的某个label
    * @param labels
    * @param value
    * @returns
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  isLabelsContainValue(labels: LabelOf<T>[], value?: any) {
+  isLabelsMatchValue(labels: LabelOf<T>[], value?: any) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return labels.includes(this.getLabelByValue(value) as any)
   }
