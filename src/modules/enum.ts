@@ -105,8 +105,28 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
       return item.label
     }) as LabelOf<T>[]
   }
+  getLabels() {
+    return this.getLabelList()
+  }
+  getValues() {
+    return this.toList().map((item) => {
+      return item.value
+    }) as ValueOf<T>[]
+  }
   toList() {
     return [...this.values()]
+  }
+
+  /**
+   * 判断枚举值匹配label列表中的某个label
+   * @param labels
+   * @param value
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isLabelsMatchValue(labels: LabelOf<T>[], value?: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return labels.includes(this.getLabelByValue(value) as any)
   }
 }
 
