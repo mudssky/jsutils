@@ -66,4 +66,64 @@ function* rangeIter(start: number, end?: number, step = 1) {
   }
 }
 
-export { range, rangeIter }
+type Filter<T> = (item: T) => boolean
+class Query<T extends object> extends Array<T> {
+  private filters: Filter<T>[] = []
+  private sortKeys: (keyof T)[] = []
+  private groupByKey: keyof T | null = null
+  constructor(list: T[]) {
+    super(list.length)
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i]
+      this[i] = item
+    }
+  }
+
+  where(filter: Filter<T>) {
+    this.filters.push(filter)
+    return this
+  }
+
+  sortBy(key: keyof T) {
+    this.sortKeys.push(key)
+    return this
+  }
+  groupBy(key: keyof T) {
+    this.groupByKey = key
+    return this
+  }
+  execute() {
+    let res = [...this.values()]
+    if (this.filters.length > 0) {
+      res = res.filter((item) =>
+        this.filters.every((predicate) => predicate(item)),
+      )
+    }
+
+    if (this.sortKeys.length > 0) {
+      this.sortKeys.forEach((key) => {
+        res.sort((a, b) => (a[key] > b[key] ? 1 : -1))
+      })
+    }
+    if (this.groupByKey) {
+      const groups: Record<string, T[]> = {}
+      for (const item of res) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const key: any = item[this.groupByKey]
+        if (!(key in groups)) {
+          groups[key] = []
+        }
+        groups[key].push(item)
+      }
+      // @ts-expect-error allow different type
+      res = groups
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return res as any
+  }
+}
+
+function createQuery<T extends object>(list: T[]) {
+  return new Query<T>(list)
+}
+export { Query, createQuery, range, rangeIter }

@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest'
 // 直接把根目录作为一个npm包引入
-import { range } from '@mudssky/jsutil'
-// import { range } from '../src/index'
+import { createQuery, range } from '@mudssky/jsutil'
 
 describe('range', () => {
   test('returns an empty array for zero range', () => {
@@ -32,5 +31,27 @@ describe('range', () => {
   test('test invalid param', () => {
     expect(() => range(0.5, 5)).toThrowError('unsupport decimal number')
     expect(() => range(0, 5, 0)).toThrowError('step can not be zero')
+  })
+})
+
+describe('query', () => {
+  const data = [
+    { name: 'apple', category: 'fruit', price: 10 },
+    { name: 'banana', category: 'fruit', price: 5 },
+    { name: 'carrot', category: 'vegetable', price: 3 },
+    { name: 'orange', category: 'fruit', price: 8 },
+  ]
+  test('basic func', () => {
+    const result = createQuery(data)
+      .where((item) => {
+        return item.category === 'fruit' && item.price > 5
+      })
+      .sortBy('price')
+      .groupBy('name')
+      .execute()
+    expect(result).toEqual({
+      orange: [{ name: 'orange', category: 'fruit', price: 8 }],
+      apple: [{ name: 'apple', category: 'fruit', price: 10 }],
+    })
   })
 })
