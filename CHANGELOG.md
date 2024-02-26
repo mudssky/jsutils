@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/mudssky/jsutils/compare/v0.11.0...v0.12.0) (2023-12-25)
+
+
+### Features
+
+* 🎸 add getLabelList ([e6a6257](https://github.com/mudssky/jsutils/commit/e6a625738c1a2914a1dcd9f7da8958ff97c399b8))
+
 # [0.11.0](https://github.com/mudssky/jsutils/compare/v0.10.0...v0.11.0) (2023-12-25)
 
 
