@@ -35,14 +35,15 @@
     "moduleResolution": "Bundler" /* Specify how TypeScript looks up a file from a given module specifier. */,
     "baseUrl": "." /* Specify the base directory to resolve non-relative module names. */,
     "paths": {
-      //   "@mudssky/jsutil": ["."],
-      "@mudssky/jsutil": ["./src/index.ts"],
+      //   "@mudssky/jsutils": ["."],
+      "@mudssky/jsutils": ["./src/index.ts"],
       "@/*": ["src/*"]
+      // "*": ["src/types/*.d.ts"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
-    "typeRoots": [
-      "src/types/"
-    ] /* Specify multiple folders that act like './node_modules/@types'. */,
+    // "typeRoots": [
+    //   "src/types"
+    // ] /* Specify multiple folders that act like './node_modules/@types'. */,
     // "types": ["src/types"] /* Specify type package names to be included without being referenced in a source file. */,
     // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
     // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */

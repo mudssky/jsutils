@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { ObjectIterator } from '../types/index'
+
 /**
  *  从obj中选取属性，返回一个新的对象
  * @param obj

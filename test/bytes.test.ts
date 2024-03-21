@@ -4,7 +4,7 @@ import {
   bytesInstance,
   bytesUnitMap,
   genAllCasesCombination,
-} from '@mudssky/jsutil'
+} from '@mudssky/jsutils'
 import { assert, describe, expect, it, test } from 'vitest'
 
 function genTestCases(
