@@ -1,4 +1,4 @@
-import { singletonProxy } from '@mudssky/jsutil'
+import { singletonProxy } from '@mudssky/jsutils'
 import { describe, expect, test } from 'vitest'
 
 describe('singletonProxy', () => {

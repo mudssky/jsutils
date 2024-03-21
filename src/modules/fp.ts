@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ArgumentError } from '..'
+import { ArgumentError } from '@/modules/error'
 
 type AnyFunction = (...args: any[]) => any
 

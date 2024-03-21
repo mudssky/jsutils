@@ -5,7 +5,7 @@ import {
   generateUUID,
   range,
   tableTest,
-} from '@mudssky/jsutil'
+} from '@mudssky/jsutils'
 
 import { describe, expect, test } from 'vitest'
 
