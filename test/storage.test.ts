@@ -1,4 +1,4 @@
-import { WebLocalStorage } from '@mudssky/jsutil'
+import { WebLocalStorage } from '@mudssky/jsutils'
 import { beforeEach, describe, expect, test } from 'vitest'
 
 class LocalStorageMock {

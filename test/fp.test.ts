@@ -1,4 +1,4 @@
-import { ArgumentError, Monad, compose, curry, pipe } from '@mudssky/jsutil'
+import { ArgumentError, Monad, compose, curry, pipe } from '@mudssky/jsutils'
 import { describe, expect, test } from 'vitest'
 
 describe('pipe', () => {
