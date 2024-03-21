@@ -24,7 +24,7 @@ pnpm add @mudssky/jsutil
 推荐使用esm的方式按需引入，这样可以借由tree shaking，减少最后的打包体积
 
 ```ts
-import { range } from '@mudssky/jsutil'
+import { range } from '@mudssky/jsutils'
 console.log(range(1, 10))
 ```
 

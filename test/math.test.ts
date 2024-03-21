@@ -1,5 +1,5 @@
+import { ArgumentError, randomInt } from '@mudssky/jsutils'
 import { describe, expect, test } from 'vitest'
-import { ArgumentError, randomInt } from '@mudssky/jsutil'
 
 describe('randomInt', () => {
   test('should be in  range ', () => {

@@ -1,4 +1,11 @@
-import { mapKeys, mapValues, omit, omitBy, pick, pickBy } from '@mudssky/jsutil'
+import {
+  mapKeys,
+  mapValues,
+  omit,
+  omitBy,
+  pick,
+  pickBy,
+} from '@mudssky/jsutils'
 import { describe, expect, test } from 'vitest'
 
 describe('pick', () => {

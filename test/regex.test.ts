@@ -1,4 +1,4 @@
-import { TestCase, regexChecker, tableTest } from '@mudssky/jsutil'
+import { TestCase, regexChecker, tableTest } from '@mudssky/jsutils'
 import { describe, expect, test } from 'vitest'
 
 describe('regexChecker', () => {

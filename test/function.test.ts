@@ -1,4 +1,4 @@
-import { debounce, throttle } from '@mudssky/jsutil'
+import { debounce, throttle } from '@mudssky/jsutils'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 function sum(...args: number[]) {
   return args.reduce((a, b) => a + b, 0)

@@ -1,4 +1,4 @@
-import { PromiseType } from '@mudssky/jsutil'
+import { PromiseType } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
 
 test('test PromiseType', async () => {
