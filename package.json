@@ -48,7 +48,7 @@
     "dev:watch": "rollup -c rollup.config.dev.js --watch",
     "prebuild": "pnpm clean:dist&&pnpm copy:style",
     "build": "rollup -c",
-    "test": "vitest --run",
+    "test": "vitest --run --typecheck",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
