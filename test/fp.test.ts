@@ -1,4 +1,4 @@
-import { ArgumentError, Monad, compose, curry, pipe } from '@mudssky/jsutil'
+import { ArgumentError, Monad, compose, curry, pipe } from '@mudssky/jsutils'
 import { describe, expect, test } from 'vitest'
 
 describe('pipe', () => {
@@ -86,6 +86,7 @@ describe('monad', () => {
 
     // 输出 Monad {val: 1}，符合“不嵌套”的预期
     const res = nestedMonad.flatMap((x) => x)
-    console.log({ res })
+    // console.log({ res })
+    expect(res).toEqual(1)
   })
 })

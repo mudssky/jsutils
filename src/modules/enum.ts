@@ -74,7 +74,8 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    */
   getKeyMappedIter(mapDictionary: Record<string, string>) {
     return this.map((item) => {
-      return mapKeys(item, (value, key) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return mapKeys(item, (value: any, key: string) => {
         if (key in mapDictionary) {
           return mapDictionary[key]!
         }

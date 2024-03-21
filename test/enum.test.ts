@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 // 直接把根目录作为一个npm包引入
-import { EnumArray, EnumArrayObj, createEnum } from '@mudssky/jsutil'
+import { EnumArray, EnumArrayObj, createEnum } from '@mudssky/jsutils'
 
 describe('EnumArray', () => {
   const sexList = [
