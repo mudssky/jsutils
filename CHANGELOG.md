@@ -1,3 +1,13 @@
+# [0.13.0](https://github.com/mudssky/jsutils/compare/v0.12.0...v0.13.0) (2024-02-26)
+
+
+### Features
+
+* 🎸 add enum methods ([c396be2](https://github.com/mudssky/jsutils/commit/c396be27f8a04037cffa9fc58ec848f44eae2ab1))
+* 🎸 add fp function ([4e9d8c7](https://github.com/mudssky/jsutils/commit/4e9d8c7527913c4be2be9766889682c97c6db97e))
+* 🎸 add query ([0802fad](https://github.com/mudssky/jsutils/commit/0802fadaf520a2e630b70df2f368501d1705996e))
+* 🎸 update enum methods ([125f252](https://github.com/mudssky/jsutils/commit/125f25280db700b979f58b9469431e81b156e09f))
+
 # [0.12.0](https://github.com/mudssky/jsutils/compare/v0.11.0...v0.12.0) (2023-12-25)
 
 
