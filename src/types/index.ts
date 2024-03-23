@@ -1,2 +1,7 @@
+export type * from './array'
+export type * from './class'
+export type * from './function'
 export type * from './global'
 export type * from './promise'
+export type * from './string'
+export type * from './utils'

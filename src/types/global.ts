@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type PropertyName = string | number | symbol
 
 export interface Dictionary<T> {
@@ -10,3 +11,12 @@ export type ObjectIterator<T extends object, TResult = any> = (
   key: keyof T,
   obj: T,
 ) => TResult
+
+/**
+ * 空白字符的联合类型
+ */
+export type SpaceString = ' ' | '\t' | '\n'
+
+export type AnyFunction = (...args: any) => any
+
+export type AnyConstructor = new (...args: any) => any
