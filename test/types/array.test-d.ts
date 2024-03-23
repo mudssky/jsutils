@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
+  Concat,
+  Equal,
   First,
+  Includes,
   Last,
   Length,
   PopArray,
+  Push,
   ShiftArray,
   TupleToObject,
 } from '@mudssky/jsutils'
@@ -84,4 +88,53 @@ test('test LENGTH', () => {
   assertType<Length<5>>
   // @ts-expect-error not tuple
   assertType<Length<'hello world'>>
+})
+const tuple = [1] as const
+
+test('test Concat', () => {
+  assertType<Concat<[], []>>([]),
+    assertType<Concat<[], [1]>>([1]),
+    assertType<Concat<typeof tuple, typeof tuple>>([1, 1]),
+    assertType<Concat<[1, 2], [3, 4]>>([1, 2, 3, 4]),
+    assertType<Concat<['1', 2, '3'], [false, boolean, '4']>>([
+      '1',
+      2,
+      '3',
+      false,
+      true,
+      '4',
+    ])
+
+  // @ts-expect-error not tuple
+  assertType<Concat<null, undefined>>
+})
+
+test('test Includes', () => {
+  assertType<
+    Equal<Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Kars'>, true>
+  >(true)
+  assertType<
+    Equal<Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'>, false>
+  >(true)
+  assertType<Equal<Includes<[1, 2, 3, 5, 6, 7], 7>, true>>(true)
+  assertType<Equal<Includes<[1, 2, 3, 5, 6, 7], 4>, false>>(true)
+  assertType<Equal<Includes<[1, 2, 3], 2>, true>>(true)
+  assertType<Equal<Includes<[1, 2, 3], 1>, true>>(true)
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  assertType<Equal<Includes<[{}], { a: 'A' }>, false>>(true)
+  assertType<Equal<Includes<[boolean, 2, 3, 5, 6, 7], false>, false>>(true)
+  assertType<Equal<Includes<[true, 2, 3, 5, 6, 7], boolean>, false>>(true)
+  assertType<Equal<Includes<[false, 2, 3, 5, 6, 7], false>, true>>(true)
+  assertType<Equal<Includes<[{ a: 'A' }], { readonly a: 'A' }>, false>>(true)
+  assertType<Equal<Includes<[{ readonly a: 'A' }], { a: 'A' }>, false>>(true)
+  assertType<Equal<Includes<[1], 1 | 2>, false>>(true)
+  assertType<Equal<Includes<[1 | 2], 1>, false>>(true)
+  assertType<Equal<Includes<[null], undefined>, false>>(true)
+  assertType<Equal<Includes<[undefined], null>, false>>(true)
+})
+
+test('test Push', () => {
+  assertType<Equal<Push<[], 1>, [1]>>(true)
+  assertType<Equal<Push<[1, 2], '3'>, [1, 2, '3']>>(true)
+  assertType<Equal<Push<['1', 2, '3'], boolean>, ['1', 2, '3', boolean]>>(true)
 })

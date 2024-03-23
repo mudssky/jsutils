@@ -1,3 +1,6 @@
+import { Tuple } from './global'
+import { Equal } from './utils'
+
 /**
  * 获取数组第一个类型
  */
@@ -41,3 +44,28 @@ export type ShiftArray<ARR extends unknown[]> = ARR extends []
   : ARR extends [unknown, ...infer Rest]
     ? Rest
     : never
+
+/**
+ * 合并两个元组类型
+ */
+export type Concat<Arr1 extends Tuple<unknown>, Arr2 extends Tuple<unknown>> = [
+  ...Arr1,
+  ...Arr2,
+]
+
+/**
+ * 判断元组是否包含某个元素
+ */
+export type Includes<Arr extends Tuple<unknown>, Item> = Arr extends [
+  infer First,
+  ...infer Rest,
+]
+  ? Equal<First, Item> extends true
+    ? true
+    : Includes<Rest, Item>
+  : false
+
+/**
+ * 在元组类型尾部添加值
+ */
+export type Push<T extends Tuple<unknown>, U> = [...T, U]
