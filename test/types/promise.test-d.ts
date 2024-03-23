@@ -3,7 +3,7 @@ import { assertType, test } from 'vitest'
 
 test('test PromiseType', async () => {
   const testFn: () => Promise<string> = async () => {
-    return 'dsad'
+    return 'dad'
   }
 
   // expectTypeOf(testFn).toMatchTypeOf<{ name: string }>()
