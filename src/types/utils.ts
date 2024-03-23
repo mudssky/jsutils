@@ -36,3 +36,8 @@ export type UnionToIntersection<U> =
   (U extends any ? (k: U) => void : never) extends (k: infer I) => void
     ? I
     : never
+
+/**
+ * 类型编程中的If判断
+ */
+export type If<Condition extends boolean, T, F> = Condition extends true ? T : F

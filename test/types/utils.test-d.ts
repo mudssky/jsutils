@@ -5,6 +5,7 @@ import {
   Expect,
   ExpectFalse,
   ExpectTrue,
+  If,
   IsAny,
   NotEqual,
 } from '@mudssky/jsutils'
@@ -54,4 +55,10 @@ test('test util', () => {
   /* Alike */
   assertType<Alike<{ a: 1 } & { b: 2 }, { a: 1; b: 2 }>>(true)
   assertType<Equal<{ a: 1 } & { b: 2 }, { a: 1; b: 2 }>>(false)
+
+  /* If */
+  assertType<If<true, 'a', 'b'>>('a')
+  assertType<If<false, 'a', 'b'>>('b')
+  // @ts-expect-error not boolean
+  assertType<If<null, 'a', 'b'>>
 })

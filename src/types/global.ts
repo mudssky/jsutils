@@ -20,3 +20,5 @@ export type SpaceString = ' ' | '\t' | '\n'
 export type AnyFunction = (...args: any) => any
 
 export type AnyConstructor = new (...args: any) => any
+
+export type Tuple<T = any> = readonly T[]
