@@ -69,3 +69,33 @@ export type Includes<Arr extends Tuple<unknown>, Item> = Arr extends [
  * 在元组类型尾部添加值
  */
 export type Push<T extends Tuple<unknown>, U> = [...T, U]
+
+/**
+ * 在元组类型头部添加值
+ */
+export type Unshift<T extends Tuple<unknown>, U> = [U, ...T]
+
+/**
+ * zip组合两个元素的元组
+ * 如果元组不满足含有两个元素，那么返回{】}
+ */
+export type Zip2<
+  One extends [unknown, unknown],
+  Two extends [unknown, unknown],
+> = One extends [infer OneFirst, infer OneSecond]
+  ? Two extends [infer TwoFirst, infer TwoSecond]
+    ? [[OneFirst, TwoFirst], [OneSecond, TwoSecond]]
+    : []
+  : []
+
+/**
+ * zip组合任意多个元素的元组
+ */
+export type Zip<One extends unknown[], Other extends unknown[]> = One extends [
+  infer OneFirst,
+  ...infer OneRest,
+]
+  ? Other extends [infer TwoFirst, ...infer TwoRest]
+    ? [[OneFirst, TwoFirst], ...Zip<OneRest, TwoRest>]
+    : []
+  : []
