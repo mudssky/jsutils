@@ -10,6 +10,8 @@ import type {
   Push,
   ShiftArray,
   TupleToObject,
+  Unshift,
+  Zip,
 } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
 let n!: never
@@ -137,4 +139,18 @@ test('test Push', () => {
   assertType<Equal<Push<[], 1>, [1]>>(true)
   assertType<Equal<Push<[1, 2], '3'>, [1, 2, '3']>>(true)
   assertType<Equal<Push<['1', 2, '3'], boolean>, ['1', 2, '3', boolean]>>(true)
+})
+
+test('test Unshift', () => {
+  assertType<Equal<Unshift<[], 1>, [1]>>(true)
+  assertType<Equal<Unshift<[1, 2], '3'>, ['3', 1, 2]>>(true)
+  assertType<Equal<Unshift<['1', 2, '3'], boolean>, [boolean, '1', 2, '3']>>(
+    true,
+  )
+})
+
+test('test zip', () => {
+  assertType<
+    Equal<Zip<[1, 2, 3], ['a', 'b', 'c']>, [[1, 'a'], [2, 'b'], [3, 'c']]>
+  >(true)
 })
