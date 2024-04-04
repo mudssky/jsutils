@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { ParameterType } from '@mudssky/jsutils'
+import type { AppendArgument, ParameterType } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
 
 let n!: never
@@ -23,4 +23,9 @@ test('test ParameterType', () => {
 test('test ThisParameterType', () => {
   const dog = new Dog()
   assertType<ThisParameterType<typeof dog.say>>(dog)
+})
+
+test('test AppendArgument', () => {
+  const fn = () => {}
+  assertType<AppendArgument<typeof fn, string>>((ll: string) => {})
 })
