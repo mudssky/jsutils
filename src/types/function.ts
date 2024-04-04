@@ -18,3 +18,12 @@ export type ThisParameterType<Func> = Func extends (
 ) => unknown
   ? ThisType
   : unknown
+
+/**
+ * 给函数添加参数
+ */
+export type AppendArgument<Func extends AnyFunction, Arg> = Func extends (
+  ...args: infer Args
+) => infer ReturnType
+  ? (...args: [...Args, Arg]) => ReturnType
+  : never
