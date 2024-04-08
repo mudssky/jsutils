@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
+  Equal,
   Replace,
   ReplaceAll,
   ReverseStr,
   StartsWith,
+  StrLen,
   Trim,
   TrimLeft,
   TrimRight,
@@ -41,4 +43,9 @@ test('test Trim', () => {
 test('test ReverseStr', () => {
   assertType<ReverseStr<'1234'>>('4321')
   assertType<ReverseStr<''>>('')
+})
+
+test('test StrLen', () => {
+  assertType<Equal<StrLen<'1234'>, 4>>(true)
+  assertType<Equal<StrLen<''>, 0>>(true)
 })
