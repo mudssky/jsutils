@@ -32,6 +32,22 @@ export type ReplaceAll<
   : Str
 
 /**
+ * 移除字符串前缀，不会递归调用
+ */
+export type TrimPrefix<
+  Str extends string,
+  Prefix extends string,
+> = Str extends `${Prefix}${infer Rest}` ? Rest : Str
+
+/**
+ * 移除字符串后缀，不会递归调用
+ */
+export type TrimSuffix<
+  Str extends string,
+  Suffix extends string,
+> = Str extends `${infer Rest}${Suffix}` ? Rest : Str
+
+/**
  * 移除字符串右边的空白字符
  */
 export type TrimRight<Str extends string> =
@@ -114,3 +130,22 @@ export type CamelCaseToKebabCase<Str extends string> =
       ? `${First}${CamelCaseToKebabCase<Rest>}` // First是小写字母，跳过
       : `-${Lowercase<First>}${CamelCaseToKebabCase<Rest>}` // First是大写字母
     : Str
+
+/**
+ * 移除开头的字符
+ */
+export type TrimFirst<Str extends string> =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Str extends `${infer _}${infer Rest}` ? Rest : Str
+
+/**
+ * 用分隔符拼接元组为字符串
+ */
+export type JoinStr<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Items extends any[], //这里是方便传参
+  Delimiter extends string,
+  Result extends string = '',
+> = Items extends [infer Cur, ...infer Rest]
+  ? JoinStr<Rest, Delimiter, `${Result}${Delimiter}${Cur & string}`> // Cur 是 unknown 类型，要 & string 转成字符串类型
+  : TrimFirst<Result> //因为最开始会在头部拼接分隔符，所以这里移除

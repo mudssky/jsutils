@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
+  AllCombinations,
   CamelCaseToKebabCase,
   Equal,
+  JoinStr,
   KebabCaseToCamelCase,
   Replace,
   ReplaceAll,
@@ -9,8 +11,11 @@ import type {
   StartsWith,
   StrLen,
   Trim,
+  TrimFirst,
   TrimLeft,
+  TrimPrefix,
   TrimRight,
+  TrimSuffix,
 } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
 let n!: never
@@ -62,4 +67,45 @@ test('test CamelCaseToKebabCase', () => {
   assertType<
     Equal<CamelCaseToKebabCase<'whoIsYourDaddy'>, 'who-is-your-daddy'>
   >(true)
+})
+
+test('test AllCombinations', () => {
+  assertType<Equal<AllCombinations<'a'>, 'a'>>(true)
+  assertType<Equal<AllCombinations<'a' | 'b'>, 'a' | 'b' | 'ab' | 'ba'>>(true)
+  assertType<
+    Equal<
+      AllCombinations<'a' | 'b' | 'c'>,
+      | 'a'
+      | 'b'
+      | 'c'
+      | 'ab'
+      | 'ac'
+      | 'ba'
+      | 'bc'
+      | 'ca'
+      | 'cb'
+      | 'abc'
+      | 'acb'
+      | 'bac'
+      | 'bca'
+      | 'cab'
+      | 'cba'
+    >
+  >(true)
+})
+
+test('test JoinStr', () => {
+  assertType<Equal<JoinStr<['a', 'b', 'c'], '-'>, 'a-b-c'>>(true)
+})
+
+test('test TrimFirst', () => {
+  assertType<Equal<TrimFirst<'abc'>, 'bc'>>(true)
+})
+
+test('test TrimPrefix', () => {
+  assertType<Equal<TrimPrefix<'abc', 'ab'>, 'c'>>(true)
+})
+
+test('test TrimSuffix', () => {
+  assertType<Equal<TrimSuffix<'abc', 'bc'>, 'a'>>(true)
 })
