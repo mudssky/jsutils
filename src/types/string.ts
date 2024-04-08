@@ -67,3 +67,32 @@ export type StrLen<
 > = Str extends `${string}${infer Rest}`
   ? StrLen<Rest, [...CountArr, unknown]>
   : CountArr['length']
+
+/**
+ * 传入Block Element，Modifiers，生成所有BEM排列的联合类型
+ * bem 是 css 命名规范，用 block__element--modifier 的形式来描述某个区块下面的某个元素的某个状态的样式。
+ */
+export type BEM<
+  Block extends string,
+  Element extends string[],
+  Modifiers extends string[],
+> = `${Block}__${Element[number]}--${Modifiers[number]}`
+
+/**
+ * 返回两个字符串字面量类型的所有组合
+ */
+export type Combination<A extends string, B extends string> =
+  | A
+  | B
+  | `${A}${B}`
+  | `${B}${A}`
+
+/**
+ * 字符串字面量联合类型，所有排列组合
+ * A extends A触发分布式(条件类型左边是联合类型的时候就会触发)，将每一个字面量类型与其余的排列组合，
+ * 分布式最后会拼起来就是所有排列
+ */
+export type AllCombinations<
+  A extends string,
+  B extends string = A,
+> = A extends A ? Combination<A, AllCombinations<Exclude<B, A>>> : never
