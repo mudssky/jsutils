@@ -55,3 +55,17 @@ export type DeepReadonly<Obj extends Record<string, any>> = {
       : DeepReadonly<Obj[Key]>
     : Obj[Key]
 }
+
+/**
+ * 判断是否是联合类型
+ * 因为联合类型会触发分布式，比如A是'1'|'2'|'3', A extends A触发了分布式，每次都会分别传入 '1','2','3',
+ * 但是B([A]extends [A],只有单独的条件类型的A触发)不会触发分布式，是'1'|'2'|'3',所以这两个不相等的情况的是联合类型
+ *
+ * 当extends关键字左侧是泛型且传入的是联合类型时，它可以实现分配效果，即对联合类型中的每个类型分别进行处理。
+ * 如果左侧不是泛型，直接是一个联合类型，那么extends只是进行简单的条件判断，没有分配效果。
+ */
+export type IsUnion<A, B = A> = A extends A
+  ? [B] extends [A]
+    ? false
+    : true
+  : never
