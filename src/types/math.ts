@@ -81,16 +81,16 @@ export type GreaterThanOrEqual<Num1 extends number, Num2 extends number> =
       : false
 
 type FibonacciLoop<
-  PrevArr extends unknown[],
-  CurrentArr extends unknown[],
-  IndexArr extends unknown[] = [],
+  PrevArr extends unknown[], //上一个代表数的数组
+  CurrentArr extends unknown[], // 当前数的数组
+  IndexArr extends unknown[] = [], //当前index，每次递归加一，默认值是 []，代表从 0 开始。
   Num extends number = 1,
 > = IndexArr['length'] extends Num
   ? CurrentArr['length']
   : FibonacciLoop<
       CurrentArr,
       [...PrevArr, ...CurrentArr],
-      [...IndexArr, unknown],
+      [...IndexArr, unknown], //每次递归index+1
       Num
     >
 
