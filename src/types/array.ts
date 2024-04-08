@@ -131,3 +131,42 @@ export type BuildArray<
   Ele = unknown,
   Arr extends unknown[] = [],
 > = Arr['length'] extends Length ? Arr : BuildArray<Length, Ele, [...Arr, Ele]>
+
+/**
+ * 对数组做分组，传入两个参数,数组和分组的长度
+ */
+export type Chunk<
+  Arr extends unknown[],
+  ItemLen extends number,
+  CurItem extends unknown[] = [],
+  Res extends unknown[] = [],
+> = Arr extends [infer First, ...infer Rest]
+  ? CurItem['length'] extends ItemLen // 是否提取到ItemLen个元素
+    ? Chunk<Rest, ItemLen, [First], [...Res, CurItem]> // 已提取到ItemLen个元素，此时CurItem为ItemLen长度的数组，直接放入Res，继续处理下一个元素
+    : Chunk<Rest, ItemLen, [...CurItem, First], Res> // 为提取到，则CurItem继续添加元素
+  : [...Res, CurItem] //退出条件，即传入的Arr为空时，此时CurItem时最后累计的数组
+
+/**
+ * 元组转为嵌套对象
+ *  [‘a’, ‘b’, ‘c’] 转为 {
+    a: {
+        b: {
+            c: 'xxx'
+        }
+    }
+}
+
+ */
+export type TupleToNestedObject<
+  Tuple extends unknown[],
+  Value,
+> = Tuple extends [infer First, ...infer Rest]
+  ? {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      [Key in First as Key extends keyof any
+        ? Key
+        : never]: Rest extends unknown[]
+        ? TupleToNestedObject<Rest, Value>
+        : Value
+    }
+  : Value

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
+  CamelCaseToKebabCase,
   Equal,
+  KebabCaseToCamelCase,
   Replace,
   ReplaceAll,
   ReverseStr,
@@ -48,4 +50,16 @@ test('test ReverseStr', () => {
 test('test StrLen', () => {
   assertType<Equal<StrLen<'1234'>, 4>>(true)
   assertType<Equal<StrLen<''>, 0>>(true)
+})
+
+test('test KebabCaseToCamelCase', () => {
+  assertType<
+    Equal<KebabCaseToCamelCase<'who-is-your-daddy'>, 'whoIsYourDaddy'>
+  >(true)
+})
+
+test('test CamelCaseToKebabCase', () => {
+  assertType<
+    Equal<CamelCaseToKebabCase<'whoIsYourDaddy'>, 'who-is-your-daddy'>
+  >(true)
 })

@@ -96,3 +96,21 @@ export type AllCombinations<
   A extends string,
   B extends string = A,
 > = A extends A ? Combination<A, AllCombinations<Exclude<B, A>>> : never
+
+/**
+ * KebabCase 字符串字面量转CamelCase
+ */
+export type KebabCaseToCamelCase<Str extends string> =
+  Str extends `${infer Item}-${infer Rest}`
+    ? `${Item}${KebabCaseToCamelCase<Capitalize<Rest>>}`
+    : Str
+
+/**
+ * CamelCase 字符串字面量转KebabCase
+ */
+export type CamelCaseToKebabCase<Str extends string> =
+  Str extends `${infer First}${infer Rest}`
+    ? First extends Lowercase<First>
+      ? `${First}${CamelCaseToKebabCase<Rest>}` // First是小写字母，跳过
+      : `-${Lowercase<First>}${CamelCaseToKebabCase<Rest>}` // First是大写字母
+    : Str

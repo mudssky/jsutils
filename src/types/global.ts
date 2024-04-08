@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type PropertyName = string | number | symbol
+// export type PropertyName = string | number | symbol
+// keyof any默认是string | number | symbol，开启KeyofStringsOnly后只有string，这里这样用比写死更灵活
+export type PropertyName = keyof any
 
 export interface Dictionary<T> {
   [index: string]: T

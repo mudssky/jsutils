@@ -23,6 +23,8 @@ export type DeepPromiseType<T extends Promise<unknown>> =
 //   T extends Promise<infer ValueType> ? DeepPromiseType2<ValueType> : T
 
 /**
+ * @deprecated
+ * ts有内置的Awaited
  * 获取PromiseLike，即具有满足PromiseA+的then方法函数的返回值类型，递归获取
  * 这里不用PromiseLike<unknown>是因为any更宽松一些
  */

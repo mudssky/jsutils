@@ -6,12 +6,21 @@ export type ExpectFalse<T extends false> = T
 export type IsTrue<T extends true> = T
 export type IsFalse<T extends false> = T
 
+/**
+ * ts对函数类型有特殊处理，可以区分any类型
+ */
 export type Equal<X, Y> =
   (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
     ? true
     : false
+
+export type IsEqual<X, Y> = Equal<X, Y>
+
 export type NotEqual<X, Y> = true extends Equal<X, Y> ? false : true
 
+/**
+ * any 类型与任何类型的交叉都是 any，也就是 1 & any 结果是 any。
+ */
 // https://stackoverflow.com/questions/49927523/disallow-call-with-any/49928360#49928360
 export type IsAny<T> = 0 extends 1 & T ? true : false
 export type NotAny<T> = true extends IsAny<T> ? false : true
@@ -33,6 +42,16 @@ export type ExpectValidArgs<
   ARGS extends any[],
 > = ARGS extends Parameters<FUNC> ? true : false
 
+// 类型之间是有父子关系的，更具体的那个是子类型，比如 A 和 B 的交叉类型 A & B 就是联合类型 A | B 的子类型，因为更具体。
+// 如果允许父类型赋值给子类型，就叫做逆变。
+// 如果允许子类型赋值给父类型，就叫做协变。
+
+/**
+ * 联合类型转交叉类型
+ * 也就是{a:1}|{b:1}变成{a:1}&{b:1}
+ * TypeScript 有函数参数是有逆变的性质的
+ * U extends any 触发分布式，用函数触发你便，转为交叉类型
+ */
 export type UnionToIntersection<U> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (U extends any ? (k: U) => void : never) extends (k: infer I) => void
@@ -69,3 +88,16 @@ export type IsUnion<A, B = A> = A extends A
     ? false
     : true
   : never
+
+/**
+ * 判断是否是never类型
+ */
+export type IsNever<T> = [T] extends [never] ? true : false
+
+/**
+ * 判断是否为元组
+ * 元组和数组的区别是，数组的length是number类型
+ */
+export type IsTuple<T> = T extends [...params: infer Elements]
+  ? NotEqual<Elements['length'], number>
+  : false

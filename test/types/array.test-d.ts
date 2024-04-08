@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   BuildArray,
+  Chunk,
   Concat,
   Equal,
   First,
@@ -12,6 +13,7 @@ import type {
   RemoveArrItem,
   ReverseArr,
   ShiftArray,
+  TupleToNestedObject,
   TupleToObject,
   Unshift,
   Zip,
@@ -170,4 +172,27 @@ test('test BuildArray', () => {
   assertType<BuildArray<3, 3>>([3, 3, 3])
   assertType<BuildArray<3, 'a'>>(['a', 'a', 'a'])
   assertType<BuildArray<0, 3>>([])
+})
+
+test('test Chunk', () => {
+  assertType<Equal<Chunk<[1, 2, 3, 4, 5], 3>, [[1, 2, 3], [4, 5]]>>(true)
+  assertType<Equal<Chunk<[1, 2, 3, 4, 5], 2>, [[1, 2], [3, 4], [5]]>>(true)
+  assertType<Equal<Chunk<[1, 2, 3, 4, 5], 1>, [[1], [2], [3], [4], [5]]>>(true)
+  assertType<Equal<Chunk<[1, 2, 3, 4, 5], 5>, [[1, 2, 3, 4, 5]]>>(true)
+  assertType<Equal<Chunk<[1, 2, 3, 4, 5], 6>, [[1, 2, 3, 4, 5]]>>(true)
+})
+
+test('test TupleToNestedObject', () => {
+  assertType<
+    Equal<
+      TupleToNestedObject<['a', 'b', 'c'], number>,
+      {
+        a: {
+          b: {
+            c: number
+          }
+        }
+      }
+    >
+  >(true)
 })
