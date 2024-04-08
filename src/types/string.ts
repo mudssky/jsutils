@@ -57,3 +57,13 @@ export type ReverseStr<
 > = Str extends `${infer First}${infer Rest}`
   ? ReverseStr<Rest, `${First}${Result}`>
   : Result
+
+/**
+ * 获取字符串长度
+ */
+export type StrLen<
+  Str extends string,
+  CountArr extends unknown[] = [],
+> = Str extends `${string}${infer Rest}`
+  ? StrLen<Rest, [...CountArr, unknown]>
+  : CountArr['length']
