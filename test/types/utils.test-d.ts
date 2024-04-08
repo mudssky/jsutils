@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Alike,
+  DeepReadonly,
   Equal,
   Expect,
   ExpectFalse,
@@ -61,4 +62,24 @@ test('test util', () => {
   assertType<If<false, 'a', 'b'>>('b')
   // @ts-expect-error not boolean
   assertType<If<null, 'a', 'b'>>
+})
+
+test('test DeepReadonly', () => {
+  assertType<Equal<DeepReadonly<{ a: number }>, { readonly a: number }>>(true)
+  assertType<
+    Equal<
+      DeepReadonly<{
+        a: number
+        b: {
+          c: number
+        }
+      }>,
+      {
+        readonly a: number
+        readonly b: {
+          readonly c: number
+        }
+      }
+    >
+  >(true)
 })

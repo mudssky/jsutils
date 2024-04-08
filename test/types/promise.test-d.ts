@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Awaited, PromiseType } from '@mudssky/jsutils'
+import { DeepAwaited, PromiseType } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
 
 test('test PromiseType', async () => {
@@ -17,14 +17,14 @@ type Z1 = Promise<Promise<Promise<string | boolean>>>
 type T = { then: (onfulfilled: (arg: number) => any) => any }
 
 test('test Awaited', async () => {
-  assertType<Awaited<X>>('123')
-  assertType<Awaited<Y>>({ field: 1 })
+  assertType<DeepAwaited<X>>('123')
+  assertType<DeepAwaited<Y>>({ field: 1 })
 
-  assertType<Awaited<Z>>('123')
-  assertType<Awaited<Z>>(123)
+  assertType<DeepAwaited<Z>>('123')
+  assertType<DeepAwaited<Z>>(123)
 
-  assertType<Awaited<Z1>>('123')
-  assertType<Awaited<Z1>>(true)
+  assertType<DeepAwaited<Z1>>('123')
+  assertType<DeepAwaited<Z1>>(true)
 
-  assertType<Awaited<T>>(123)
+  assertType<DeepAwaited<T>>(123)
 })

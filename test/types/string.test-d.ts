@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
   Replace,
+  ReplaceAll,
+  ReverseStr,
   StartsWith,
   Trim,
   TrimLeft,
@@ -16,6 +18,13 @@ test('test StartsWith', () => {
 test('test Replace', () => {
   assertType<Replace<'1234', '12', 'll'>>('ll34')
   assertType<Replace<'1234', 'aa', 'll'>>('1234')
+  assertType<Replace<'123333', '3', '4'>>('124333')
+})
+
+test('test ReplaceAll', () => {
+  assertType<ReplaceAll<'1234', '12', 'll'>>('ll34')
+  assertType<ReplaceAll<'1234', 'aa', 'll'>>('1234')
+  assertType<ReplaceAll<'123333', '3', '4'>>('124444')
 })
 
 test('test Trim', () => {
@@ -27,4 +36,9 @@ test('test Trim', () => {
   assertType<Trim<' 1234 \n \t'>>('1234')
   assertType<Trim<'\t1234 \n \t'>>('1234')
   assertType<Trim<'1234'>>('1234')
+})
+
+test('test ReverseStr', () => {
+  assertType<ReverseStr<'1234'>>('4321')
+  assertType<ReverseStr<''>>('')
 })
