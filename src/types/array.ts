@@ -99,3 +99,35 @@ export type Zip<One extends unknown[], Other extends unknown[]> = One extends [
     ? [[OneFirst, TwoFirst], ...Zip<OneRest, TwoRest>]
     : []
   : []
+
+/**
+ *反转数组
+ */
+export type ReverseArr<Arr extends unknown[]> = Arr extends [
+  infer First,
+  ...infer Rest,
+]
+  ? [...ReverseArr<Rest>, First]
+  : Arr
+
+/**
+ * 移除数组中的元素
+ */
+export type RemoveArrItem<
+  Arr extends unknown[],
+  Item,
+  Result extends unknown[] = [],
+> = Arr extends [infer First, ...infer Rest]
+  ? Equal<First, Item> extends true
+    ? RemoveArrItem<Rest, Item, Result>
+    : RemoveArrItem<Rest, Item, [...Result, First]>
+  : Result
+
+/**
+ * 创建任意长度相同元素的数组
+ */
+export type BuildArray<
+  Length extends number,
+  Ele = unknown,
+  Arr extends unknown[] = [],
+> = Arr['length'] extends Length ? Arr : BuildArray<Length, Ele, [...Arr, Ele]>

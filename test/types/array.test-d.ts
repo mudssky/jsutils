@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
+  BuildArray,
   Concat,
   Equal,
   First,
@@ -8,6 +9,8 @@ import type {
   Length,
   PopArray,
   Push,
+  RemoveArrItem,
+  ReverseArr,
   ShiftArray,
   TupleToObject,
   Unshift,
@@ -153,4 +156,18 @@ test('test zip', () => {
   assertType<
     Equal<Zip<[1, 2, 3], ['a', 'b', 'c']>, [[1, 'a'], [2, 'b'], [3, 'c']]>
   >(true)
+})
+
+test('test ReverseArr', () => {
+  assertType<ReverseArr<[3, 2, 1]>>([1, 2, 3])
+})
+
+test('test RemoveItem', () => {
+  assertType<RemoveArrItem<[3, 2, 1, 3, 3, 3], 3>>([2, 1])
+})
+
+test('test BuildArray', () => {
+  assertType<BuildArray<3, 3>>([3, 3, 3])
+  assertType<BuildArray<3, 'a'>>(['a', 'a', 'a'])
+  assertType<BuildArray<0, 3>>([])
 })

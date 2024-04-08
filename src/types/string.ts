@@ -21,6 +21,17 @@ export type Replace<
   : Str
 
 /**
+ * 替换字符串中出现的全部匹配
+ */
+export type ReplaceAll<
+  Str extends string,
+  From extends string,
+  To extends string,
+> = Str extends `${infer Prefix}${From}${infer Suffix}`
+  ? `${Prefix}${To}${ReplaceAll<Suffix, From, To>}`
+  : Str
+
+/**
  * 移除字符串右边的空白字符
  */
 export type TrimRight<Str extends string> =
@@ -36,3 +47,13 @@ export type TrimLeft<Str extends string> =
  * 移除字符串两边的空白字符
  */
 export type Trim<Str extends string> = TrimRight<TrimLeft<Str>>
+
+/**
+ * 反转字符串
+ */
+export type ReverseStr<
+  Str extends string,
+  Result extends string = '',
+> = Str extends `${infer First}${infer Rest}`
+  ? ReverseStr<Rest, `${First}${Result}`>
+  : Result
