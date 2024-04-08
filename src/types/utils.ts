@@ -1,3 +1,5 @@
+import { AnyFunction } from './global'
+
 export type Expect<T extends true> = T
 export type ExpectTrue<T extends true> = T
 export type ExpectFalse<T extends false> = T
@@ -41,3 +43,15 @@ export type UnionToIntersection<U> =
  * 类型编程中的If判断
  */
 export type If<Condition extends boolean, T, F> = Condition extends true ? T : F
+
+/**
+ * Readonly递归版本
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DeepReadonly<Obj extends Record<string, any>> = {
+  readonly [Key in keyof Obj]: Obj[Key] extends object
+    ? Obj[Key] extends AnyFunction
+      ? Obj[Key]
+      : DeepReadonly<Obj[Key]>
+    : Obj[Key]
+}
