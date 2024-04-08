@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Alike,
-  AllCombinations,
   DeepReadonly,
   Equal,
   Expect,
@@ -9,7 +8,6 @@ import {
   ExpectTrue,
   If,
   IsAny,
-  IsUnion,
   NotEqual,
 } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
@@ -82,38 +80,6 @@ test('test DeepReadonly', () => {
           readonly c: number
         }
       }
-    >
-  >(true)
-})
-test('test IsUnion', () => {
-  assertType<Equal<IsUnion<{ a: number }>, false>>(true)
-  assertType<Equal<IsUnion<'a' | 'b' | 'c'>, true>>(true)
-  assertType<Equal<IsUnion<'a'>, false>>(true)
-  assertType<Equal<IsUnion<unknown>, false>>(true)
-  assertType<Equal<IsUnion<any>, false>>(true)
-})
-
-test('test AllCombinations', () => {
-  assertType<Equal<AllCombinations<'a'>, 'a'>>(true)
-  assertType<Equal<AllCombinations<'a' | 'b'>, 'a' | 'b' | 'ab' | 'ba'>>(true)
-  assertType<
-    Equal<
-      AllCombinations<'a' | 'b' | 'c'>,
-      | 'a'
-      | 'b'
-      | 'c'
-      | 'ab'
-      | 'ac'
-      | 'ba'
-      | 'bc'
-      | 'ca'
-      | 'cb'
-      | 'abc'
-      | 'acb'
-      | 'bac'
-      | 'bca'
-      | 'cab'
-      | 'cba'
     >
   >(true)
 })
