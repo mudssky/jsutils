@@ -73,3 +73,16 @@ export type PartialBy<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Key extends keyof any,
 > = CopyRecord<Partial<Pick<Obj, Extract<keyof Obj, Key>>> & Omit<Obj, Key>>
+
+/**
+ * 获取Record的所有key的路径的联合类型
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AllKeyPath<Obj extends Record<string, any>> = {
+  [Key in keyof Obj]: Key extends string
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Obj[Key] extends Record<string, any>
+      ? Key | `${Key}.${AllKeyPath<Obj[Key]>}`
+      : Key
+    : never
+}[keyof Obj]
