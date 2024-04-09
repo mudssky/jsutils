@@ -1,4 +1,5 @@
 import {
+  AllKeyPath,
   Equal,
   ExtractOptional,
   ExtractRequired,
@@ -71,6 +72,26 @@ test('test PartialBy', () => {
     Equal<
       PartialBy<{ name: string; age: number; sex: string }, 'name' | 'age'>,
       { name?: string; age?: number; sex: string }
+    >
+  >(true)
+})
+
+test('test AllKeyPath', () => {
+  assertType<
+    Equal<
+      AllKeyPath<{
+        a: {
+          b: {
+            b1: string
+            b2: string
+          }
+          c: {
+            c1: string
+            c2: string
+          }
+        }
+      }>,
+      'a' | 'a.b' | 'a.b.b1' | 'a.b.b2' | 'a.c' | 'a.c.c1' | 'a.c.c2'
     >
   >(true)
 })
