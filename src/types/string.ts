@@ -149,3 +149,25 @@ export type JoinStr<
 > = Items extends [infer Cur, ...infer Rest]
   ? JoinStr<Rest, Delimiter, `${Result}${Delimiter}${Cur & string}`> // Cur 是 unknown 类型，要 & string 转成字符串类型
   : TrimFirst<Result> //因为最开始会在头部拼接分隔符，所以这里移除
+
+/**
+ * 转换数字字符串为数字
+ * 使用infer extend 语法，这个语法是ts4.7引入，4.8完善可以推导字面量类型
+ */
+export type StrToNum<Str> = Str extends `${infer Num extends number}`
+  ? Num
+  : Str
+
+/**
+ * 转换布尔字符串为布尔值
+ */
+export type StrToBoolean<Str> = Str extends `${infer Bool extends boolean}`
+  ? Bool
+  : Str
+
+/**
+ * 转换null字符串为null
+ */
+export type StrToNull<Str> = Str extends `${infer Null extends null}`
+  ? Null
+  : Str

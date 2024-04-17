@@ -10,6 +10,9 @@ import type {
   ReverseStr,
   StartsWith,
   StrLen,
+  StrToBoolean,
+  StrToNull,
+  StrToNum,
   Trim,
   TrimFirst,
   TrimLeft,
@@ -108,4 +111,20 @@ test('test TrimPrefix', () => {
 
 test('test TrimSuffix', () => {
   assertType<Equal<TrimSuffix<'abc', 'bc'>, 'a'>>(true)
+})
+
+test('test StrToNum', () => {
+  assertType<Equal<StrToNum<'abc'>, 'abc'>>(true)
+  assertType<Equal<StrToNum<'123'>, 123>>(true)
+})
+
+test('test StrToBoolean', () => {
+  assertType<Equal<StrToBoolean<'abc'>, 'abc'>>(true)
+  assertType<Equal<StrToBoolean<'true'>, true>>(true)
+  assertType<Equal<StrToBoolean<'false'>, false>>(true)
+})
+
+test('test StrToNull', () => {
+  assertType<Equal<StrToNull<'abc'>, 'abc'>>(true)
+  assertType<Equal<StrToNull<'null'>, null>>(true)
 })
