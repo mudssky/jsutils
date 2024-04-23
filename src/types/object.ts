@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * 使用值类型过滤索引类型
  */
@@ -86,3 +87,12 @@ export type AllKeyPath<Obj extends Record<string, any>> = {
       : Key
     : never
 }[keyof Obj]
+
+/**
+ * 递归给对象字面量类型，添加Record<string, any>，即每一层可以额外添加任意字段
+ */
+export type DeepRecord<Obj extends Record<string, any>> = {
+  [Key in keyof Obj]: Obj[Key] extends Record<string, any>
+    ? DeepRecord<Obj[Key]> & Record<string, any>
+    : Obj[Key]
+} & Record<string, any>
