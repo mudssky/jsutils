@@ -1,5 +1,6 @@
 import {
   AllKeyPath,
+  DeepRecord,
   Equal,
   ExtractOptional,
   ExtractRequired,
@@ -92,6 +93,43 @@ test('test AllKeyPath', () => {
         }
       }>,
       'a' | 'a.b' | 'a.b.b1' | 'a.b.b2' | 'a.c' | 'a.c.c1' | 'a.c.c2'
+    >
+  >(true)
+})
+
+test('test DeepRecord', () => {
+  assertType<
+    Equal<
+      DeepRecord<{
+        a: string
+        b: number
+      }>,
+      {
+        a: string
+        b: number
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } & Record<string, any>
+    >
+  >(true)
+
+  assertType<
+    Equal<
+      DeepRecord<{
+        a: string
+        b: number
+        c: {
+          name: string
+        }
+      }>,
+      {
+        a: string
+        b: number
+        c: {
+          name: string
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } & Record<string, any>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } & Record<string, any>
     >
   >(true)
 })
