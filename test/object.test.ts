@@ -338,6 +338,30 @@ describe('merge', () => {
           a: 1,
         },
       },
+      {
+        input: [
+          {
+            a: { b: { c: 3 }, d: 5 },
+          },
+          { a: { b: { c: 4 } } },
+        ],
+        output: {
+          a: { b: { c: 4 }, d: 5 },
+        },
+      },
+      {
+        input: [
+          {
+            a: { b: { c: 3 } },
+            d: 5,
+          },
+          { a: { b: 4 } },
+        ],
+        output: {
+          a: { b: 4 },
+          d: 5,
+        },
+      },
     ] as const
 
     for (const caseItem of testCases) {
