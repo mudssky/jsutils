@@ -93,4 +93,9 @@ describe('EnumArray', () => {
     expect(sexEnum.isLabelsMatchValue(['女'], 2)).toEqual(true)
     expect(sexEnum.isLabelsMatchValue(['女'], 1)).toEqual(false)
   })
+
+  test('isLabelsMatchLabel', () => {
+    expect(sexEnum.isLabelsMatchLabel(['女'], '女')).toEqual(true)
+    expect(sexEnum.isLabelsMatchLabel(['男', '男'], '女')).toEqual(false)
+  })
 })
