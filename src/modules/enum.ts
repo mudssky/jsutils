@@ -2,7 +2,7 @@ import { mapKeys } from '@/modules/object'
 
 // 枚举类型接口
 interface EnumArrayObj {
-  value: number | string
+  value: number | string | boolean
   label: string //中文key，方便阅读
   displayText?: string //展示的文字,只有和label不同的时候使用，
 }

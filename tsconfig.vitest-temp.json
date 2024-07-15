@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "useDefineForClassFields": true,
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "baseUrl": "./",
+    "paths": {
+      "@mudssky/jsutils": ["./src/index.ts"],
+      "@/*": ["src/*"]
+    },
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "emitDeclarationOnly": false,
+    "incremental": true,
+    "tsBuildInfoFile": "D:/coding/Projects/frontend/jsutils/node_modules/.pnpm/vitest@1.4.0_@types+node@20.11.30_@vitest+ui@1.4.0/node_modules/vitest/dist/vendor/tsconfig.tmp.tsbuildinfo"
+  },
+  "includes": ["src", "test"]
+}

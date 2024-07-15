@@ -50,7 +50,7 @@
     "build": "rollup -c",
     "test": "vitest --run --typecheck",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui",
+    "test:ui": "vitest --ui --typecheck",
     "coverage": "vitest run --coverage",
     "typedoc:gen": "typedoc src/index.ts --out typedoc",
     "typedoc:json": "typedoc src/index.ts --json typedoc/typedoc.json",
