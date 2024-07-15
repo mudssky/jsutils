@@ -1,5 +1,5 @@
-import { Equal } from 'dist/types'
 import { BuildArray } from './array'
+import { Equal } from './utils'
 
 // 这边很多方法是使用数组长度计数。因此只能实现正整数的运算
 

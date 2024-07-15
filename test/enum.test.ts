@@ -28,6 +28,45 @@ describe('EnumArray', () => {
   test('should return a enum array', () => {
     expect([...sexEnum]).toEqual(sexList)
   })
+  test('value type', () => {
+    const list1 = [
+      {
+        label: '男',
+        value: 1,
+      },
+      {
+        label: '女',
+        value: 0,
+      },
+    ] as const
+    const list2 = [
+      {
+        label: '男',
+        value: true,
+      },
+      {
+        label: '女',
+        value: false,
+      },
+    ] as const
+
+    const list3 = [
+      {
+        label: '男',
+        value: '男',
+      },
+      {
+        label: '女',
+        value: '女',
+      },
+    ] as const
+    const list1Enum = createEnum(list1)
+    const list2Enum = createEnum(list2)
+    const list3Enum = createEnum(list3)
+    expect(list1Enum.getLabelByValue(1)).toEqual('男')
+    expect(list2Enum.getLabelByValue(true)).toEqual('男')
+    expect(list3Enum.getLabelByValue('男')).toEqual('男')
+  })
   test('should compatible with array method', () => {
     // 返回的是一个生成器，还带两个map，所以要先用扩展运算符转变为数组才能相等
     expect([...sexEnum.filter((item) => item.label === '男')]).toEqual([
