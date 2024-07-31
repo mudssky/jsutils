@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArgumentError } from '@/modules/error'
-
-type AnyFunction = (...args: any[]) => any
+import type { AnyFunction } from '../types/global'
 
 /**
  * pipe方法，用于串联函数的，实现流水线管道，需要传入的函数入参和出参都是一个(一元函数)。

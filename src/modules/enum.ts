@@ -2,7 +2,7 @@ import { mapKeys } from '@/modules/object'
 
 // 枚举类型接口
 interface EnumArrayObj {
-  value: number | string
+  value: number | string | boolean
   label: string //中文key，方便阅读
   displayText?: string //展示的文字,只有和label不同的时候使用，
 }
@@ -128,6 +128,16 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   isLabelsMatchValue(labels: LabelOf<T>[], value?: any) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return labels.includes(this.getLabelByValue(value) as any)
+  }
+  /**
+   * 判断label是否匹配列表，可以节省引入Type的时间
+   * @param labels
+   * @param label
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isLabelsMatchLabel(labels: LabelOf<T>[], label?: any) {
+    return labels.includes(label)
   }
 }
 

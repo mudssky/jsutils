@@ -1,6 +1,7 @@
 import {
   mapKeys,
   mapValues,
+  merge,
   omit,
   omitBy,
   pick,
@@ -277,6 +278,96 @@ describe('mapValues', () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       expect(mapValues(...caseItem.input)).toEqual(caseItem.output)
+    }
+  })
+})
+
+describe('merge', () => {
+  test('normal merge', () => {
+    const testCases = [
+      {
+        input: [
+          {
+            a: 1,
+            b: 2,
+            c: 3,
+          },
+          {
+            a: 11,
+            b: 22,
+          },
+        ],
+        output: {
+          a: 11,
+          b: 22,
+          c: 3,
+        },
+      },
+      {
+        input: [
+          {
+            a: 1,
+            b: 2,
+            c: 3,
+          },
+          {
+            a: 11,
+            b: 22,
+          },
+          {
+            d: 66,
+            c: 9,
+          },
+        ],
+        output: {
+          a: 11,
+          b: 22,
+          c: 9,
+          d: 66,
+        },
+      },
+      {
+        input: [{}, { a: 1 }],
+        output: {
+          a: 1,
+        },
+      },
+      {
+        input: [{ a: 1 }, {}],
+        output: {
+          a: 1,
+        },
+      },
+      {
+        input: [
+          {
+            a: { b: { c: 3 }, d: 5 },
+          },
+          { a: { b: { c: 4 } } },
+        ],
+        output: {
+          a: { b: { c: 4 }, d: 5 },
+        },
+      },
+      {
+        input: [
+          {
+            a: { b: { c: 3 } },
+            d: 5,
+          },
+          { a: { b: 4 } },
+        ],
+        output: {
+          a: { b: 4 },
+          d: 5,
+        },
+      },
+    ] as const
+
+    for (const caseItem of testCases) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      expect(merge(...caseItem.input)).toEqual(caseItem.output)
     }
   })
 })
