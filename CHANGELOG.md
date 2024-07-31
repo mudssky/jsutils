@@ -1,3 +1,26 @@
+# [0.15.0](https://github.com/mudssky/jsutils/compare/v0.14.0...v0.15.0) (2024-07-31)
+
+### Bug Fixes
+
+- 🐛 fix debounce throttle type ([aabf3a9](https://github.com/mudssky/jsutils/commit/aabf3a92c642f5d90aa1731f35650bfbc66d0797))
+
+### Features
+
+- 🎸 add merge ([c1cb5d7](https://github.com/mudssky/jsutils/commit/c1cb5d7c516be98af9e2eb5a5cafb2fb1c2ee121))
+- 🎸 add AllKeyPath ([010d502](https://github.com/mudssky/jsutils/commit/010d5026dc561f0c0403cf488d8467bcaffddf2d))
+- 🎸 add DeepRecord ([1d4fb39](https://github.com/mudssky/jsutils/commit/1d4fb396786f97d932d1e5f4f4ef7cf0607cea95))
+- 🎸 add isLabelsMatchLabel ([b98186e](https://github.com/mudssky/jsutils/commit/b98186e3479906d77f98c690d1b6eb81a591b8c9))
+- 🎸 add IsUnion AllCombinations ([b53226e](https://github.com/mudssky/jsutils/commit/b53226e8d94a59056116f6597e62203e598988fe))
+- 🎸 add match type ([4d9a7e9](https://github.com/mudssky/jsutils/commit/4d9a7e93f20285a60d8fca206d5a7548fa520574))
+- 🎸 add math type ([3c4fa0a](https://github.com/mudssky/jsutils/commit/3c4fa0a7296daf04d54121982a0f78ae2e433741))
+- 🎸 add ReverseArr,DeepPromiseType,ReplaceAll,ReverseStr ([0b09848](https://github.com/mudssky/jsutils/commit/0b09848694c2caa863184f32b07006f350f4e18e))
+- 🎸 add StrToNum StrToBoolean etc ([2b650b5](https://github.com/mudssky/jsutils/commit/2b650b5c9d02f6f17f11bfc665ab62d2e92aaa46))
+- 🎸 add types ([62131ea](https://github.com/mudssky/jsutils/commit/62131eabf6154973065e9e377f5e6a267fb23b6c))
+- 🎸 add types ([750d395](https://github.com/mudssky/jsutils/commit/750d395ef3d4cda58e17dc2dd04f3ab0fa6c3ded))
+- 🎸 add types ([a69826c](https://github.com/mudssky/jsutils/commit/a69826c7b4f2efcd08037105696418d3f946882e))
+- 🎸 add zip Unshift ([2040cd0](https://github.com/mudssky/jsutils/commit/2040cd00517594b4604968dc438c9631b6ce24cd))
+- 🎸 enum support boolean ([3d3c276](https://github.com/mudssky/jsutils/commit/3d3c27659d4edb33fb2f095e667eac56ebdec531))
+
 # [0.14.0](https://github.com/mudssky/jsutils/compare/v0.13.0...v0.14.0) (2024-03-21)
 
 ### Features
