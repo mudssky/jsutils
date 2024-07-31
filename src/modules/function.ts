@@ -1,3 +1,5 @@
+import { AnyFunction } from '@/types'
+
 /**
  * 创建一个防抖函数，该函数会从上一次被调用后，延迟 wait 毫秒后调用 func 方法。debounced函数提供一个cancel方法，
  * 以及flush方法立即调用。
@@ -9,7 +11,7 @@
  * @returns
  */
 function debounce(
-  func: (...args: unknown[]) => unknown,
+  func: AnyFunction,
   wait = 200,
   options: {
     leading?: boolean
@@ -155,7 +157,7 @@ function debounce(
  * @returns
  */
 function throttle(
-  func: (...args: unknown[]) => unknown,
+  func: AnyFunction,
   wait: number = 200,
   options: {
     leading: boolean
