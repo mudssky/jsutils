@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ObjectIterator } from '../types/index'
+import { AnyObject, ObjectIterator } from '../types/index'
 
 /**
  *  从obj中选取属性，返回一个新的对象
@@ -124,4 +124,27 @@ function mapValues<T extends object, U = any>(
   return result as Record<keyof T, U>
 }
 
-export { mapKeys, mapValues, omit, omitBy, pick, pickBy }
+function isObject(obj: any): obj is AnyObject {
+  return typeof obj === 'object' && obj !== null
+}
+
+/**
+ * 对两个对象，进行递归合并
+ * @param target
+ * @param sources
+ * @returns
+ */
+function merge(target: AnyObject, ...sources: AnyObject[]): AnyObject {
+  for (const source of sources) {
+    for (const key in source) {
+      if (isObject(target[key]) && isObject(source[key])) {
+        merge(target[key], source[key])
+      } else {
+        target[key] = source[key]
+      }
+    }
+  }
+  return target
+}
+
+export { mapKeys, mapValues, merge, omit, omitBy, pick, pickBy }
