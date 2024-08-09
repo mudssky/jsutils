@@ -1,3 +1,9 @@
+## [0.15.1](https://github.com/mudssky/jsutils/compare/v0.15.0...v0.15.1) (2024-07-31)
+
+### Bug Fixes
+
+- 🐛 remove pnpm version ([802a43f](https://github.com/mudssky/jsutils/commit/802a43fda8b54bf24719de3bfa80bc76e9cdf6f6))
+
 # [0.15.0](https://github.com/mudssky/jsutils/compare/v0.14.0...v0.15.0) (2024-07-31)
 
 ### Bug Fixes
