@@ -9,3 +9,6 @@ etc/*.md
 
 # vitest ui测试的临时文件
 tsconfig.vitest-temp.json
+
+
+renameCommit.sh
