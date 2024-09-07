@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/mudssky/jsutils/compare/v1.0.1...v1.1.0) (2024-09-07)
+
+### Features
+
+- 🎸 1.0.2 ([ae25164](https://github.com/mudssky/jsutils/commit/ae25164257a7e146f941cd8acf578a334b014156))
+
 ## [0.15.1](https://github.com/mudssky/jsutils/compare/v0.15.0...v0.15.1) (2024-07-31)
 
 ### Bug Fixes
