@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/mudssky/jsutils/compare/v1.1.0...v1.2.0) (2024-09-19)
+
+### Features
+
+- 🎸 add analyzePasswordStrength ([2b1d4f3](https://github.com/mudssky/jsutils/commit/2b1d4f3830ebcfbc7191ac5b0108e91305ec0780))
+
 # [1.1.0](https://github.com/mudssky/jsutils/compare/v1.0.1...v1.1.0) (2024-09-07)
 
 ### Features
