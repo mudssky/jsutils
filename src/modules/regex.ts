@@ -76,6 +76,9 @@ const passwordStrengthRule = [
 
 type PasswordStrengthRuleKey = (typeof passwordStrengthRule)[number]['key']
 
+type AnalyzePasswordStrenthOptions = {
+  minLength?: number
+}
 /**
  * 检查密码强度，返回多个判断的结果对象
  * @param options
@@ -83,9 +86,7 @@ type PasswordStrengthRuleKey = (typeof passwordStrengthRule)[number]['key']
  */
 function analyzePasswordStrength(
   password: Nullable<string>,
-  options?: {
-    minLength?: number
-  },
+  options?: AnalyzePasswordStrenthOptions,
 ) {
   const { minLength = 8 } = options || {}
   const res: Record<PasswordStrengthRuleKey, boolean> = {
@@ -133,19 +134,41 @@ const passwordStrengthLevelStrategys: Record<
   },
 }
 
+type CalculatePasswordStrengthLevelOptions = {
+  strategy?: PasswordStrengthLevelStrategy
+} & AnalyzePasswordStrenthOptions
+/**
+ * 计算密码强度等级，可以切换不同的策略
+ * 有一个默认策略，若密码强度小于minlength，则返回0
+ * 处理minLength以外，其他规则若有一项符合则强度+1，比如大写字母，小写字母，特殊字符，数字
+ * @param password
+ * @param strategy
+ * @returns
+ */
 function calculatePasswordStrengthLevel(
   password: string,
-  strategy = passwordStrengthLevelStrategys['default'],
+  options?: CalculatePasswordStrengthLevelOptions,
 ) {
-  const res = analyzePasswordStrength(password)
+  const {
+    strategy = passwordStrengthLevelStrategys['default'],
+    ...restOptions
+  } = options || {}
+  const res = analyzePasswordStrength(password, restOptions)
   return strategy(res)
 }
 
 export {
   analyzePasswordStrength,
   calculatePasswordStrengthLevel,
+  passwordStrengthLevelStrategys,
   passwordStrengthRule,
   RegexChecker,
   regexChecker,
 }
-export type { PasswordStrengthRuleKey }
+export type {
+  AnalyzePasswordStrenthOptions,
+  CalculatePasswordStrengthLevelOptions,
+  PasswordStrengthLevelStrategy,
+  PasswordStrengthRule,
+  PasswordStrengthRuleKey,
+}

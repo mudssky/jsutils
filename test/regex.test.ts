@@ -1,4 +1,5 @@
 import {
+  PasswordStrengthLevelStrategy,
   TestCase,
   analyzePasswordStrength,
   calculatePasswordStrengthLevel,
@@ -95,26 +96,6 @@ describe('analyzePasswordStrength', () => {
 })
 
 describe('calculatePasswordStrengthLevel', () => {
-  test('should return 0 for password shorter than minimum length', () => {
-    const result = calculatePasswordStrengthLevel('abcD1!')
-    expect(result).toBe(0)
-  })
-
-  test('should return 1 for password with minimum length and one lowercase letter', () => {
-    const result = calculatePasswordStrengthLevel('abcdefgh')
-    expect(result).toBe(1)
-  })
-
-  test('should return 2 for password with minimum length, one lowercase and one uppercase letter', () => {
-    const result = calculatePasswordStrengthLevel('abcDeEFGH')
-    expect(result).toBe(2)
-  })
-
-  test('should return 3 for password with minimum length, one lowercase, one uppercase letter, and one digit', () => {
-    const result = calculatePasswordStrengthLevel('abcDeEFG1')
-    expect(result).toBe(3)
-  })
-
   test('should return 4 for password with all character requirements met', () => {
     const result = calculatePasswordStrengthLevel('Abcde1@!')
     expect(result).toBe(4)
@@ -133,5 +114,48 @@ describe('calculatePasswordStrengthLevel', () => {
   test('should return correct strength level for a complex password', () => {
     const result = calculatePasswordStrengthLevel('A1@abcdEf')
     expect(result).toBe(4)
+  })
+
+  test('should return 0 for password shorter than minLength', () => {
+    const result = calculatePasswordStrengthLevel('abc', { minLength: 8 })
+    expect(result).toBe(0)
+  })
+
+  test('should return 1 for password with minimum length and one lowercase letter', () => {
+    const result = calculatePasswordStrengthLevel('abcdefgh')
+    expect(result).toBe(1)
+  })
+
+  test('should return 2 for password with minimum length, one lowercase and one uppercase letter', () => {
+    const result = calculatePasswordStrengthLevel('abcDeEFGH')
+    expect(result).toBe(2)
+  })
+
+  test('should return 3 for password with minimum length, one lowercase, one uppercase letter, and one digit', () => {
+    const result = calculatePasswordStrengthLevel('abcDeEFG1')
+    expect(result).toBe(3)
+  })
+
+  test('should return 4 for password with minimum length and all required characters', () => {
+    const result = calculatePasswordStrengthLevel('Abcdefg1@!', {
+      minLength: 8,
+    })
+    expect(result).toBe(4)
+  })
+
+  test('should return 0 for null password', () => {
+    const result = calculatePasswordStrengthLevel(null as unknown as string)
+    expect(result).toBe(0)
+  })
+
+  test('should allow custom strategy for password strength level', () => {
+    const customStrategy: PasswordStrengthLevelStrategy = (res) => {
+      return Object.values(res).filter(Boolean).length * 2
+    }
+    const result = calculatePasswordStrengthLevel('Abcdefg1@!', {
+      strategy: customStrategy,
+      minLength: 8,
+    })
+    expect(result).toBe(8) // 4 rules satisfied, so 4 * 2
   })
 })
