@@ -80,11 +80,13 @@ type PasswordStrengthRuleKey = (typeof passwordStrengthRule)[number]['key']
  * @param options
  * @returns
  */
-function analyzePasswordStrength(options: {
-  password: Nullable<string>
-  minLength?: number
-}) {
-  const { password, minLength = 8 } = options
+function analyzePasswordStrength(
+  password: Nullable<string>,
+  options?: {
+    minLength?: number
+  },
+) {
+  const { minLength = 8 } = options || {}
   const res: Record<PasswordStrengthRuleKey, boolean> = {
     minLength: false,
     hasLowercase: false,
