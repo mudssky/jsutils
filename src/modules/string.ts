@@ -52,6 +52,28 @@ function generateUUID() {
   })
 }
 
+const base62Chars =
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+
+/**
+ * 生成任意长度的base62随机字符串
+ * 可以用于生成短链的编码
+ * @param len
+ * @returns
+ */
+function generateBase62Code(len = 6) {
+  if (len < 0) {
+    throw new Error('len must be greater than 0')
+  }
+  let str = ''
+  for (let i = 0; i < len; i++) {
+    // 生成0-61的随机数
+    const num = Math.floor(Math.random() * 62)
+    // str += base62Chars.charAt(num)
+    str += base62Chars[num]
+  }
+  return str
+}
 /**
  * 模糊匹配字符串，忽略大小写
  * @param searchValue 用于匹配的字符串
@@ -63,4 +85,4 @@ function fuzzyMatch(searchValue: string, targetString: string) {
   return pattern.test(targetString)
 }
 
-export { fuzzyMatch, genAllCasesCombination, generateUUID }
+export { fuzzyMatch, genAllCasesCombination, generateBase62Code, generateUUID }
