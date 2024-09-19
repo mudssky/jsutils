@@ -1,3 +1,9 @@
+# [1.3.0](https://github.com/mudssky/jsutils/compare/v1.2.0...v1.3.0) (2024-09-19)
+
+### Features
+
+- 🎸 add generateBase62Code ([3bfe5c8](https://github.com/mudssky/jsutils/commit/3bfe5c8d9b542a991a261c97871e799c98319da8))
+
 # [1.2.0](https://github.com/mudssky/jsutils/compare/v1.1.0...v1.2.0) (2024-09-19)
 
 ### Features
