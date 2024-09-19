@@ -1,4 +1,5 @@
 import { Nullable } from 'vitest'
+import { omit } from './object'
 
 class RegexChecker {
   /**
@@ -109,8 +110,40 @@ function analyzePasswordStrength(
   return res
 }
 
+type PasswordStrengthLevelStrategy<OUT = number> = (
+  analyzeResult: Record<PasswordStrengthRuleKey, boolean>,
+) => OUT
+const passwordStrengthLevelStrategys: Record<
+  string,
+  PasswordStrengthLevelStrategy
+> = {
+  default: (res) => {
+    if (res.minLength) {
+      return 0
+    }
+    const entries = Object.entries(omit(res, ['minLength']))
+    let strengthLevel = 0
+    for (const [, value] of entries) {
+      if (value) {
+        strengthLevel++
+      }
+    }
+    // 返回密码强度等级
+    return strengthLevel
+  },
+}
+
+function calculatePasswordStrengthLevel(
+  password: string,
+  strategy = passwordStrengthLevelStrategys['default'],
+) {
+  const res = analyzePasswordStrength(password)
+  return strategy(res)
+}
+
 export {
   analyzePasswordStrength,
+  calculatePasswordStrengthLevel,
   passwordStrengthRule,
   RegexChecker,
   regexChecker,

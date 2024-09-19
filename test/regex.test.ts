@@ -1,6 +1,7 @@
 import {
   TestCase,
   analyzePasswordStrength,
+  calculatePasswordStrengthLevel,
   regexChecker,
   tableTest,
 } from '@mudssky/jsutils'
@@ -90,5 +91,47 @@ describe('analyzePasswordStrength', () => {
       hasDigit: true,
       hasSpecialChar: true,
     })
+  })
+})
+
+describe('calculatePasswordStrengthLevel', () => {
+  test('should return 0 for password shorter than minimum length', () => {
+    const result = calculatePasswordStrengthLevel('abcD1!')
+    expect(result).toBe(0)
+  })
+
+  test('should return 1 for password with minimum length and one lowercase letter', () => {
+    const result = calculatePasswordStrengthLevel('abcdefgh')
+    expect(result).toBe(1)
+  })
+
+  test('should return 2 for password with minimum length, one lowercase and one uppercase letter', () => {
+    const result = calculatePasswordStrengthLevel('abcDeEFGH')
+    expect(result).toBe(2)
+  })
+
+  test('should return 3 for password with minimum length, one lowercase, one uppercase letter, and one digit', () => {
+    const result = calculatePasswordStrengthLevel('abcDeEFG1')
+    expect(result).toBe(3)
+  })
+
+  test('should return 4 for password with all character requirements met', () => {
+    const result = calculatePasswordStrengthLevel('Abcde1@!')
+    expect(result).toBe(4)
+  })
+
+  test('should handle passwords without special characters correctly', () => {
+    const result = calculatePasswordStrengthLevel('Abcde1234')
+    expect(result).toBe(3)
+  })
+
+  test('should return 0 for empty password', () => {
+    const result = calculatePasswordStrengthLevel('')
+    expect(result).toBe(0)
+  })
+
+  test('should return correct strength level for a complex password', () => {
+    const result = calculatePasswordStrengthLevel('A1@abcdEf')
+    expect(result).toBe(4)
   })
 })
