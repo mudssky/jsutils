@@ -71,3 +71,5 @@ export type IsNever<T> = [T] extends [never] ? true : false
 export type IsTuple<T> = T extends [...params: infer Elements]
   ? NotEqual<Elements['length'], number>
   : false
+
+export type Nullable<T> = T | null | undefined
