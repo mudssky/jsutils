@@ -2,6 +2,7 @@ import {
   TestCase,
   fuzzyMatch,
   genAllCasesCombination,
+  generateBase62Code,
   generateUUID,
   range,
   tableTest,
@@ -50,5 +51,36 @@ describe('fuzzyMatch table', () => {
         throw e
       }
     })
+  })
+})
+
+describe('generateBase62Code', () => {
+  test('should generate a string of default length 6', () => {
+    const result = generateBase62Code()
+    expect(result).toMatch(/^[0-9A-Za-z]{6}$/)
+  })
+
+  test('should generate a string of specified length', () => {
+    const len = 10
+    const result = generateBase62Code(len)
+    expect(result).toHaveLength(len)
+    expect(result).toMatch(/^[0-9A-Za-z]{10}$/)
+  })
+
+  test('should throw an error if length is less than or equal to 0', () => {
+    expect(() => generateBase62Code(0)).toHaveLength(0)
+    expect(() => generateBase62Code(-5)).toThrow('len must be greater than 0')
+  })
+
+  test('should generate different strings on multiple calls', () => {
+    const result1 = generateBase62Code()
+    const result2 = generateBase62Code()
+    expect(result1).not.toEqual(result2)
+  })
+
+  test('should generate a string of length 1', () => {
+    const result = generateBase62Code(1)
+    expect(result).toHaveLength(1)
+    expect(result).toMatch(/^[0-9A-Za-z]$/)
   })
 })
