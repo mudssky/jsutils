@@ -85,4 +85,22 @@ function fuzzyMatch(searchValue: string, targetString: string) {
   return pattern.test(targetString)
 }
 
-export { fuzzyMatch, genAllCasesCombination, generateBase62Code, generateUUID }
+/**
+ * 以.分割文件名，返回扩展名
+ * @param fileName
+ * @returns
+ */
+function getFileExt(fileName: string) {
+  const parts = fileName.split('.')
+  if (parts.length > 1) {
+    return parts[parts.length - 1]
+  }
+  return ''
+}
+export {
+  fuzzyMatch,
+  genAllCasesCombination,
+  generateBase62Code,
+  generateUUID,
+  getFileExt,
+}
