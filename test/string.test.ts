@@ -4,6 +4,7 @@ import {
   genAllCasesCombination,
   generateBase62Code,
   generateUUID,
+  getFileExt,
   range,
   tableTest,
 } from '@mudssky/jsutils'
@@ -82,5 +83,32 @@ describe('generateBase62Code', () => {
     const result = generateBase62Code(1)
     expect(result).toHaveLength(1)
     expect(result).toMatch(/^[0-9A-Za-z]$/)
+  })
+})
+
+describe('getFileExt', () => {
+  // Happy path test case
+  test('should return the correct file extension for a valid file name', () => {
+    expect(getFileExt('document.pdf')).toBe('pdf')
+    expect(getFileExt('archive.tar.gz')).toBe('gz')
+    expect(getFileExt('image.jpeg')).toBe('jpeg')
+  })
+
+  // Edge cases
+  test('should return an empty string for a file name without an extension', () => {
+    expect(getFileExt('filename')).toBe('')
+    expect(getFileExt('no_extension.')).toBe('')
+  })
+
+  test('should return an empty string for an empty file name', () => {
+    expect(getFileExt('')).toBe('')
+  })
+
+  test('should return the extension for a file name with multiple dots', () => {
+    expect(getFileExt('file.name.with.multiple.dots.txt')).toBe('txt')
+  })
+
+  test('should handle a single dot as the file name', () => {
+    expect(getFileExt('.')).toBe('')
   })
 })
