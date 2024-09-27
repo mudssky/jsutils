@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/mudssky/jsutils/compare/v1.3.0...v1.4.0) (2024-09-19)
+
+### Features
+
+- 🎸 add calculatePasswordStrengthLevel ([128b365](https://github.com/mudssky/jsutils/commit/128b365c609e1cb11c72e4db7f216545637dee83))
+- 🎸 update calculatePasswordStrengthLevel param ([977c991](https://github.com/mudssky/jsutils/commit/977c9919e309afb36b86752dc30f7d6c5065e821))
+
 # [1.3.0](https://github.com/mudssky/jsutils/compare/v1.2.0...v1.3.0) (2024-09-19)
 
 ### Features
