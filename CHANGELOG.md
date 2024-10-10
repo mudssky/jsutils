@@ -1,3 +1,9 @@
+# [1.5.0](https://github.com/mudssky/jsutils/compare/v1.4.0...v1.5.0) (2024-09-27)
+
+### Features
+
+- 🎸 add getFileExt ([72840b3](https://github.com/mudssky/jsutils/commit/72840b334c5808e61b424186d42fff6a350c53ab))
+
 # [1.4.0](https://github.com/mudssky/jsutils/compare/v1.3.0...v1.4.0) (2024-09-19)
 
 ### Features
