@@ -1,3 +1,9 @@
+# [1.6.0](https://github.com/mudssky/jsutils/compare/v1.5.0...v1.6.0) (2024-10-10)
+
+### Features
+
+- 🎸 add safeJsonStringify ([fd9e349](https://github.com/mudssky/jsutils/commit/fd9e34929647e0d4adb5c5494ba565102c47d9b9))
+
 # [1.5.0](https://github.com/mudssky/jsutils/compare/v1.4.0...v1.5.0) (2024-09-27)
 
 ### Features
