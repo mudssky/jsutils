@@ -146,5 +146,72 @@ function merge(target: AnyObject, ...sources: AnyObject[]): AnyObject {
   }
   return target
 }
+/**
+ * 移除对象中不能被json序列化的属性
+ * @param obj
+ * @returns
+ */
+function removeNonSerializableProps(obj: Record<any, any> | null | undefined) {
+  if (obj === null || obj === undefined) {
+    return obj
+  }
+  // 这里用weakset，因为是弱引用，可以被垃圾回收机制回收
+  // 另外weakset不能存原始类型的值，专门用于存储对象
+  function remove(obj: any, seen: WeakSet<any> = new WeakSet()): any {
+    // 如果已经处理过这个对象，返回一个指示循环引用的标记
+    if (seen.has(obj)) {
+      return '[Circular]'
+    }
 
-export { mapKeys, mapValues, merge, omit, omitBy, pick, pickBy }
+    // 如果是数组，则遍历每个元素
+    if (Array.isArray(obj)) {
+      return obj
+        .filter(
+          (item) => typeof item !== 'function' && typeof item !== 'symbol',
+        )
+        .map((item) => remove(item, seen))
+    }
+
+    // 如果是对象，遍历每个属性
+    if (typeof obj === 'object') {
+      seen.add(obj)
+      const newObj: any = {}
+      for (const key in obj) {
+        if (Object.hasOwn(obj, key)) {
+          // 只保留可以 JSON 序列化的属性
+          const value = obj[key]
+          if (typeof value !== 'function' && typeof value !== 'symbol') {
+            newObj[key] = remove(value, seen)
+          }
+        }
+      }
+      return newObj
+    }
+
+    // 如果是基础类型，直接返回
+    return obj
+  }
+  return remove(obj)
+}
+
+/**
+ * 移除对象中不能序列化的属性后，再执行JSON.stringify
+ * @param obj
+ * @returns
+ */
+function safeJsonStringify(obj: AnyObject | null | undefined): string {
+  const serializableObj = removeNonSerializableProps(obj)
+  return JSON.stringify(serializableObj)
+}
+
+export {
+  mapKeys,
+  mapValues,
+  merge,
+  omit,
+  omitBy,
+  pick,
+  pickBy,
+  removeNonSerializableProps,
+  safeJsonStringify,
+}
