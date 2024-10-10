@@ -28,7 +28,7 @@ function randomInt(startInt: number, endInt?: number) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getRandomItemFromArray<T = any>(arr: T[]): T | undefined {
+function getRandomItemFromArray<T = any>(arr: T[]): T {
   if (arr.length < 1) {
     throw new ArgumentError('array should not be empty')
   }
