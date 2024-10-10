@@ -1,4 +1,8 @@
-import { ArgumentError, randomInt } from '@mudssky/jsutils'
+import {
+  ArgumentError,
+  getRandomItemFromArray,
+  randomInt,
+} from '@mudssky/jsutils'
 import { describe, expect, test } from 'vitest'
 
 describe('randomInt', () => {
@@ -14,5 +18,21 @@ describe('randomInt', () => {
 
   test('should input bigger endInt ', () => {
     expect(() => randomInt(100, 10)).toThrowError(ArgumentError)
+  })
+})
+
+describe('getRandomItemFromArray', () => {
+  test('should return a random item from a non-empty array', () => {
+    const result = getRandomItemFromArray([1, 2, 3, 4, 5])
+    expect([1, 2, 3, 4, 5]).toContain(result)
+  })
+
+  test('should throw an error if the array is empty', () => {
+    expect(() => getRandomItemFromArray([])).toThrow(ArgumentError)
+  })
+
+  test('should return undefined for a single item array', () => {
+    const result = getRandomItemFromArray([10])
+    expect(result).toEqual(10)
   })
 })

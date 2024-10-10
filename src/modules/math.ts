@@ -26,4 +26,14 @@ function randomInt(startInt: number, endInt?: number) {
 
   return Math.floor(Math.random() * (max - min)) + min
 }
-export { randomInt }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getRandomItemFromArray<T = any>(arr: T[]): T {
+  if (arr.length < 1) {
+    throw new ArgumentError('array should not be empty')
+  }
+  const randomIndex = Math.floor(Math.random() * arr.length)
+  return arr[randomIndex]
+}
+
+export { getRandomItemFromArray, randomInt }
