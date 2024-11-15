@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArgumentError } from './error'
 
 /**
@@ -126,4 +127,59 @@ class Query<T extends object> extends Array<T> {
 function createQuery<T extends object>(list: T[]) {
   return new Query<T>(list)
 }
-export { Query, createQuery, range, rangeIter }
+
+type SortDirection = 'asc' | 'desc' | 'none'
+
+type CompareFunction<T> = (a: T, b: T) => number
+const defaultAsc = <T = any>(a: T, b: T) => {
+  const astr = String(a)
+  const bstr = String(b)
+  if (astr === bstr) {
+    return 0
+  }
+  if (astr < bstr) {
+    return -1
+  } else {
+    return 1
+  }
+}
+/**
+ * sort策略是 a-b的逻辑，如果返回负数比如-1，说明递增，或者a>b
+ */
+const sortStrategies = {
+  defaultAsc,
+  defaultDesc: <T = any>(a: T, b: T) => -defaultAsc(a, b),
+}
+
+/**
+ * 判断已排序数组的排序方向，必须传入排序好的数组
+ * @param sortedArr
+ * @param compareFn  类似sort方法的参数，返回负数说明升序，即b>a,返回0 b=a，返回正数说明降序，即a>b
+ * @returns
+ */
+function getSortDirection<T = any>(
+  sortedArr: T[],
+  compareFn: CompareFunction<T> = sortStrategies.defaultAsc,
+): SortDirection {
+  if (sortedArr.length <= 1) {
+    return 'none'
+  }
+  for (let i = 1; i < sortedArr.length; i++) {
+    if (compareFn(sortedArr[i - 1], sortedArr[i]) < 0) {
+      return 'asc'
+    }
+    if (compareFn(sortedArr[i - 1], sortedArr[i]) > 0) {
+      return 'desc'
+    }
+  }
+  return 'none'
+}
+export {
+  createQuery,
+  getSortDirection,
+  Query,
+  range,
+  rangeIter,
+  sortStrategies,
+}
+export type { CompareFunction, SortDirection }
