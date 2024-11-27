@@ -19,7 +19,7 @@ test('test Add', () => {
 })
 
 test('test Subtract', () => {
-  assertType<Subtract<3, 5>>(n)
+  assertType<Equal<Subtract<3, 5>, never>>(true)
   assertType<Equal<Subtract<5, 3>, 2>>(true)
   assertType<Equal<Subtract<0, 0>, 0>>(true)
 })
