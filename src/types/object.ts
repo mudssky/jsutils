@@ -96,3 +96,13 @@ export type DeepRecord<Obj extends Record<string, any>> = {
     ? DeepRecord<Obj[Key]> & Record<string, any>
     : Obj[Key]
 } & Record<string, any>
+
+/**
+ * 给对象字面量类型所有key添加前缀
+ */
+export type PrefixKeyBy<
+  Obj extends Record<string, any>,
+  Prefix extends string,
+> = {
+  [Key in keyof Obj as `${Prefix}${Key & string}`]: Obj[Key]
+}

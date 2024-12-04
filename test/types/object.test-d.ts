@@ -6,6 +6,7 @@ import {
   ExtractRequired,
   FilterRecordByValue,
   PartialBy,
+  PrefixKeyBy,
   RemoveIndexSignature,
 } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
@@ -73,6 +74,17 @@ test('test PartialBy', () => {
     Equal<
       PartialBy<{ name: string; age: number; sex: string }, 'name' | 'age'>,
       { name?: string; age?: number; sex: string }
+    >
+  >(true)
+})
+
+test('test PrefixKeyBy', () => {
+  // type ll=Debug<PrefixKeyBy<{ name: string; age: number; sex: string }, 'my_'>>
+
+  assertType<
+    Equal<
+      PrefixKeyBy<{ name: string; age: number; sex: string }, 'my_'>,
+      { my_name: string; my_age: number; my_sex: string }
     >
   >(true)
 })
