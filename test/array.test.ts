@@ -511,3 +511,24 @@ describe('unique function', () => {
     assert.equal(c.word, 'yolo')
   })
 })
+
+describe('shuffle function', () => {
+  test('returns list with same number of items', () => {
+    const list = [1, 2, 3, 4, 5]
+    const result = _.shuffle(list)
+    assert.equal(list.length, result.length)
+  })
+  test('returns list with same value', () => {
+    const list = [1, 2, 3, 4, 5]
+    const totalBefore = _.sum(list)
+    const result = _.shuffle(list)
+    const totalAfter = _.sum(result)
+    assert.equal(totalBefore, totalAfter)
+  })
+  test('returns copy of list without mutatuing input', () => {
+    const list = [1, 2, 3, 4, 5]
+    const result = _.shuffle(list)
+    assert.notEqual(list, result)
+    assert.deepEqual(list, [1, 2, 3, 4, 5])
+  })
+})

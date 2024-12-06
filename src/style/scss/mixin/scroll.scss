@@ -1,0 +1,5 @@
+@mixin antd-default-scrollbar() {
+  scrollbar-width: thin;
+  scrollbar-color: #eaeaea transparent;
+  scrollbar-gutter: stable;
+}

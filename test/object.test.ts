@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import * as _ from '@mudssky/jsutils'
 import {
   mapKeys,
   mapValues,
@@ -10,7 +11,9 @@ import {
   removeNonSerializableProps,
   safeJsonStringify,
 } from '@mudssky/jsutils'
-import { describe, expect, test } from 'vitest'
+import { assert, describe, expect, test } from 'vitest'
+
+const NULL = null as unknown as unknown[]
 
 describe('pick', () => {
   test('should pick exist property', () => {
@@ -491,5 +494,23 @@ describe('safeJsonStringify', () => {
     obj.ref = obj
     const result = safeJsonStringify(obj)
     expect(result).toBe(JSON.stringify({ ref: '[Circular]' }))
+  })
+})
+
+describe('invert function', () => {
+  const peopleByRole = {
+    admin: 'jay',
+    user: 'fey',
+    guest: 'bray',
+  }
+  test('handles null input', () => {
+    const result = _.invert(NULL as any)
+    assert.deepEqual(result, {})
+  })
+  test('correctly maps keys and values', () => {
+    const result = _.invert(peopleByRole)
+    assert.equal(result.jay, 'admin')
+    assert.equal(result.fey, 'user')
+    assert.equal(result.bray, 'guest')
   })
 })
