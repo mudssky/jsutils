@@ -1,3 +1,9 @@
+# [1.9.0](https://github.com/mudssky/jsutils/compare/v1.8.0...v1.9.0) (2024-12-06)
+
+### Features
+
+- 🎸 add random func ([681f035](https://github.com/mudssky/jsutils/commit/681f035d1a49c2852fc3e49819b76ee146475725))
+
 # [1.8.0](https://github.com/mudssky/jsutils/compare/v1.7.0...v1.8.0) (2024-12-04)
 
 ### Features
