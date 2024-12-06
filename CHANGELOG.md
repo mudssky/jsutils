@@ -1,3 +1,9 @@
+# [1.7.0](https://github.com/mudssky/jsutils/compare/v1.6.0...v1.7.0) (2024-10-10)
+
+### Features
+
+- 🎸 add getRandomItemFromArray ([d39d825](https://github.com/mudssky/jsutils/commit/d39d825ecebf9f37b8db117bd73de71a2f4304f6))
+
 # [1.6.0](https://github.com/mudssky/jsutils/compare/v1.5.0...v1.6.0) (2024-10-10)
 
 ### Features
