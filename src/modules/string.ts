@@ -1,3 +1,5 @@
+import { Nullable } from '@/types'
+
 /**
  * 传入字符串，返回字符串中每个字母不同大小写情况的列表
  * @param str 输入字符串
@@ -97,10 +99,130 @@ function getFileExt(fileName: string) {
   }
   return ''
 }
+
+/**
+ * Capitalize the first word of the string
+ *
+ * capitalize('hello')   -> 'Hello'
+ * capitalize('va va voom') -> 'Va va voom'
+ */
+const capitalize = (str: string): string => {
+  if (!str || str.length === 0) return ''
+  const lower = str.toLowerCase()
+  return lower.substring(0, 1).toUpperCase() + lower.substring(1, lower.length)
+}
+
+/**
+ * Formats the given string in camel case fashion
+ *
+ * camel('hello world')   -> 'helloWorld'
+ * camel('va va-VOOM') -> 'vaVaVoom'
+ * camel('helloWorld') -> 'helloWorld'
+ */
+const camelCase = (str: string): string => {
+  const parts =
+    str
+      ?.replace(/([A-Z])+/g, capitalize)
+      ?.split(/(?=[A-Z])|[.\-\s_]/)
+      .map((x) => x.toLowerCase()) ?? []
+  if (parts.length === 0) return ''
+  if (parts.length === 1) return parts[0]
+  return parts.reduce((acc, part) => {
+    return `${acc}${part.charAt(0).toUpperCase()}${part.slice(1)}`
+  })
+}
+
+/**
+ * Formats the given string in snake case fashion
+ *
+ * snake('hello world')   -> 'hello_world'
+ * snake('va va-VOOM') -> 'va_va_voom'
+ * snake('helloWord') -> 'hello_world'
+ */
+const snake_case = (
+  str: string,
+  options?: {
+    splitOnNumber?: boolean
+  },
+): string => {
+  const parts =
+    str
+      ?.replace(/([A-Z])+/g, capitalize)
+      .split(/(?=[A-Z])|[.\-\s_]/)
+      .map((x) => x.toLowerCase()) ?? []
+  if (parts.length === 0) return ''
+  if (parts.length === 1) return parts[0]
+  const result = parts.reduce((acc, part) => {
+    return `${acc}_${part.toLowerCase()}`
+  })
+  return options?.splitOnNumber === false
+    ? result
+    : result.replace(/([A-Za-z]{1}[0-9]{1})/, (val) => `${val[0]!}_${val[1]!}`)
+}
+
+/**
+ * Formats the given string in dash case fashion
+ *
+ * dash('hello world')   -> 'hello-world'
+ * dash('va va_VOOM') -> 'va-va-voom'
+ * dash('helloWord') -> 'hello-word'
+ */
+const dashCase = (str: string): string => {
+  const parts =
+    str
+      ?.replace(/([A-Z])+/g, capitalize)
+      ?.split(/(?=[A-Z])|[.\-\s_]/)
+      .map((x) => x.toLowerCase()) ?? []
+  if (parts.length === 0) return ''
+  if (parts.length === 1) return parts[0]
+  return parts.reduce((acc, part) => {
+    return `${acc}-${part.toLowerCase()}`
+  })
+}
+
+/**
+ * Formats the given string in pascal case fashion
+ *
+ * pascal('hello world') -> 'HelloWorld'
+ * pascal('va va boom') -> 'VaVaBoom'
+ */
+const PascalCase = (str: string): string => {
+  const parts = str?.split(/[.\-\s_]/).map((x) => x.toLowerCase()) ?? []
+  if (parts.length === 0) return ''
+  return parts.map((str) => str.charAt(0).toUpperCase() + str.slice(1)).join('')
+}
+
+const parseTemplate = (
+  str: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: Record<string, any>,
+  regex = /\{\{(.+?)\}\}/g,
+) => {
+  return Array.from(str.matchAll(regex)).reduce((acc, match) => {
+    return acc.replace(match[0], data[match[1]])
+  }, str)
+}
+
+const trim = (str: Nullable<string>, charsToTrim: string = ' ') => {
+  if (!str) return ''
+  // 转义替换字符串中的特殊字符
+  const toTrim = charsToTrim.replace(/[\W]{1}/g, '\\$&')
+  // 构建正则，全局替换toTrim分别为开头和结尾的情况
+  const regex = new RegExp(`^[${toTrim}]+|[${toTrim}]+$`, 'g')
+  return str.replace(regex, '')
+}
+
 export {
+  camelCase,
+  capitalize,
+  dashCase,
   fuzzyMatch,
   genAllCasesCombination,
   generateBase62Code,
   generateUUID,
   getFileExt,
+  parseTemplate,
+  PascalCase,
+  snake_case,
+  trim,
 }

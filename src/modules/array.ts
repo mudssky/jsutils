@@ -486,6 +486,13 @@ const unique = <T, K extends PropertyName>(
   return Object.values(valueMap)
 }
 
+const shuffle = <T>(array: readonly T[]): T[] => {
+  return array
+    .map((a) => ({ rand: Math.random(), value: a }))
+    .sort((a, b) => a.rand - b.rand)
+    .map((a) => a.value)
+}
+
 export {
   alphabetical,
   boil,
@@ -503,6 +510,7 @@ export {
   Query,
   range,
   rangeIter,
+  shuffle,
   sortStrategies,
   sum,
   toggle,

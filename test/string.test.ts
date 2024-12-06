@@ -1,3 +1,4 @@
+import * as _ from '@mudssky/jsutils'
 import {
   TestCase,
   fuzzyMatch,
@@ -8,8 +9,7 @@ import {
   range,
   tableTest,
 } from '@mudssky/jsutils'
-
-import { describe, expect, test } from 'vitest'
+import { assert, describe, expect, test } from 'vitest'
 
 describe('genAllCasesCombination', () => {
   test('should return [""] when input empty str ', () => {
@@ -110,5 +110,171 @@ describe('getFileExt', () => {
 
   test('should handle a single dot as the file name', () => {
     expect(getFileExt('.')).toBe('')
+  })
+})
+
+describe('capitalize function', () => {
+  test('handles null', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = _.capitalize(null as any)
+    assert.equal(result, '')
+  })
+  test('converts hello as Hello', () => {
+    const result = _.capitalize('hello')
+    assert.equal(result, 'Hello')
+  })
+  test('converts hello Bob as Hello bob', () => {
+    const result = _.capitalize('hello Bob')
+    assert.equal(result, 'Hello bob')
+  })
+})
+
+describe('camelCase function', () => {
+  test('returns correctly cased string', () => {
+    const result = _.camelCase('hello world')
+    assert.equal(result, 'helloWorld')
+  })
+  test('returns single word', () => {
+    const result = _.camelCase('hello')
+    assert.equal(result, 'hello')
+  })
+  test('returns empty string for empty input', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = _.camelCase(null as any)
+    assert.equal(result, '')
+  })
+  test('a word in camel case should remain in camel case', () => {
+    const result = _.camelCase('helloWorld')
+    assert.equal(result, 'helloWorld')
+  })
+})
+
+describe('snake_case function', () => {
+  test('returns correctly cased string', () => {
+    const result = _.snake_case('hello world')
+    assert.equal(result, 'hello_world')
+  })
+  test('must handle strings that are camelCase', () => {
+    const result = _.snake_case('helloWorld')
+    assert.equal(result, 'hello_world')
+  })
+  test('must handle strings that are dash', () => {
+    const result = _.snake_case('hello-world')
+    assert.equal(result, 'hello_world')
+  })
+  test('splits numbers that are next to letters', () => {
+    const result = _.snake_case('hello-world12_19-bye')
+    assert.equal(result, 'hello_world_12_19_bye')
+  })
+  test('does not split numbers when flag is set to false', () => {
+    const result = _.snake_case('hello-world12_19-bye', {
+      splitOnNumber: false,
+    })
+    assert.equal(result, 'hello_world12_19_bye')
+  })
+  test('returns single word', () => {
+    const result = _.snake_case('hello')
+    assert.equal(result, 'hello')
+  })
+  test('returns empty string for empty input', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = _.snake_case(null as any)
+    assert.equal(result, '')
+  })
+})
+
+describe('dashCase function', () => {
+  test('returns correctly cased string', () => {
+    const result = _.dashCase('hello world')
+    assert.equal(result, 'hello-world')
+  })
+  test('returns single word', () => {
+    const result = _.dashCase('hello')
+    assert.equal(result, 'hello')
+  })
+  test('returns empty string for empty input', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = _.dashCase(null as any)
+    assert.equal(result, '')
+  })
+  test('must handle strings that are camelCase', () => {
+    const result = _.dashCase('helloWorld')
+    assert.equal(result, 'hello-world')
+  })
+  test('must handle strings that are dash', () => {
+    const result = _.dashCase('hello-world')
+    assert.equal(result, 'hello-world')
+  })
+})
+
+describe('PascalCase function', () => {
+  test('returns non alphanumerics in pascal', () => {
+    const result = _.PascalCase('Exobase Starter_flash AND-go')
+    assert.equal(result, 'ExobaseStarterFlashAndGo')
+  })
+  test('returns single word', () => {
+    const result = _.PascalCase('hello')
+    assert.equal(result, 'Hello')
+  })
+  test('returns empty string for empty input', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = _.PascalCase(null as any)
+    assert.equal(result, '')
+  })
+})
+
+describe('parseTemplate function', () => {
+  test('replaces all occurrences', () => {
+    const tmp = `
+    Hello my name is {{name}}. I am a {{type}}.
+    Not sure why I am {{reason}}.
+
+    Thank You - {{name}}
+  `
+    const data = {
+      name: 'Ray',
+      type: 'template',
+      reason: 'so beautiful',
+    }
+
+    const result = _.parseTemplate(tmp, data)
+    const expected = `
+    Hello my name is ${data.name}. I am a ${data.type}.
+    Not sure why I am ${data.reason}.
+
+    Thank You - ${data.name}
+  `
+
+    assert.equal(result, expected)
+  })
+
+  test('replaces all occurrences given template', () => {
+    const tmp = `Hello <name>.`
+    const data = {
+      name: 'Ray',
+    }
+
+    const result = _.parseTemplate(tmp, data, /<(.+?)>/g)
+    assert.equal(result, `Hello ${data.name}.`)
+  })
+})
+
+describe('trim function', () => {
+  test('handles bad input', () => {
+    assert.equal(_.trim(null), '')
+    assert.equal(_.trim(undefined), '')
+  })
+  test('returns input string correctly trimmed', () => {
+    assert.equal(_.trim('\n\n\t\nhello\n\t  \n', '\n\t '), 'hello')
+    assert.equal(_.trim('hello', 'x'), 'hello')
+    assert.equal(_.trim(' hello  '), 'hello')
+    assert.equal(_.trim(' __hello__  ', '_'), ' __hello__  ')
+    assert.equal(_.trim('__hello__', '_'), 'hello')
+    assert.equal(_.trim('//repos////', '/'), 'repos')
+    assert.equal(_.trim('/repos/:owner/:repo/', '/'), 'repos/:owner/:repo')
+  })
+
+  test('handles when char to trim is special case in regex', () => {
+    assert.equal(_.trim('_- hello_- ', '_- '), 'hello')
   })
 })

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { AnyObject, ObjectIterator } from '../types/index'
+import { AnyObject, ObjectIterator, PropertyName } from '../types/index'
 
 /**
  *  从obj中选取属性，返回一个新的对象
@@ -204,7 +204,22 @@ function safeJsonStringify(obj: AnyObject | null | undefined): string {
   return JSON.stringify(serializableObj)
 }
 
+const invert = <TKey extends PropertyName, TValue extends PropertyName>(
+  obj: Record<TKey, TValue>,
+): Record<TValue, TKey> => {
+  if (!obj) return {} as Record<TValue, TKey>
+  const keys = Object.keys(obj) as TKey[]
+  return keys.reduce(
+    (acc, key) => {
+      acc[obj[key]] = key
+      return acc
+    },
+    {} as Record<TValue, TKey>,
+  )
+}
+
 export {
+  invert,
   mapKeys,
   mapValues,
   merge,
