@@ -1,3 +1,12 @@
+# [1.8.0](https://github.com/mudssky/jsutils/compare/v1.7.0...v1.8.0) (2024-12-04)
+
+### Features
+
+- 🎸 add array function ([57d6907](https://github.com/mudssky/jsutils/commit/57d6907b38374603c02765261aebaedf2c4c07cc))
+- 🎸 add getSortDirection ([17e6acd](https://github.com/mudssky/jsutils/commit/17e6acd39282f5991fe0aa65c2c457552550af73))
+- 🎸 add type check function ([edb5186](https://github.com/mudssky/jsutils/commit/edb5186be524da229be7ae18ecd26a1dafbb5b33))
+- 🎸 add type PrefixKeyBy ([86b1111](https://github.com/mudssky/jsutils/commit/86b111180c4e2697e7c12e4532dd72d04121bd64))
+
 # [1.7.0](https://github.com/mudssky/jsutils/compare/v1.6.0...v1.7.0) (2024-10-10)
 
 ### Features
