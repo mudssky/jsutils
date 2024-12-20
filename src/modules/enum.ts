@@ -1,11 +1,12 @@
 import { mapKeys } from '@/modules/object'
 
 // 枚举类型接口
-interface EnumArrayObj {
+type EnumArrayObj = {
   value: number | string | boolean
   label: string //中文key，方便阅读
   displayText?: string //展示的文字,只有和label不同的时候使用，
-}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} & Record<string, any>
 
 type ValueOf<T extends readonly EnumArrayObj[]> = T[number]['value']
 type LabelOf<T extends readonly EnumArrayObj[]> = T[number]['label']
@@ -166,5 +167,5 @@ function createEnum<T extends readonly EnumArrayObj[]>(enumsTuple: T) {
   // return new EnumArray(enums)
 }
 
-export { EnumArray, createEnum }
+export { createEnum, EnumArray }
 export type { EnumArrayObj, LabelOf, ValueOf }
