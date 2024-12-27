@@ -140,6 +140,28 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   isLabelsMatchLabel(labels: LabelOf<T>[], label?: any) {
     return labels.includes(label)
   }
+
+  /**
+   * 根据label列表获取value列表
+   * @param labels
+   * @returns
+   */
+  getValuesByLabels(labels: LabelOf<T>[]) {
+    return labels.map((label) => {
+      return this.getValueByLabel(label)
+    })
+  }
+
+  /**
+   * 根据value列表获取label列表
+   * @param values
+   * @returns
+   */
+  getLabelsByValues(values: ValueOf<T>[]) {
+    return values.map((value) => {
+      return this.getLabelByValue(value)
+    })
+  }
 }
 
 /**

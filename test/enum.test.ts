@@ -139,4 +139,20 @@ describe('EnumArray', () => {
     expect(sexEnum.isLabelsMatchLabel([], '女')).toEqual(false)
     expect(sexEnum.isLabelsMatchLabel(['男', '男'], '女')).toEqual(false)
   })
+  test('getValuesByLabels', () => {
+    expect(sexEnum.getValuesByLabels(['男'])).toEqual([1])
+    expect(sexEnum.getValuesByLabels(['女'])).toEqual([2])
+    expect(sexEnum.getValuesByLabels(['男', '女'])).toEqual([1, 2])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect(sexEnum.getValuesByLabels([undefined as any, '女'])).toEqual([
+      undefined,
+      2,
+    ])
+  })
+
+  test('getLabelsByValues', () => {
+    expect(sexEnum.getLabelsByValues([1])).toEqual(['男'])
+    expect(sexEnum.getLabelsByValues([2])).toEqual(['女'])
+    expect(sexEnum.getLabelsByValues([1, 2])).toEqual(['男', '女'])
+  })
 })
