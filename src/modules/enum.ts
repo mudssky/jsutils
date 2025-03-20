@@ -1,11 +1,12 @@
 import { mapKeys } from '@/modules/object'
 
 // 枚举类型接口
-interface EnumArrayObj {
+type EnumArrayObj = {
   value: number | string | boolean
   label: string //中文key，方便阅读
   displayText?: string //展示的文字,只有和label不同的时候使用，
-}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} & Record<string, any>
 
 type ValueOf<T extends readonly EnumArrayObj[]> = T[number]['value']
 type LabelOf<T extends readonly EnumArrayObj[]> = T[number]['label']
@@ -139,6 +140,28 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   isLabelsMatchLabel(labels: LabelOf<T>[], label?: any) {
     return labels.includes(label)
   }
+
+  /**
+   * 根据label列表获取value列表
+   * @param labels
+   * @returns
+   */
+  getValuesByLabels(labels: LabelOf<T>[]) {
+    return labels.map((label) => {
+      return this.getValueByLabel(label)
+    })
+  }
+
+  /**
+   * 根据value列表获取label列表
+   * @param values
+   * @returns
+   */
+  getLabelsByValues(values: ValueOf<T>[]) {
+    return values.map((value) => {
+      return this.getLabelByValue(value)
+    })
+  }
 }
 
 /**
@@ -166,5 +189,5 @@ function createEnum<T extends readonly EnumArrayObj[]>(enumsTuple: T) {
   // return new EnumArray(enums)
 }
 
-export { EnumArray, createEnum }
+export { createEnum, EnumArray }
 export type { EnumArrayObj, LabelOf, ValueOf }

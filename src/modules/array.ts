@@ -111,7 +111,6 @@ class Query<T extends object> extends Array<T> {
     if (this.groupByKey) {
       const groups: Record<string, T[]> = {}
       for (const item of res) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const key: any = item[this.groupByKey]
         if (!(key in groups)) {
           groups[key] = []
@@ -121,7 +120,7 @@ class Query<T extends object> extends Array<T> {
       // @ts-expect-error allow different type
       res = groups
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     return res as any
   }
 }

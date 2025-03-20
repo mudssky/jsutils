@@ -112,8 +112,6 @@ describe('pickBy', () => {
     ] as const
 
     for (const caseItem of testCases) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-
       expect(pickBy(caseItem.input[0], caseItem.input[1])).toEqual(
         caseItem.output,
       )
@@ -236,7 +234,7 @@ describe('mapKeys', () => {
             b: 2,
             c: 3,
           },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
           (value: any, key: any) => {
             return key + value
           },
@@ -267,7 +265,7 @@ describe('mapValues', () => {
             b: 2,
             c: 3,
           },
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
           (value: any, key: any) => {
             return key + value
           },

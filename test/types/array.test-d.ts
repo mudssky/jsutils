@@ -127,8 +127,8 @@ test('test Includes', () => {
   assertType<Equal<Includes<[1, 2, 3, 5, 6, 7], 4>, false>>(true)
   assertType<Equal<Includes<[1, 2, 3], 2>, true>>(true)
   assertType<Equal<Includes<[1, 2, 3], 1>, true>>(true)
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  assertType<Equal<Includes<[{}], { a: 'A' }>, false>>(true)
+  // 用{}会被eslint报错，所以这里换成object
+  assertType<Equal<Includes<[object], { a: 'A' }>, false>>(true)
   assertType<Equal<Includes<[boolean, 2, 3, 5, 6, 7], false>, false>>(true)
   assertType<Equal<Includes<[true, 2, 3, 5, 6, 7], boolean>, false>>(true)
   assertType<Equal<Includes<[false, 2, 3, 5, 6, 7], false>, true>>(true)
