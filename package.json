@@ -43,6 +43,7 @@
   ],
   "scripts": {
     "lint": "eslint --ext .js,.ts ./",
+    "lintfix": "eslint --ext .js,.ts ./ --fix",
     "dev": "rollup -c rollup.config.dev.js",
     "dev:watch": "rollup -c rollup.config.dev.js --watch",
     "prebuild": "pnpm clean:dist&&pnpm copy:style",
@@ -110,7 +111,7 @@
     "@vitest/ui": "^3.0.9",
     "cz-conventional-changelog": "^3.3.0",
     "esbuild": "^0.25.1",
-    "eslint": "^8.57.0",
+    "eslint": "^9.22.0",
     "eslint-plugin-tsdoc": "^0.4.0",
     "fast-glob": "^3.3.3",
     "git-cz": "^4.9.0",

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ClassPublicProps, Equal } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
 
