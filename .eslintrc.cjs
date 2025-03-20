@@ -20,6 +20,13 @@ module.exports = {
         'no-console': 'warn',
       },
     },
+    {
+      // 测试文件不需要这个报错
+      files: ['**/test/**'],
+      rules: {
+        '@typescript-eslint/no-unused-expressions': 'off',
+      },
+    },
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
