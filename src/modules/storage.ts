@@ -38,11 +38,11 @@ abstract class AbstractStorage<T extends string = string> {
 class WebLocalStorage<T extends string = string> extends AbstractStorage {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private cache = new Map<T, any>()
-  private enableCahce: boolean
-  constructor(options?: { enableCahce?: boolean }) {
+  private enableCache: boolean
+  constructor(options?: { enableCache?: boolean }) {
     super()
-    const { enableCahce = false } = options || {}
-    this.enableCahce = enableCahce
+    const { enableCache = false } = options || {}
+    this.enableCache = enableCache
   }
   getStorageInfoSync(): StorageInfo {
     const keys = []
@@ -83,7 +83,7 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
    * 清理localStorage，并清理缓存
    */
   clearStorageSync() {
-    if (this.enableCahce) {
+    if (this.enableCache) {
       this.cache.clear()
     }
     localStorage.clear()
@@ -105,13 +105,13 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
   }
 
   setStorageSync(key: T, value: unknown): void {
-    if (this.enableCahce) {
+    if (this.enableCache) {
       this.cache.set(key, value)
     }
     localStorage.setItem(key, this.stringify(value))
   }
   getStorageSync(key: T) {
-    if (this.enableCahce && this.cache.has(key)) {
+    if (this.enableCache && this.cache.has(key)) {
       return this.cache.get(key)
     }
     const item = localStorage.getItem(key)

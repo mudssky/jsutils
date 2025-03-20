@@ -42,7 +42,7 @@ class LocalStorageMock {
 }
 
 const globalStorage = new WebLocalStorage({
-  // enableCahce: true,
+  // enableCache: true,
 })
 global.localStorage = new LocalStorageMock()
 
@@ -96,5 +96,13 @@ describe('localStorage', () => {
     globalStorage.removeStorage('toBeRemove')
     expect(await globalStorage.getStorage('toBeRemove')).toBe(null)
     expect(globalStorage.Keys()).toEqual([])
+  })
+
+  test('缓存功能测试', async () => {
+    const storage = new WebLocalStorage({ enableCache: true })
+    storage.setStorageSync('cached', 'value')
+    expect(storage.getStorageSync('cached')).toBe('value')
+    localStorage.removeItem('cached') // 模拟外部修改
+    expect(storage.getStorageSync('cached')).toBe('value') // 预期从缓存获取
   })
 })
