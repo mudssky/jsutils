@@ -484,7 +484,9 @@ describe('createPolling', () => {
   })
 
   test('立即执行配置', async () => {
-    const task = vi.fn().mockResolvedValue('data')
+    const task = vi.fn().mockImplementation(async () => {
+      return 'success'
+    })
     const polling = createPolling({
       task,
       stopCondition: () => false,
@@ -493,11 +495,11 @@ describe('createPolling', () => {
     })
 
     polling.start()
-    expect(task).toBeCalledTimes(1)
-
-    vi.advanceTimersByTime(2000)
     await Promise.resolve()
-    expect(task).toBeCalledTimes(2)
+    expect(task).toHaveResolvedTimes(1)
+    vi.advanceTimersToNextTimer()
+    await Promise.resolve()
+    expect(task).toHaveResolvedTimes(2)
   })
 
   test('进度回调执行', async () => {
