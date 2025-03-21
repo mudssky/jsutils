@@ -1,3 +1,9 @@
+# [1.11.0](https://github.com/mudssky/jsutils/compare/v1.10.0...v1.11.0) (2025-03-21)
+
+### Features
+
+- **函数模块:** 新增轮询控制器功能 ([e542b28](https://github.com/mudssky/jsutils/commit/e542b2811e9024f57656aa5b16150fb1701b6757))
+
 # [1.10.0](https://github.com/mudssky/jsutils/compare/v1.9.0...v1.10.0) (2025-03-20)
 
 ### Bug Fixes
