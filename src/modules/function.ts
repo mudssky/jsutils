@@ -284,11 +284,14 @@ export function createPolling<T>(options: PollingOptions<T>) {
   let isActive = true
   let retryCount = 0
   let timeoutId: NodeJS.Timeout | null = null
-  let excuteCount = 0
+  let executeCount = 0
+  let lastResult: T | undefined
+  let lastError: unknown = undefined
   async function executePoll() {
     try {
       const result = await task()
-      excuteCount++
+      executeCount++
+      lastResult = result
       onProgress?.(result)
 
       if (stopCondition(result)) {
@@ -296,6 +299,7 @@ export function createPolling<T>(options: PollingOptions<T>) {
         return
       }
     } catch (error) {
+      lastError = error
       retryCount++
       errorAction?.(error)
 
@@ -326,10 +330,11 @@ export function createPolling<T>(options: PollingOptions<T>) {
     status: () => {
       return {
         options,
-        isActive,
+        status: isActive ? 'running' : 'stopped',
         retryCount,
-        timeoutId,
-        excuteCount,
+        executeCount,
+        lastResult,
+        lastError,
       }
     },
   }
