@@ -1,3 +1,15 @@
+# [1.10.0](https://github.com/mudssky/jsutils/compare/v1.9.0...v1.10.0) (2025-03-20)
+
+### Bug Fixes
+
+- **eslint:** 修复ESLint报错 ([444155b](https://github.com/mudssky/jsutils/commit/444155bfedf7af4dfd4627966245aef8b94fe66d))
+- **storage:** 修正enableCache拼写错误并添加缓存功能测试 ([c390002](https://github.com/mudssky/jsutils/commit/c390002a38e7f036d2a5bd60a3264a6a5e800904))
+
+### Features
+
+- 🎸 add enum methods ([af0ab05](https://github.com/mudssky/jsutils/commit/af0ab055da82e1e7c82d6952a4ad9fa9d7c2a765))
+- 🎸 enumObj type change ([e2c15f3](https://github.com/mudssky/jsutils/commit/e2c15f315c9e8b43e981b1c34a164280040e596a))
+
 # [1.9.0](https://github.com/mudssky/jsutils/compare/v1.8.0...v1.9.0) (2024-12-06)
 
 ### Features
