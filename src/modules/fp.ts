@@ -132,4 +132,4 @@ class Monad<T = any> extends AbstractMonad<T> {
 //   }
 // }
 
-export { Monad, compose, curry, identity, pipe }
+export { compose, curry, identity, Monad, pipe }

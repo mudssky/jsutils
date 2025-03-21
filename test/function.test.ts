@@ -1,4 +1,4 @@
-import { debounce, throttle } from '@mudssky/jsutils'
+import { createPolling, debounce, throttle } from '@mudssky/jsutils'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 function sum(...args: number[]) {
   return args.reduce((a, b) => a + b, 0)
@@ -391,5 +391,139 @@ describe('throttle', () => {
     vi.advanceTimersByTime(1000)
     const res2 = throttledFn.flush()
     expect(res2).toBe(6)
+  })
+})
+
+describe('createPolling', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  test('正常启动和停止轮询', async () => {
+    const task = vi.fn().mockResolvedValue('data')
+    const polling = createPolling({
+      task,
+      stopCondition: (res) => res === 'done',
+      interval: 1000,
+    })
+
+    polling.start()
+    expect(task).not.toBeCalled()
+
+    vi.advanceTimersByTime(1000)
+    await Promise.resolve()
+    expect(task).toBeCalledTimes(1)
+
+    polling.stop()
+    vi.advanceTimersByTime(2000)
+    expect(task).toBeCalledTimes(1)
+  })
+
+  test('满足停止条件时自动终止', async () => {
+    let count = 0
+    const task = vi.fn().mockImplementation(async () => {
+      return ++count
+    })
+
+    const polling = createPolling({
+      task,
+      stopCondition: (res) => res === 3,
+      interval: 500,
+    })
+
+    polling.start()
+
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(count).toBe(1)
+
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(count).toBe(2)
+
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(count).toBe(3)
+
+    // 应该停止执行
+    vi.advanceTimersByTime(1500)
+    expect(count).toBe(3)
+  })
+
+  test('错误重试机制', async () => {
+    const errorMock = vi.fn()
+    let attempt = 0
+
+    const task = vi.fn().mockImplementation(async () => {
+      attempt++
+      if (attempt < 3) throw new Error('retry')
+      return 'success'
+    })
+
+    const polling = createPolling({
+      task,
+      stopCondition: (res) => res === 'success',
+      errorAction: errorMock,
+      maxRetries: 5,
+      interval: 1000,
+    })
+
+    polling.start()
+
+    vi.advanceTimersByTime(1000)
+    await Promise.resolve()
+    expect(errorMock).toBeCalledTimes(1)
+
+    vi.advanceTimersByTime(1000)
+    await Promise.resolve()
+    expect(errorMock).toBeCalledTimes(2)
+
+    vi.advanceTimersByTime(1000)
+    await Promise.resolve()
+    expect(task).toHaveResolvedWith('success')
+  })
+
+  test('立即执行配置', async () => {
+    const task = vi.fn().mockResolvedValue('data')
+    const polling = createPolling({
+      task,
+      stopCondition: () => false,
+      immediate: true,
+      interval: 2000,
+    })
+
+    polling.start()
+    expect(task).toBeCalledTimes(1)
+
+    vi.advanceTimersByTime(2000)
+    await Promise.resolve()
+    expect(task).toBeCalledTimes(2)
+  })
+
+  test('进度回调执行', async () => {
+    const progressMock = vi.fn()
+    const results = [1, 2, 3]
+    let index = 0
+
+    const polling = createPolling({
+      task: () => Promise.resolve(results[index++]),
+      stopCondition: (res) => res === 3,
+      onProgress: progressMock,
+      interval: 500,
+    })
+
+    polling.start()
+
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(progressMock).toBeCalledWith(1)
+
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(progressMock).toBeCalledWith(2)
+
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(progressMock).toBeCalledWith(3)
   })
 })

@@ -1,7 +1,7 @@
-import { defineConfig } from 'rollup'
 import commonjs from '@rollup/plugin-commonjs'
-import esbuild from 'rollup-plugin-esbuild'
+import { defineConfig } from 'rollup'
 import dts from 'rollup-plugin-dts'
+import esbuild from 'rollup-plugin-esbuild'
 const config = defineConfig([
   // 开发时使用esbuild，并且只打包esm模块，提高速度
   {

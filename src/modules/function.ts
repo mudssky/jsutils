@@ -234,4 +234,105 @@ function throttle(
   return throttled
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface PollingOptions<T = any> {
+  task: () => Promise<T>
+  stopCondition: (result: T) => boolean
+  errorAction?: (error: unknown) => void
+  onProgress?: (result: T) => void
+  quitOnError?: boolean
+  interval?: number
+  maxRetries?: number
+  immediate?: boolean
+}
+/**
+ * 创建轮询控制器
+ * @template T 轮询任务返回值的类型
+ * @param {PollingOptions<T>} options 轮询配置选项
+ * @param {() => Promise<T>} options.task 需要轮询的异步任务函数
+ * @param {(result: T) => boolean} options.stopCondition 停止轮询的条件判断函数
+ * @param {(error: unknown) => void} [options.errorAction] 错误回调函数
+ * @param {(result: T) => void} [options.onProgress] 任务成功时的进度回调
+ * @param {boolean} [options.quitOnError=true] 是否在达到最大重试次数后停止轮询
+ * @param {number} [options.interval=5000] 轮询间隔时间（毫秒）
+ * @param {number} [options.maxRetries=3] 最大重试次数
+ * @param {boolean} [options.immediate=false] 是否立即执行首次任务
+ * @returns {Object} 轮询控制器对象
+ * @returns {Function} return.start 启动轮询
+ * @returns {Function} return.stop 停止轮询
+ *
+ * @example
+ * const poller = createPolling({
+ *   task: fetchData,
+ *   stopCondition: (data) => data.status === 'done',
+ *   interval: 2000
+ * });
+ * poller.start();
+ */
+export function createPolling<T>(options: PollingOptions<T>) {
+  const {
+    task,
+    stopCondition,
+    interval = 5000,
+    errorAction,
+    quitOnError = true,
+    maxRetries = 3,
+    immediate = false,
+    onProgress,
+  } = options
+
+  let isActive = true
+  let retryCount = 0
+  let timeoutId: NodeJS.Timeout | null = null
+  let excuteCount = 0
+  async function executePoll() {
+    try {
+      const result = await task()
+      excuteCount++
+      onProgress?.(result)
+
+      if (stopCondition(result)) {
+        isActive = false
+        return
+      }
+    } catch (error) {
+      retryCount++
+      errorAction?.(error)
+
+      if (quitOnError && retryCount >= maxRetries) {
+        isActive = false
+        throw error
+      }
+    } finally {
+      if (isActive) {
+        timeoutId = setTimeout(executePoll, interval)
+      }
+    }
+  }
+
+  return {
+    start: () => {
+      isActive = true
+      if (immediate) {
+        executePoll()
+      } else {
+        timeoutId = setTimeout(executePoll, interval)
+      }
+    },
+    stop: () => {
+      isActive = false
+      if (timeoutId) clearTimeout(timeoutId)
+    },
+    status: () => {
+      return {
+        options,
+        isActive,
+        retryCount,
+        timeoutId,
+        excuteCount,
+      }
+    },
+  }
+}
+
 export { debounce, throttle }
