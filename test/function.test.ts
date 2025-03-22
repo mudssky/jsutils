@@ -528,4 +528,58 @@ describe('createPolling', () => {
     await Promise.resolve()
     expect(progressMock).toBeCalledWith(3)
   })
+  test('达到最大执行次数自动停止', async () => {
+    const task = vi.fn().mockResolvedValue('data')
+    const polling = createPolling({
+      task,
+      stopCondition: () => false,
+      maxExecutions: 3,
+      interval: 500,
+    })
+
+    polling.start()
+
+    // 第一次执行
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(task).toBeCalledTimes(1)
+
+    // 第二次执行
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(task).toBeCalledTimes(2)
+
+    // 第三次执行应触发停止
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(task).toBeCalledTimes(3)
+
+    // 验证是否停止
+    vi.advanceTimersByTime(1500)
+    expect(task).toBeCalledTimes(3)
+    expect(polling.status().status).toBe('stopped')
+  })
+
+  test('最大执行次数与停止条件组合', async () => {
+    let count = 0
+    const task = vi.fn().mockImplementation(async () => ++count)
+    const polling = createPolling({
+      task,
+      stopCondition: (res: number) => res >= 5,
+      maxExecutions: 3,
+      interval: 500,
+    })
+
+    polling.start()
+
+    // 执行3次后因maxExecutions停止
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    vi.advanceTimersByTime(500)
+    await Promise.resolve()
+    expect(count).toBe(3)
+    expect(polling.status().status).toBe('stopped')
+  })
 })
