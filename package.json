@@ -1,6 +1,6 @@
 {
   "name": "@mudssky/jsutils",
-  "version": "1.9.0",
+  "version": "1.11.0",
   "description": "个人通用js库",
   "keywords": [
     "util"
@@ -44,6 +44,9 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts ./",
     "lintfix": "eslint --ext .js,.ts ./ --fix",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "check:apply": "biome check --apply .",
     "dev": "rollup -c rollup.config.dev.js",
     "dev:watch": "rollup -c rollup.config.dev.js --watch",
     "prebuild": "pnpm clean:dist&&pnpm copy:style",
@@ -93,6 +96,7 @@
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
+    "@biomejs/biome": "^1.9.4",
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
     "@microsoft/api-documenter": "^7.26.17",

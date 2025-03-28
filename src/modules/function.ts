@@ -238,13 +238,14 @@ function throttle(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface PollingOptions<T = any> {
   task: () => Promise<T>
-  stopCondition: (result: T) => boolean
+  stopCondition?: (result: T) => boolean
   errorAction?: (error: unknown) => void
   onProgress?: (result: T) => void
   quitOnError?: boolean
   interval?: number
   maxRetries?: number
   immediate?: boolean
+  maxExecutions?: number
 }
 /**
  * 创建轮询控制器
@@ -273,29 +274,30 @@ export interface PollingOptions<T = any> {
 export function createPolling<T>(options: PollingOptions<T>) {
   const {
     task,
-    stopCondition,
+    stopCondition = () => false,
     interval = 5000,
     errorAction,
     quitOnError = true,
     maxRetries = 3,
     immediate = false,
     onProgress,
+    maxExecutions = Infinity,
   } = options
 
   let isActive = true
   let retryCount = 0
   let timeoutId: NodeJS.Timeout | null = null
-  let executeCount = 0
+  let executionCount = 0
   let lastResult: T | undefined
   let lastError: unknown = undefined
   async function executePoll() {
     try {
       const result = await task()
-      executeCount++
+      executionCount++
       lastResult = result
       onProgress?.(result)
 
-      if (stopCondition(result)) {
+      if (stopCondition(result) || executionCount >= maxExecutions) {
         isActive = false
         return
       }
@@ -309,7 +311,7 @@ export function createPolling<T>(options: PollingOptions<T>) {
         throw error
       }
     } finally {
-      if (isActive) {
+      if (isActive && executionCount < maxExecutions) {
         timeoutId = setTimeout(executePoll, interval)
       }
     }
@@ -333,7 +335,7 @@ export function createPolling<T>(options: PollingOptions<T>) {
         options,
         status: isActive ? 'running' : 'stopped',
         retryCount,
-        executeCount,
+        executeCount: executionCount,
         lastResult,
         lastError,
       }
