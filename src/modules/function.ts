@@ -1,4 +1,5 @@
 import { AnyFunction } from '@/types'
+import { sleepAsync } from './async'
 
 /**
  * 创建一个防抖函数，该函数会从上一次被调用后，延迟 wait 毫秒后调用 func 方法。debounced函数提供一个cancel方法，
@@ -342,4 +343,63 @@ export function createPolling<T>(options: PollingOptions<T>) {
   }
 }
 
-export { debounce, throttle }
+export interface RetryOptions {
+  maxRetries?: number
+  delay?: number
+  shouldRetry?: (error: unknown) => boolean
+}
+
+/**
+ * 创建一个支持重试的函数包装器
+ * @param fn 需要重试的函数（支持同步和异步）
+ * @param options 重试配置
+ * @param options.maxRetries 最大重试次数，默认3次
+ * @param options.delay 重试延迟时间（毫秒），默认0
+ * @param options.shouldRetry 自定义重试条件函数
+ * @returns 包装后的函数
+ *
+ * @example
+ * // 基本用法
+ * const fetchWithRetry = withRetry(fetchData, { maxRetries: 3 });
+ *
+ * // 带延迟重试
+ * const fetchWithRetry = withRetry(fetchData, { maxRetries: 3, delay: 1000 });
+ *
+ * // 自定义重试条件
+ * const fetchWithRetry = withRetry(fetchData, {
+ *   maxRetries: 3,
+ *   shouldRetry: (error) => error.statusCode !== 404
+ * });
+ */
+function withRetry<T extends AnyFunction>(
+  fn: T,
+  options: RetryOptions = {},
+): (...args: Parameters<T>) => Promise<ReturnType<T>> {
+  const { maxRetries = 3, delay = 0, shouldRetry } = options
+
+  return async function (...args: Parameters<T>): Promise<ReturnType<T>> {
+    let retryCount = 0
+    let lastError: unknown
+
+    while (retryCount <= maxRetries) {
+      try {
+        const result = await fn(...args)
+        return result
+      } catch (error) {
+        lastError = error
+        retryCount++
+
+        if (retryCount > maxRetries || (shouldRetry && !shouldRetry(error))) {
+          throw lastError
+        }
+
+        if (delay > 0) {
+          await sleepAsync(delay)
+        }
+      }
+    }
+
+    throw lastError
+  }
+}
+export { debounce, throttle, withRetry }

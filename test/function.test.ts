@@ -1,4 +1,4 @@
-import { createPolling, debounce, throttle } from '@mudssky/jsutils'
+import { createPolling, debounce, throttle, withRetry } from '@mudssky/jsutils'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 function sum(...args: number[]) {
   return args.reduce((a, b) => a + b, 0)
@@ -581,5 +581,81 @@ describe('createPolling', () => {
     await Promise.resolve()
     expect(count).toBe(3)
     expect(polling.status().status).toBe('stopped')
+  })
+})
+
+describe('withRetry', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  test('正常执行成功', async () => {
+    const fn = vi.fn().mockResolvedValue('success')
+    const retryFn = withRetry(fn)
+    const result = await retryFn()
+    expect(result).toBe('success')
+    expect(fn).toBeCalledTimes(1)
+  })
+
+  test('重试后成功', async () => {
+    let attempt = 0
+    const fn = vi.fn().mockImplementation(async () => {
+      attempt++
+      if (attempt < 2) throw new Error('retry')
+      return 'success'
+    })
+    const retryFn = withRetry(fn)
+    const result = await retryFn()
+    expect(result).toBe('success')
+    expect(fn).toBeCalledTimes(2)
+  })
+
+  test('达到最大重试次数后失败', async () => {
+    const fn = vi.fn().mockRejectedValue(new Error('fail'))
+    const retryFn = withRetry(fn, { maxRetries: 2 })
+    await expect(retryFn()).rejects.toThrow('fail')
+    expect(fn).toBeCalledTimes(3)
+  })
+
+  test('自定义重试条件', async () => {
+    const fn = vi
+      .fn()
+      .mockRejectedValueOnce({ statusCode: 500 })
+      .mockRejectedValueOnce({ statusCode: 404 })
+    const retryFn = withRetry(fn, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      shouldRetry: (error: any) => error.statusCode !== 404,
+    })
+    await expect(retryFn()).rejects.toEqual({ statusCode: 404 })
+    expect(fn).toBeCalledTimes(2)
+  })
+
+  test('带延迟的重试', async () => {
+    const fn = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('retry'))
+      .mockResolvedValue('success')
+      .mockResolvedValue('success')
+    const retryFn = withRetry(fn, { delay: 1000 })
+
+    const promise = retryFn()
+    expect(fn).toBeCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(500)
+    await vi.advanceTimersByTimeAsync(500)
+    expect(fn).toBeCalledTimes(2)
+    await expect(promise).resolves.toBe('success')
+  })
+
+  test('同步函数支持', async () => {
+    const fn = vi
+      .fn()
+      .mockImplementationOnce(() => {
+        throw new Error('retry')
+      })
+      .mockReturnValue('success')
+    const retryFn = withRetry(fn)
+    const result = await retryFn()
+    expect(result).toBe('success')
+    expect(fn).toBeCalledTimes(2)
   })
 })
