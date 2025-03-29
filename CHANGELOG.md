@@ -1,3 +1,9 @@
+# [1.12.0](https://github.com/mudssky/jsutils/compare/v1.11.0...v1.12.0) (2025-03-22)
+
+### Features
+
+- **轮询:** 增加最大执行次数限制 ([80ac717](https://github.com/mudssky/jsutils/commit/80ac7175c62af96f6012e8b6b03b7bfc693157e5))
+
 # [1.11.0](https://github.com/mudssky/jsutils/compare/v1.10.0...v1.11.0) (2025-03-21)
 
 ### Features
