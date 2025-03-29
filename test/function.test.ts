@@ -630,27 +630,21 @@ describe('withRetry', () => {
     expect(fn).toBeCalledTimes(2)
   })
 
-  /* TODO */
   test('带延迟的重试', async () => {
     const fn = vi
       .fn()
       .mockRejectedValueOnce(new Error('retry'))
       .mockResolvedValue('success')
+      .mockResolvedValue('success')
     const retryFn = withRetry(fn, { delay: 1000 })
-    const p = await retryFn()
-    // expect(fn).toBeCalledTimes(1)
-    console.log({ p })
 
-    // const promise = retryFn()
-    // expect(fn).toBeCalledTimes(1)
-
-    // vi.advanceTimersByTime(500)
-    // expect(fn).toBeCalledTimes(1)
-
-    // vi.advanceTimersByTime(500)
-    // await expect(promise).resolves.toBe('success') // 直接await promise
-    // expect(fn).toBeCalledTimes(2)
-  }) // 增加超时时间
+    const promise = retryFn()
+    expect(fn).toBeCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(500)
+    await vi.advanceTimersByTimeAsync(500)
+    expect(fn).toBeCalledTimes(2)
+    await expect(promise).resolves.toBe('success')
+  })
 
   test('同步函数支持', async () => {
     const fn = vi
