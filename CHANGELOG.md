@@ -1,3 +1,9 @@
+# [1.14.0](https://github.com/mudssky/jsutils/compare/v1.13.0...v1.14.0) (2025-04-08)
+
+### Features
+
+- **dom:** 添加 DOMHelper 工具类及其测试 ([7d836a3](https://github.com/mudssky/jsutils/commit/7d836a3b9df64a8480ca0728b7fdb85939021dce))
+
 # [1.13.0](https://github.com/mudssky/jsutils/compare/v1.12.0...v1.13.0) (2025-03-29)
 
 ### Features
