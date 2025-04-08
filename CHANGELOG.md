@@ -1,3 +1,9 @@
+# [1.13.0](https://github.com/mudssky/jsutils/compare/v1.12.0...v1.13.0) (2025-03-29)
+
+### Features
+
+- **函数工具:** 新增异步延迟函数和重试函数包装器 ([2e0809e](https://github.com/mudssky/jsutils/commit/2e0809e931aa0a462801f9328d5c59b858dc807a))
+
 # [1.12.0](https://github.com/mudssky/jsutils/compare/v1.11.0...v1.12.0) (2025-03-22)
 
 ### Features
