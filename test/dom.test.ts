@@ -110,4 +110,110 @@ describe('DOMHelper', () => {
     helper.setText('Test Content')
     expect(helper.text()).toBe('Test Content')
   })
+
+  test('setStyle() with single property', () => {
+    const helper = $('#test')
+    helper.setStyle('color', 'red')
+    expect(helper.get()?.style.color).toBe('red')
+  })
+
+  test('setStyle() with camelCase property', () => {
+    const helper = $('#test')
+    helper.setStyle('backgroundColor', 'blue')
+    expect(helper.get()?.style.backgroundColor).toBe('blue')
+  })
+
+  test('setStyle() with style object', () => {
+    const helper = $('#test')
+    helper.setStyle({
+      color: 'green',
+      fontSize: '16px',
+      marginTop: '10px',
+    })
+    const style = helper.get()!.style
+    expect(style.color).toBe('green')
+    expect(style.fontSize).toBe('16px')
+    expect(style.marginTop).toBe('10px')
+  })
+
+  test('createElement() basic element', () => {
+    const div = DOMHelper.createElement('div')
+    expect(div.get()).toBeInstanceOf(HTMLDivElement)
+  })
+
+  test('createElement() with attributes', () => {
+    const div = DOMHelper.createElement('div', { id: 'test', class: 'box' })
+    expect(div.attr('id')).toBe('test')
+    expect(div.attr('class')).toBe('box')
+  })
+
+  test('createElement() with children', () => {
+    const child1 = DOMHelper.createElement('span')
+    const child2 = document.createElement('span')
+    const parent = DOMHelper.createElement('div', {}, [child1, child2])
+    expect(parent.children().length).toBe(2)
+  })
+
+  test('appendChild() adds child element', () => {
+    const parent = new DOMHelper('.parent')
+    const newChild = document.createElement('div')
+    newChild.className = 'new-child'
+
+    expect(parent.children().length).toBe(2)
+    parent.appendChild(newChild)
+    expect(parent.children().length).toBe(3)
+    expect(parent.children()[2].get()?.className).toBe('new-child')
+  })
+
+  test('removeChild() removes child element', () => {
+    const parent = new DOMHelper('.parent')
+    const child = new DOMHelper('.child')
+
+    expect(parent.children().length).toBe(3)
+    parent.removeChild(child)
+    expect(parent.children().length).toBe(2)
+  })
+
+  test('chainable appendChild and removeChild', () => {
+    const parent = new DOMHelper('.parent')
+    const newChild = document.createElement('div')
+
+    parent.appendChild(newChild).removeChild(newChild)
+
+    expect(parent.children().length).toBe(2)
+  })
+
+  test('prependChild() adds child at first position', () => {
+    const parent = new DOMHelper('.parent')
+    const newChild = document.createElement('div')
+    newChild.className = 'new-child'
+
+    expect(parent.children().length).toBe(2)
+    parent.prependChild(newChild)
+    expect(parent.children().length).toBe(3)
+    expect(parent.children()[0].get()?.className).toBe('new-child')
+  })
+
+  test('chainable prependChild', () => {
+    const parent = new DOMHelper('.parent')
+    const newChild = document.createElement('div')
+
+    parent.prependChild(newChild).removeChild(newChild)
+    expect(parent.children().length).toBe(3)
+  })
+
+  test('hide() and show() methods', () => {
+    const helper = new DOMHelper('#test')
+
+    // 初始状态检查
+    expect(helper.get()?.style.display).toBe('')
+
+    // 隐藏元素
+    helper.hide()
+    expect(helper.get()?.style.display).toBe('none')
+
+    // 显示元素
+    helper.show()
+    expect(helper.get()?.style.display).toBe('')
+  })
 })
