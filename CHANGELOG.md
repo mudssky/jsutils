@@ -1,3 +1,9 @@
+# [1.16.0](https://github.com/mudssky/jsutils/compare/v1.15.0...v1.16.0) (2025-04-23)
+
+### Features
+
+- **types:** 添加PromiseFunction及其相关类型工具 ([2e18bd4](https://github.com/mudssky/jsutils/commit/2e18bd44fbd901f4a56757311770a53f62ca5450))
+
 # [1.15.0](https://github.com/mudssky/jsutils/compare/v1.14.0...v1.15.0) (2025-04-11)
 
 ### Features
