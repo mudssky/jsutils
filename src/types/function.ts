@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnyFunction } from './global'
 
 /**
@@ -26,4 +27,25 @@ export type AppendArgument<Func extends AnyFunction, Arg> = Func extends (
   ...args: infer Args
 ) => infer ReturnType
   ? (...args: [...Args, Arg]) => ReturnType
+  : never
+
+export type PromiseFunction<Args extends any[] = any[], R = any> = (
+  ...args: Args
+) => Promise<R>
+/**
+ * 获取Promise函数的返回值类型
+ */
+export type PromiseReturnType<Func extends PromiseFunction> = Func extends (
+  ...args: any
+) => Promise<infer R>
+  ? R
+  : never
+
+/**
+ * 获取Promise函数的参数类型
+ */
+export type PromiseParameterType<Func extends PromiseFunction> = Func extends (
+  ...args: infer Args
+) => Promise<any>
+  ? Args
   : never
