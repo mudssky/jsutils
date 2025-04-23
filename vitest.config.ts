@@ -18,7 +18,7 @@ export default defineConfig({
       // all:false,// 不包括未测试的文件
       enabled: true,
       include: ['src'],
-      exclude: ['src/modules/config'],
+      exclude: ['src/modules/config', 'src/modules/style'],
     },
   },
 })
