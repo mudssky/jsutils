@@ -1,3 +1,9 @@
+# [1.15.0](https://github.com/mudssky/jsutils/compare/v1.14.0...v1.15.0) (2025-04-11)
+
+### Features
+
+- **dom:** 添加DOM操作相关方法及测试 ([9ee0f1c](https://github.com/mudssky/jsutils/commit/9ee0f1c9c920690f8b3f51d9ee4b2882b08f6930))
+
 # [1.14.0](https://github.com/mudssky/jsutils/compare/v1.13.0...v1.14.0) (2025-04-08)
 
 ### Features
