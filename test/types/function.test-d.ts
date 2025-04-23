@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { AppendArgument, ParameterType } from '@mudssky/jsutils'
+import type {
+  AppendArgument,
+  ParameterType,
+  PromiseParameterType,
+  PromiseReturnType,
+} from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
 
 let n!: never
@@ -28,4 +33,14 @@ test('test ThisParameterType', () => {
 test('test AppendArgument', () => {
   const fn = () => {}
   assertType<AppendArgument<typeof fn, string>>((ll: string) => {})
+})
+
+test('test PromiseReturnType', () => {
+  const asyncFn = async () => 'hello'
+  assertType<PromiseReturnType<typeof asyncFn>>('hello')
+})
+
+test('test PromiseParameterType', () => {
+  const asyncFn = async (a: string, b: number) => a + b
+  assertType<PromiseParameterType<typeof asyncFn>>(['test', 123])
 })
