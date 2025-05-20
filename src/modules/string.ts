@@ -212,6 +212,20 @@ const trim = (str: Nullable<string>, charsToTrim: string = ' ') => {
   return str.replace(regex, '')
 }
 
+const trimStart = (str: Nullable<string>, charsToTrim: string = ' ') => {
+  if (!str) return ''
+  const toTrim = charsToTrim.replace(/[\W]{1}/g, '\\$&')
+  const regex = new RegExp(`^[${toTrim}]+`, 'g')
+  return str.replace(regex, '')
+}
+
+const trimEnd = (str: Nullable<string>, charsToTrim: string = ' ') => {
+  if (!str) return ''
+  const toTrim = charsToTrim.replace(/[\W]{1}/g, '\\$&')
+  const regex = new RegExp(`[${toTrim}]+$`, 'g')
+  return str.replace(regex, '')
+}
+
 export {
   camelCase,
   capitalize,
@@ -225,4 +239,6 @@ export {
   PascalCase,
   snake_case,
   trim,
+  trimEnd,
+  trimStart,
 }

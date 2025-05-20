@@ -278,3 +278,35 @@ describe('trim function', () => {
     assert.equal(_.trim('_- hello_- ', '_- '), 'hello')
   })
 })
+
+describe('trimStart function', () => {
+  test('handles bad input', () => {
+    assert.equal(_.trimStart(null), '')
+    assert.equal(_.trimStart(undefined), '')
+  })
+  test('returns input string correctly trimmed at start', () => {
+    assert.equal(_.trimStart('\n\n\t\nhello\n\t  \n', '\n\t '), 'hello\n\t  \n')
+    assert.equal(_.trimStart(' hello  '), 'hello  ')
+    assert.equal(_.trimStart('__hello__', '_'), 'hello__')
+    assert.equal(_.trimStart('//repos////', '/'), 'repos////')
+  })
+  test('handles when char to trim is special case in regex', () => {
+    assert.equal(_.trimStart('_- hello_- ', '_- '), 'hello_- ')
+  })
+})
+
+describe('trimEnd function', () => {
+  test('handles bad input', () => {
+    assert.equal(_.trimEnd(null), '')
+    assert.equal(_.trimEnd(undefined), '')
+  })
+  test('returns input string correctly trimmed at end', () => {
+    assert.equal(_.trimEnd('\n\n\t\nhello\n\t  \n', '\n\t '), '\n\n\t\nhello')
+    assert.equal(_.trimEnd(' hello  '), ' hello')
+    assert.equal(_.trimEnd('__hello__', '_'), '__hello')
+    assert.equal(_.trimEnd('//repos////', '/'), '//repos')
+  })
+  test('handles when char to trim is special case in regex', () => {
+    assert.equal(_.trimEnd('_- hello_- ', '_- '), '_- hello')
+  })
+})

@@ -29,9 +29,20 @@ export type AppendArgument<Func extends AnyFunction, Arg> = Func extends (
   ? (...args: [...Args, Arg]) => ReturnType
   : never
 
+/**
+ * 给函数添加参数
+ * @template Func - 原函数类型
+ * @template Arg - 要添加的参数类型
+ * @example
+ * ```ts
+ * type Fn = (a: string) => number
+ * type NewFn = AppendArgument<Fn, boolean> // (a: string, b: boolean) => number
+ * ```
+ */
 export type PromiseFunction<Args extends any[] = any[], R = any> = (
   ...args: Args
 ) => Promise<R>
+
 /**
  * 获取Promise函数的返回值类型
  */
