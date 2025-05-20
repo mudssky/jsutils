@@ -1,3 +1,9 @@
+# [1.18.0](https://github.com/mudssky/jsutils/compare/v1.17.0...v1.18.0) (2025-05-20)
+
+### Features
+
+- **字符串处理:** 添加trimStart和trimEnd函数并更新测试 ([53aa3c2](https://github.com/mudssky/jsutils/commit/53aa3c2d190fb4e79d082a9174989d81e56ace2a))
+
 # [1.17.0](https://github.com/mudssky/jsutils/compare/v1.16.0...v1.17.0) (2025-04-23)
 
 ### Features
