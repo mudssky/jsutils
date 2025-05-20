@@ -1,3 +1,9 @@
+# [1.17.0](https://github.com/mudssky/jsutils/compare/v1.16.0...v1.17.0) (2025-04-23)
+
+### Features
+
+- **style:** 添加clsx和tailwind-merge依赖并导出样式工具函数 ([8debf30](https://github.com/mudssky/jsutils/commit/8debf306756429b35e0656d91a5534f9471cc745))
+
 # [1.16.0](https://github.com/mudssky/jsutils/compare/v1.15.0...v1.16.0) (2025-04-23)
 
 ### Features
