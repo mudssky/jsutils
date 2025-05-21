@@ -192,6 +192,27 @@ const PascalCase = (str: string): string => {
   return parts.map((str) => str.charAt(0).toUpperCase() + str.slice(1)).join('')
 }
 
+/**
+ * 解析模板字符串，并将占位符替换为数据对象中的值。
+ * @param str - 包含占位符的模板字符串。
+ * @param data - 一个记录，其键是占位符的名称（不带括号），值是替换内容。
+ * @param regex - 用于匹配占位符的正则表达式。默认为 /\{\{(.+?)\}\}/g，匹配 {{placeholder}} 格式。
+ * @returns 替换占位符后的字符串。
+ * @example
+ * ```ts
+ * const template = "Hello {{name}}, welcome to {{place}}!";
+ * const data = { name: "World", place: "our app" };
+ * console.log(parseTemplate(template, data));
+ * // -> "Hello World, welcome to our app!"
+ *
+ * const customTemplate = "Hi <user>, your id is <id>.";
+ * const customData = { user: "Alex", id: "123" };
+ * const customRegex = /<(.+?)>/g;
+ * console.log(parseTemplate(customTemplate, customData, customRegex));
+ * // -> "Hi Alex, your id is 123."
+ * ```
+ * @public
+ */
 const parseTemplate = (
   str: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -203,6 +224,21 @@ const parseTemplate = (
   }, str)
 }
 
+/**
+ * 移除字符串两端指定的字符。
+ * @param str - 需要修剪的原始字符串，可以为 null。
+ * @param charsToTrim - 一个包含需要移除字符的字符串，默认为空格。这些字符将被视为一个集合，任何在开头或结尾处匹配此集合中字符的实例都将被移除。
+ * @returns 修剪后的字符串。如果输入字符串为 null 或 undefined，则返回空字符串。
+ * @example
+ * ```ts
+ * console.log(trim("  hello world  ")); // -> "hello world"
+ * console.log(trim("__hello__", "_")); // -> "hello"
+ * console.log(trim("-!-hello-!-", "-!")); // -> "hello"
+ * console.log(trim("/path/to/file/", "/")); // -> "path/to/file"
+ * console.log(trim(null)); // -> ""
+ * ```
+ * @public
+ */
 const trim = (str: Nullable<string>, charsToTrim: string = ' ') => {
   if (!str) return ''
   // 转义替换字符串中的特殊字符
@@ -212,6 +248,21 @@ const trim = (str: Nullable<string>, charsToTrim: string = ' ') => {
   return str.replace(regex, '')
 }
 
+/**
+ * 移除字符串开头指定的字符。
+ * @param str - 需要修剪的原始字符串，可以为 null。
+ * @param charsToTrim - 一个包含需要移除字符的字符串，默认为空格。这些字符将被视为一个集合，任何在开头处匹配此集合中字符的实例都将被移除。
+ * @returns 从开头修剪后的字符串。如果输入字符串为 null 或 undefined，则返回空字符串。
+ * @example
+ * ```ts
+ * console.log(trimStart("  hello world  ")); // -> "hello world  "
+ * console.log(trimStart("__hello__", "_")); // -> "hello__"
+ * console.log(trimStart("-!-hello-!-", "-!")); // -> "hello-!-"
+ * console.log(trimStart("/path/to/file/", "/")); // -> "path/to/file/"
+ * console.log(trimStart(null)); // -> ""
+ * ```
+ * @public
+ */
 const trimStart = (str: Nullable<string>, charsToTrim: string = ' ') => {
   if (!str) return ''
   const toTrim = charsToTrim.replace(/[\W]{1}/g, '\\$&')
@@ -219,11 +270,45 @@ const trimStart = (str: Nullable<string>, charsToTrim: string = ' ') => {
   return str.replace(regex, '')
 }
 
+/**
+ * 移除字符串末尾指定的字符。
+ * @param str - 需要修剪的原始字符串，可以为 null。
+ * @param charsToTrim - 一个包含需要移除字符的字符串，默认为空格。这些字符将被视为一个集合，任何在末尾处匹配此集合中字符的实例都将被移除。
+ * @returns 从末尾修剪后的字符串。如果输入字符串为 null 或 undefined，则返回空字符串。
+ * @example
+ * ```ts
+ * console.log(trimEnd("  hello world  ")); // -> "  hello world"
+ * console.log(trimEnd("__hello__", "_")); // -> "__hello"
+ * console.log(trimEnd("-!-hello-!-", "-!")); // -> "-!-hello"
+ * console.log(trimEnd("/path/to/file/", "/")); // -> "/path/to/file"
+ * console.log(trimEnd(null)); // -> ""
+ * ```
+ * @public
+ */
 const trimEnd = (str: Nullable<string>, charsToTrim: string = ' ') => {
   if (!str) return ''
   const toTrim = charsToTrim.replace(/[\W]{1}/g, '\\$&')
   const regex = new RegExp(`[${toTrim}]+$`, 'g')
   return str.replace(regex, '')
+}
+
+/**
+ * 移除字符串中指定的前缀
+ * @param str - 原始字符串
+ * @param prefix - 需要移除的前缀
+ * @returns 移除前缀后的字符串，如果原始字符串不以该前缀开头则返回原字符串
+ * @example
+ * ```ts
+ * console.log(removePrefix("hello world", "hello ")); // -> "world"
+ * console.log(removePrefix("__hello__", "__")); // -> "hello__"
+ * console.log(removePrefix("test", "no")); // -> "test"
+ * console.log(removePrefix(null, "prefix")); // -> ""
+ * ```
+ * @public
+ */
+const removePrefix = (str: Nullable<string>, prefix: string): string => {
+  if (!str || !prefix) return str || ''
+  return str.startsWith(prefix) ? str.slice(prefix.length) : str
 }
 
 export {
@@ -237,6 +322,7 @@ export {
   getFileExt,
   parseTemplate,
   PascalCase,
+  removePrefix,
   snake_case,
   trim,
   trimEnd,
