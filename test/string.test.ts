@@ -279,6 +279,27 @@ describe('trim function', () => {
   })
 })
 
+describe('removePrefix function', () => {
+  test('handles bad input', () => {
+    assert.equal(_.removePrefix(null, 'prefix'), '')
+    assert.equal(_.removePrefix(undefined, 'prefix'), '')
+    assert.equal(_.removePrefix('test', ''), 'test')
+  })
+  test('removes prefix when present', () => {
+    assert.equal(_.removePrefix('hello world', 'hello '), 'world')
+    assert.equal(_.removePrefix('__hello__', '__'), 'hello__')
+    assert.equal(_.removePrefix('//path', '//'), 'path')
+    assert.equal(_.removePrefix('//path', '//'), 'path')
+  })
+  test('returns original string when prefix not found', () => {
+    assert.equal(_.removePrefix('hello world', 'world'), 'hello world')
+    assert.equal(_.removePrefix('test', 'no'), 'test')
+  })
+  test('handles when prefix is special case in regex', () => {
+    assert.equal(_.removePrefix('_-hello_- ', '_-'), 'hello_- ')
+  })
+})
+
 describe('trimStart function', () => {
   test('handles bad input', () => {
     assert.equal(_.trimStart(null), '')
