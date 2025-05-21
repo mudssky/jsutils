@@ -1,3 +1,9 @@
+# [1.19.0](https://github.com/mudssky/jsutils/compare/v1.18.0...v1.19.0) (2025-05-21)
+
+### Features
+
+- 添加 removePrefix 函数用于移除字符串前缀 ([fa86f20](https://github.com/mudssky/jsutils/commit/fa86f203eca54077bf150c69461ee722c2865ced))
+
 # [1.18.0](https://github.com/mudssky/jsutils/compare/v1.17.0...v1.18.0) (2025-05-20)
 
 ### Features
