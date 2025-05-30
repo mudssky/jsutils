@@ -1,3 +1,9 @@
+# [1.20.0](https://github.com/mudssky/jsutils/compare/v1.19.0...v1.20.0) (2025-05-30)
+
+### Features
+
+- **decorator:** 添加防抖方法装饰器实现 ([e017589](https://github.com/mudssky/jsutils/commit/e017589446d6c39d945478990815bb45b2462a41))
+
 # [1.19.0](https://github.com/mudssky/jsutils/compare/v1.18.0...v1.19.0) (2025-05-21)
 
 ### Features
