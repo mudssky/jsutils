@@ -22,15 +22,6 @@ export type ThisParameterType<Func> = Func extends (
 
 /**
  * 给函数添加参数
- */
-export type AppendArgument<Func extends AnyFunction, Arg> = Func extends (
-  ...args: infer Args
-) => infer ReturnType
-  ? (...args: [...Args, Arg]) => ReturnType
-  : never
-
-/**
- * 给函数添加参数
  * @template Func - 原函数类型
  * @template Arg - 要添加的参数类型
  * @example
@@ -39,6 +30,12 @@ export type AppendArgument<Func extends AnyFunction, Arg> = Func extends (
  * type NewFn = AppendArgument<Fn, boolean> // (a: string, b: boolean) => number
  * ```
  */
+export type AppendArgument<Func extends AnyFunction, Arg> = Func extends (
+  ...args: infer Args
+) => infer ReturnType
+  ? (...args: [...Args, Arg]) => ReturnType
+  : never
+
 export type PromiseFunction<Args extends any[] = any[], R = any> = (
   ...args: Args
 ) => Promise<R>
