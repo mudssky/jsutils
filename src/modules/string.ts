@@ -311,6 +311,31 @@ const removePrefix = (str: Nullable<string>, prefix: string): string => {
   return str.startsWith(prefix) ? str.slice(prefix.length) : str
 }
 
+/**
+ * 根据输入的分支数组生成合并路径
+ * @param branches - 分支名称数组，按照合并顺序排列
+ * @returns 返回合并路径数组，每个路径包含两个分支名称，表示从第一个分支合并到第二个分支
+ * @example
+ * ```ts
+ * console.log(generateMergePaths(['dev-xxx', 'dev', 'test']))
+ * // -> [['dev-xxx','dev'], ['dev','test']]
+ *
+ * console.log(generateMergePaths(['feature', 'dev', 'test', 'prod']))
+ * // -> [['feature','dev'], ['dev','test'], ['test','prod']]
+ * ```
+ * @public
+ */
+function generateMergePaths(branches: string[]): string[][] {
+  const paths: string[][] = []
+  if (branches.length < 2) {
+    return paths
+  }
+  for (let i = 0; i < branches.length - 1; i++) {
+    paths.push([branches[i], branches[i + 1]])
+  }
+  return paths
+}
+
 export {
   camelCase,
   capitalize,
@@ -318,6 +343,7 @@ export {
   fuzzyMatch,
   genAllCasesCombination,
   generateBase62Code,
+  generateMergePaths,
   generateUUID,
   getFileExt,
   parseTemplate,

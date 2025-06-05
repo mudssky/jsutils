@@ -4,6 +4,7 @@ import {
   fuzzyMatch,
   genAllCasesCombination,
   generateBase62Code,
+  generateMergePaths,
   generateUUID,
   getFileExt,
   range,
@@ -329,5 +330,35 @@ describe('trimEnd function', () => {
   })
   test('handles when char to trim is special case in regex', () => {
     assert.equal(_.trimEnd('_- hello_- ', '_- '), '_- hello')
+  })
+})
+
+describe('generateMergePaths function', () => {
+  test('正常情况下生成正确的合并路径', () => {
+    const branches = ['feature', 'dev', 'test', 'prod']
+    const result = generateMergePaths(branches)
+    expect(result).toEqual([
+      ['feature', 'dev'],
+      ['dev', 'test'],
+      ['test', 'prod'],
+    ])
+  })
+
+  test('只有两个分支时生成一个合并路径', () => {
+    const branches = ['dev', 'main']
+    const result = generateMergePaths(branches)
+    expect(result).toEqual([['dev', 'main']])
+  })
+
+  test('只有一个分支时返回空数组', () => {
+    const branches = ['main']
+    const result = generateMergePaths(branches)
+    expect(result).toEqual([])
+  })
+
+  test('空数组输入时返回空数组', () => {
+    const branches: string[] = []
+    const result = generateMergePaths(branches)
+    expect(result).toEqual([])
   })
 })
