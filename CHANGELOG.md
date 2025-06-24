@@ -1,3 +1,9 @@
+# [1.21.0](https://github.com/mudssky/jsutils/compare/v1.20.0...v1.21.0) (2025-06-05)
+
+### Features
+
+- **string:** 添加生成合并路径的函数 ([9387436](https://github.com/mudssky/jsutils/commit/9387436acf4a6eb32571c602df4f2b963829cfec))
+
 # [1.20.0](https://github.com/mudssky/jsutils/compare/v1.19.0...v1.20.0) (2025-05-30)
 
 ### Features
