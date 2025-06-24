@@ -1,3 +1,9 @@
+# [1.22.0](https://github.com/mudssky/jsutils/compare/v1.21.0...v1.22.0) (2025-06-24)
+
+### Features
+
+- **storage:** 为WebLocalStorage添加前缀功能支持 ([a110078](https://github.com/mudssky/jsutils/commit/a110078dbbcdcf7bc93053f8c13d81b962d63212))
+
 # [1.21.0](https://github.com/mudssky/jsutils/compare/v1.20.0...v1.21.0) (2025-06-05)
 
 ### Features
