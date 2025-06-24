@@ -5,17 +5,51 @@ interface StorageInfo {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cacheInfo?: any
 }
+
+interface StorageOptions {
+  /**
+   * 全局key前缀
+   */
+  prefix?: string
+  /**
+   * 是否启用缓存
+   */
+  enableCache?: boolean
+}
 /**
  * Storage抽象类，提供小程序和web平台统一的接口实现。
  */
 abstract class AbstractStorage<T extends string = string> {
+  protected prefix: string
+
+  constructor(options?: StorageOptions) {
+    this.prefix = options?.prefix || ''
+  }
+
+  /**
+   * 获取带前缀的完整key
+   */
+  protected getFullKey(key: T): string {
+    return this.prefix ? `${this.prefix}${key}` : key
+  }
+
+  /**
+   * 从完整key中移除前缀
+   */
+  protected removePrefix(fullKey: string): string {
+    if (this.prefix && fullKey.startsWith(this.prefix)) {
+      return fullKey.slice(this.prefix.length)
+    }
+    return fullKey
+  }
+
   abstract getStorageSync(key: T): unknown
   abstract getStorage(key: T): Promise<unknown>
   abstract setStorageSync(key: T, value: unknown): void
   abstract setStorage(key: T, value: unknown): Promise<void>
   abstract removeStorageSync(key: T): void
   abstract removeStorage(key: T): Promise<void>
-  abstract clearStorage(key: T): Promise<void>
+  abstract clearStorage(): Promise<void>
   /**
    * 获取存储相关信息
    */
@@ -29,32 +63,50 @@ abstract class AbstractStorage<T extends string = string> {
     return JSON.stringify(value)
   }
   parse(value: string) {
-    return JSON.parse(value)
+    try {
+      return JSON.parse(value)
+    } catch {
+      return null
+    }
   }
 }
 /**
  * web端 localStorage的封装
  */
-class WebLocalStorage<T extends string = string> extends AbstractStorage {
+class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private cache = new Map<T, any>()
+  private cache = new Map<string, any>()
   private enableCache: boolean
-  constructor(options?: { enableCache?: boolean }) {
-    super()
+
+  constructor(options?: StorageOptions) {
+    super(options)
     const { enableCache = false } = options || {}
     this.enableCache = enableCache
+  }
+  private isLocalStorageAvailable(): boolean {
+    try {
+      const test = '__localStorage_test__'
+      localStorage.setItem(test, test)
+      localStorage.removeItem(test)
+      return true
+    } catch {
+      return false
+    }
   }
   getStorageInfoSync(): StorageInfo {
     const keys = []
     let currentSize = 0
     const limitSize = 5 << 20 //假设浏览器localStorage的大小为5mb
     for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i) as string
-      // 这个情况不好测试，需要执行getStorageInfoSync函数的同时删掉localStorage的键值
-      /* c8 ignore next 1 */
-      const value = localStorage.getItem(key) ?? ''
-      keys.push(key)
-      currentSize += (key.length + value.length) * 2 //因为JavaScript中字符串使用UTF-16编码，每个字符占用2个字节
+      const fullKey = localStorage.key(i) as string
+      // 只统计带有当前前缀的key
+      if (!this.prefix || fullKey.startsWith(this.prefix)) {
+        // 这个情况不好测试，需要执行getStorageInfoSync函数的同时删掉localStorage的键值
+        /* c8 ignore next 1 */
+        const value = localStorage.getItem(fullKey) ?? ''
+        keys.push(this.removePrefix(fullKey))
+        currentSize += (fullKey.length + value.length) * 2 //因为JavaScript中字符串使用UTF-16编码，每个字符占用2个字节
+      }
     }
     const cacheInfo = this.cache.entries()
 
@@ -65,10 +117,20 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
       cacheInfo,
     }
   }
+  /**
+   * @deprecated 使用 getKeys() 替代
+   */
   Keys() {
+    return this.getKeys()
+  }
+
+  getKeys() {
     const keys = []
     for (let i = 0; i < localStorage.length; i++) {
-      keys.push(localStorage.key(i) as string)
+      const fullKey = localStorage.key(i) as string
+      if (!this.prefix || fullKey.startsWith(this.prefix)) {
+        keys.push(this.removePrefix(fullKey))
+      }
     }
     return keys
   }
@@ -89,10 +151,11 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
     localStorage.clear()
   }
   removeStorageSync(key: T): void {
-    if (this.cache) {
-      this.cache.delete(key)
+    const fullKey = this.getFullKey(key)
+    if (this.enableCache) {
+      this.cache.delete(fullKey)
     }
-    localStorage.removeItem(key)
+    localStorage.removeItem(fullKey)
   }
   async removeStorage(key: T) {
     this.removeStorageSync(key)
@@ -105,16 +168,18 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage {
   }
 
   setStorageSync(key: T, value: unknown): void {
+    const fullKey = this.getFullKey(key)
     if (this.enableCache) {
-      this.cache.set(key, value)
+      this.cache.set(fullKey, value)
     }
-    localStorage.setItem(key, this.stringify(value))
+    localStorage.setItem(fullKey, this.stringify(value))
   }
   getStorageSync(key: T) {
-    if (this.enableCache && this.cache.has(key)) {
-      return this.cache.get(key)
+    const fullKey = this.getFullKey(key)
+    if (this.enableCache && this.cache.has(fullKey)) {
+      return this.cache.get(fullKey)
     }
-    const item = localStorage.getItem(key)
+    const item = localStorage.getItem(fullKey)
     // 如果setItem设置undefined，结果会返回undefined的字符串
     if (item == null || item == 'undefined') return null
     return this.parse(item)

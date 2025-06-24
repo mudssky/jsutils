@@ -1,5 +1,5 @@
-import { WebLocalStorage } from '@mudssky/jsutils'
 import { beforeEach, describe, expect, test } from 'vitest'
+import { WebLocalStorage } from '../src/modules/storage'
 
 class LocalStorageMock {
   store: { [k: string]: string }
@@ -92,17 +92,142 @@ describe('localStorage', () => {
     globalStorage.removeStorage('122')
     globalStorage.setStorageSync('toBeRemove', 'test')
     expect(await globalStorage.getStorage('toBeRemove')).toEqual('test')
-    expect(globalStorage.Keys()).toEqual(['toBeRemove'])
+    expect(globalStorage.getKeys()).toEqual(['toBeRemove'])
     globalStorage.removeStorage('toBeRemove')
     expect(await globalStorage.getStorage('toBeRemove')).toBe(null)
-    expect(globalStorage.Keys()).toEqual([])
+    expect(globalStorage.getKeys()).toEqual([])
   })
 
-  test('缓存功能测试', async () => {
+  test('cache', () => {
     const storage = new WebLocalStorage({ enableCache: true })
     storage.setStorageSync('cached', 'value')
     expect(storage.getStorageSync('cached')).toBe('value')
     localStorage.removeItem('cached') // 模拟外部修改
     expect(storage.getStorageSync('cached')).toBe('value') // 预期从缓存获取
+  })
+
+  test('deprecated Keys method', () => {
+    globalStorage.setStorageSync('test1', 'value1')
+    globalStorage.setStorageSync('test2', 'value2')
+    expect(globalStorage.Keys()).toEqual(['test1', 'test2'])
+  })
+
+  test('should handle JSON parse errors gracefully', () => {
+    // 直接在localStorage中设置无效的JSON
+    localStorage.setItem('invalid_json', 'invalid json string')
+
+    // 应该返回null而不是抛出异常
+    expect(globalStorage.getStorageSync('invalid_json')).toBe(null)
+  })
+
+  test('should handle undefined and null values correctly', () => {
+    globalStorage.setStorageSync('undefined_test', undefined)
+    globalStorage.setStorageSync('null_test', null)
+
+    expect(globalStorage.getStorageSync('undefined_test')).toBe(null)
+    expect(globalStorage.getStorageSync('null_test')).toBe(null)
+  })
+})
+
+describe('localStorage with prefix', () => {
+  let prefixStorage: WebLocalStorage<string>
+
+  beforeEach(() => {
+    localStorage.clear()
+    prefixStorage = new WebLocalStorage({ prefix: 'app_' })
+  })
+
+  test('should add prefix to keys', () => {
+    prefixStorage.setStorageSync('user', 'john')
+    prefixStorage.setStorageSync('token', 'abc123')
+
+    // 检查实际存储的key带有前缀
+    expect(localStorage.getItem('app_user')).toBe('"john"')
+    expect(localStorage.getItem('app_token')).toBe('"abc123"')
+
+    // 检查通过storage获取时不需要前缀
+    expect(prefixStorage.getStorageSync('user')).toBe('john')
+    expect(prefixStorage.getStorageSync('token')).toBe('abc123')
+  })
+
+  test('should filter keys by prefix in getKeys', () => {
+    // 添加带前缀的数据
+    prefixStorage.setStorageSync('user', 'john')
+    prefixStorage.setStorageSync('token', 'abc123')
+
+    // 添加不带前缀的数据（模拟其他应用的数据）
+    localStorage.setItem('other_key', 'other_value')
+    localStorage.setItem('global_setting', 'setting_value')
+
+    // getKeys应该只返回当前前缀的key（不包含前缀）
+    const keys = prefixStorage.getKeys()
+    expect(keys).toEqual(['user', 'token'])
+    expect(keys).not.toContain('other_key')
+    expect(keys).not.toContain('global_setting')
+  })
+
+  test('should filter keys by prefix in getStorageInfo', async () => {
+    // 添加带前缀的数据
+    prefixStorage.setStorageSync('user', 'john')
+    prefixStorage.setStorageSync('config', { theme: 'dark' })
+
+    // 添加不带前缀的数据
+    localStorage.setItem('other_data', 'value')
+
+    const info = await prefixStorage.getStorageInfo()
+    expect(info.keys).toEqual(['user', 'config'])
+    expect(info.keys).not.toContain('other_data')
+  })
+
+  test('should remove items with prefix', () => {
+    prefixStorage.setStorageSync('temp', 'temporary')
+    expect(prefixStorage.getStorageSync('temp')).toBe('temporary')
+
+    prefixStorage.removeStorageSync('temp')
+    expect(prefixStorage.getStorageSync('temp')).toBe(null)
+    expect(localStorage.getItem('app_temp')).toBe(null)
+  })
+
+  test('should work with cache and prefix', () => {
+    const cachedPrefixStorage = new WebLocalStorage({
+      prefix: 'cache_',
+      enableCache: true,
+    })
+
+    cachedPrefixStorage.setStorageSync('data', 'cached_value')
+    expect(cachedPrefixStorage.getStorageSync('data')).toBe('cached_value')
+
+    // 直接删除localStorage中的数据，但缓存中应该还有
+    localStorage.removeItem('cache_data')
+    expect(cachedPrefixStorage.getStorageSync('data')).toBe('cached_value')
+  })
+
+  test('should handle empty prefix', () => {
+    const noPrefixStorage = new WebLocalStorage({ prefix: '' })
+    noPrefixStorage.setStorageSync('test', 'value')
+
+    expect(localStorage.getItem('test')).toBe('"value"')
+    expect(noPrefixStorage.getStorageSync('test')).toBe('value')
+  })
+
+  test('should handle undefined prefix', () => {
+    const undefinedPrefixStorage = new WebLocalStorage({})
+    undefinedPrefixStorage.setStorageSync('test', 'value')
+
+    expect(localStorage.getItem('test')).toBe('"value"')
+    expect(undefinedPrefixStorage.getStorageSync('test')).toBe('value')
+  })
+
+  test('should calculate correct size with prefix', async () => {
+    prefixStorage.setStorageSync('key1', 'value1')
+    prefixStorage.setStorageSync('key2', 'value2')
+
+    // 添加其他前缀的数据
+    localStorage.setItem('other_key', 'other_value')
+
+    const info = await prefixStorage.getStorageInfo()
+    // 应该只计算带有当前前缀的数据大小
+    expect(info.currentSize).toBeGreaterThan(0)
+    expect(info.keys).toEqual(['key1', 'key2'])
   })
 })
