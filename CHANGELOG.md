@@ -1,3 +1,9 @@
+# [1.23.0](https://github.com/mudssky/jsutils/compare/v1.22.0...v1.23.0) (2025-06-25)
+
+### Features
+
+- **storage:** 新增 WebSessionStorage 类实现会话存储功能 ([b6f1ec2](https://github.com/mudssky/jsutils/commit/b6f1ec20dc9d42e906be146967176b8319843875))
+
 # [1.22.0](https://github.com/mudssky/jsutils/compare/v1.21.0...v1.22.0) (2025-06-24)
 
 ### Features
