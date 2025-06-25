@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import { WebLocalStorage } from '../src/modules/storage'
+import { WebLocalStorage, WebSessionStorage } from '../src/modules/storage'
 
 class LocalStorageMock {
   store: { [k: string]: string }
@@ -230,4 +230,185 @@ describe('localStorage with prefix', () => {
     expect(info.currentSize).toBeGreaterThan(0)
     expect(info.keys).toEqual(['key1', 'key2'])
   })
+})
+
+class SessionStorageMock {
+  store: { [k: string]: string }
+  length: number
+
+  constructor() {
+    this.store = {}
+    this.length = 0
+  }
+
+  key = (idx: number): string => {
+    const keys = Object.keys(this.store)
+    return keys[idx]
+  }
+
+  clear() {
+    this.store = {}
+    this.syncLength()
+  }
+
+  syncLength() {
+    this.length = Object.keys(this.store).length
+  }
+
+  getItem(key: string) {
+    return this.store[key] || null
+  }
+
+  setItem(key: string, value: string) {
+    this.store[key] = String(value)
+    this.syncLength()
+  }
+
+  removeItem(key: string) {
+    delete this.store[key]
+    this.syncLength()
+  }
+}
+
+const globalSessionStorage = new WebSessionStorage({
+  enableCache: true,
+})
+const prefixSessionStorage = new WebSessionStorage({
+  prefix: 'test_',
+  enableCache: true,
+})
+
+global.sessionStorage = new SessionStorageMock()
+
+describe('sessionStorage', () => {
+  beforeEach(() => {
+    globalSessionStorage.clearStorageSync()
+    prefixSessionStorage.clearStorageSync()
+  })
+
+  test('should return null when storage not exist', () => {
+    expect(globalSessionStorage.getStorageSync('un_exist')).toBe(null)
+  })
+
+  test('should support basic type', async () => {
+    const testCases = [
+      ['string', 'test'],
+      ['number', 123456],
+      ['undefined', null], //json中没有undefined
+      ['null', null],
+      ['boolean', true],
+      ['object', { a: 1 }],
+    ] as const
+    for (const [key, value] of testCases) {
+      globalSessionStorage.setStorageSync(key, value)
+      expect(globalSessionStorage.getStorageSync(key)).toEqual(value)
+    }
+    await globalSessionStorage.clearStorage()
+    expect(await globalSessionStorage.getStorage('string')).toBe(null)
+  })
+
+  test('getStorageInfo', async () => {
+    let res
+    res = await globalSessionStorage.getStorageInfo()
+    expect(res.keys).toEqual([])
+    expect(res.limitSize).toEqual(5 << 20)
+    expect(res.currentSize).toEqual(0)
+
+    await globalSessionStorage.setStorage('test', '1234')
+    await globalSessionStorage.setStorage('test2', null)
+    res = await globalSessionStorage.getStorageInfo()
+
+    expect(res.keys).toEqual(['test', 'test2'])
+    expect(res.limitSize).toEqual(5 << 20)
+    expect(res.currentSize).toEqual(38)
+  })
+
+  test('removeStorage', async () => {
+    globalSessionStorage.removeStorage('122')
+    globalSessionStorage.setStorageSync('toBeRemove', 'test')
+    expect(await globalSessionStorage.getStorage('toBeRemove')).toEqual('test')
+    expect(globalSessionStorage.getKeys()).toEqual(['toBeRemove'])
+    globalSessionStorage.removeStorage('toBeRemove')
+    expect(await globalSessionStorage.getStorage('toBeRemove')).toBe(null)
+    expect(globalSessionStorage.getKeys()).toEqual([])
+  })
+
+  test('should work with prefix', () => {
+    prefixSessionStorage.setStorageSync('data', 'test_value')
+    expect(sessionStorage.getItem('test_data')).toBe('"test_value"')
+    expect(prefixSessionStorage.getStorageSync('data')).toBe('test_value')
+  })
+
+  test('should handle cache correctly', () => {
+    const cachedSessionStorage = new WebSessionStorage({
+      prefix: 'cache_',
+      enableCache: true,
+    })
+
+    cachedSessionStorage.setStorageSync('data', 'cached_value')
+    expect(cachedSessionStorage.getStorageSync('data')).toBe('cached_value')
+
+    // 直接从sessionStorage删除，但缓存中还有
+    sessionStorage.removeItem('cache_data')
+    expect(cachedSessionStorage.getStorageSync('data')).toBe('cached_value')
+  })
+
+  test('should sync to localStorage', () => {
+    globalSessionStorage.setStorageSync('sync_test', 'sync_value')
+    globalSessionStorage.syncToLocalStorage(['sync_test'])
+    expect(localStorage.getItem('sync_test')).toBe('"sync_value"')
+  })
+
+  test('should restore from localStorage', () => {
+    localStorage.setItem('restore_test', '"restore_value"')
+    globalSessionStorage.restoreFromLocalStorage(['restore_test'])
+    expect(globalSessionStorage.getStorageSync('restore_test')).toBe(
+      'restore_value',
+    )
+  })
+
+  test('should create and restore snapshot', () => {
+    const state = { user: 'test', page: 1 }
+    globalSessionStorage.createSnapshot('test_snapshot', state)
+
+    const restored = globalSessionStorage.restoreSnapshot('test_snapshot')
+    expect(restored).toMatchObject(state)
+    expect(restored).toHaveProperty('timestamp')
+  })
+
+  test('should clean expired snapshots', () => {
+    // 创建一个过期的快照
+    const oldTimestamp = Date.now() - 25 * 60 * 60 * 1000 // 25小时前
+    globalSessionStorage.setStorageSync('snapshot_old', {
+      data: 'old',
+      timestamp: oldTimestamp,
+    })
+
+    // 创建一个未过期的快照
+    globalSessionStorage.createSnapshot('new', { data: 'new' })
+
+    globalSessionStorage.cleanExpiredSnapshots(24 * 60 * 60 * 1000) // 24小时
+
+    expect(globalSessionStorage.getStorageSync('snapshot_old')).toBe(null)
+    expect(globalSessionStorage.getStorageSync('snapshot_new')).not.toBe(null)
+  })
+
+  // test('should handle quota exceeded', () => {
+  //   const mockSessionStorage = {
+  //     setItem: vi.fn().mockImplementation(() => {
+  //       throw new Error('QuotaExceededError')
+  //     }),
+  //     getItem: vi.fn().mockReturnValue(null),
+  //     removeItem: vi.fn(),
+  //     clear: vi.fn(),
+  //     length: 0,
+  //     key: vi.fn()
+  //   }
+
+  //   global.sessionStorage = mockSessionStorage as any
+
+  //   expect(() => {
+  //     globalSessionStorage.setStorageSync('test', 'value')
+  //   }).toThrow()
+  // })
 })

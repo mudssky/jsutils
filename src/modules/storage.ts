@@ -1,3 +1,5 @@
+import { isBrowser, isDocumentAvailable } from './env'
+
 interface StorageInfo {
   keys: string[]
   currentSize: number
@@ -59,6 +61,11 @@ abstract class AbstractStorage<T extends string = string> {
    * 获取存储相关信息异步
    */
   abstract getStorageInfo(): Promise<StorageInfo>
+
+  /**
+   * 获取所有存储的key
+   */
+  abstract getKeys(): T[]
   stringify(value: unknown) {
     return JSON.stringify(value)
   }
@@ -83,16 +90,7 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
     const { enableCache = false } = options || {}
     this.enableCache = enableCache
   }
-  private isLocalStorageAvailable(): boolean {
-    try {
-      const test = '__localStorage_test__'
-      localStorage.setItem(test, test)
-      localStorage.removeItem(test)
-      return true
-    } catch {
-      return false
-    }
-  }
+
   getStorageInfoSync(): StorageInfo {
     const keys = []
     let currentSize = 0
@@ -124,12 +122,12 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
     return this.getKeys()
   }
 
-  getKeys() {
-    const keys = []
+  getKeys(): T[] {
+    const keys: T[] = []
     for (let i = 0; i < localStorage.length; i++) {
       const fullKey = localStorage.key(i) as string
       if (!this.prefix || fullKey.startsWith(this.prefix)) {
-        keys.push(this.removePrefix(fullKey))
+        keys.push(this.removePrefix(fullKey) as T)
       }
     }
     return keys
@@ -247,6 +245,12 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
   setStorageSync(key: T, data: unknown): void {
     this.Taro.setStorageSync(key, data)
   }
+
+  getKeys(): T[] {
+    // Taro平台通常不提供直接获取所有key的方法
+    // 这里返回空数组，具体实现需要根据实际需求调整
+    return []
+  }
 }
 
 /**
@@ -303,6 +307,299 @@ class UniStorage<T extends string = string> extends AbstractStorage {
   setStorageSync(key: T, data: unknown): void {
     this.Uni.setStorageSync(key, data)
   }
+
+  getKeys(): T[] {
+    // UniApp平台通常不提供直接获取所有key的方法
+    // 这里返回空数组，具体实现需要根据实际需求调整
+    return []
+  }
 }
 
-export { AbstractStorage, TaroStorage, UniStorage, WebLocalStorage }
+/**
+ * web端 sessionStorage的封装
+ */
+class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private cache = new Map<string, any>()
+  private enableCache: boolean
+  private cleanupTimer?: NodeJS.Timeout
+
+  constructor(options?: StorageOptions) {
+    super(options)
+    const { enableCache = true } = options || {} // sessionStorage默认启用缓存
+    this.enableCache = enableCache
+    this.setupSessionListeners()
+  }
+
+  private setupSessionListeners() {
+    // 检查是否在浏览器环境中
+    if (!isBrowser()) {
+      return
+    }
+
+    // 监听页面卸载，清理缓存
+    window.addEventListener('beforeunload', () => {
+      if (this.enableCache) {
+        this.cache.clear()
+      }
+      if (this.cleanupTimer) {
+        clearInterval(this.cleanupTimer)
+      }
+    })
+
+    // 监听存储变化（同标签页内的变化）
+    window.addEventListener('storage', (e) => {
+      if (e.storageArea === sessionStorage && this.enableCache) {
+        const key = e.key
+        if (key && (!this.prefix || key.startsWith(this.prefix))) {
+          if (e.newValue === null) {
+            this.cache.delete(key)
+          } else {
+            this.cache.set(key, this.parse(e.newValue))
+          }
+        }
+      }
+    })
+  }
+
+  getStorageInfoSync(): StorageInfo {
+    const keys = []
+    let currentSize = 0
+    const limitSize = 5 << 20 // 假设浏览器sessionStorage的大小为5mb
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const fullKey = sessionStorage.key(i) as string
+      // 只统计带有当前前缀的key
+      if (!this.prefix || fullKey.startsWith(this.prefix)) {
+        /* c8 ignore next 1 */
+        const value = sessionStorage.getItem(fullKey) ?? ''
+        keys.push(this.removePrefix(fullKey))
+        currentSize += (fullKey.length + value.length) * 2 // 因为JavaScript中字符串使用UTF-16编码，每个字符占用2个字节
+      }
+    }
+    const cacheInfo = this.cache.entries()
+
+    return {
+      keys,
+      currentSize,
+      limitSize,
+      cacheInfo,
+    }
+  }
+
+  getKeys(): T[] {
+    const keys: T[] = []
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const fullKey = sessionStorage.key(i) as string
+      if (!this.prefix || fullKey.startsWith(this.prefix)) {
+        keys.push(this.removePrefix(fullKey) as T)
+      }
+    }
+    return keys
+  }
+
+  async getStorageInfo() {
+    return this.getStorageInfoSync()
+  }
+
+  async clearStorage() {
+    this.clearStorageSync()
+  }
+
+  /**
+   * 清理sessionStorage，并清理缓存
+   */
+  clearStorageSync() {
+    if (this.enableCache) {
+      this.cache.clear()
+    }
+    sessionStorage.clear()
+  }
+
+  removeStorageSync(key: T): void {
+    const fullKey = this.getFullKey(key)
+    if (this.enableCache) {
+      this.cache.delete(fullKey)
+    }
+    sessionStorage.removeItem(fullKey)
+  }
+
+  async removeStorage(key: T) {
+    this.removeStorageSync(key)
+  }
+
+  async setStorage(key: T, value: unknown) {
+    this.setStorageSync(key, value)
+  }
+
+  async getStorage(key: T) {
+    return this.getStorageSync(key)
+  }
+
+  setStorageSync(key: T, value: unknown): void {
+    const fullKey = this.getFullKey(key)
+    if (this.enableCache) {
+      this.cache.set(fullKey, value)
+    }
+    try {
+      sessionStorage.setItem(fullKey, this.stringify(value))
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+      // 处理存储空间不足的情况
+      this.handleQuotaExceeded(key, value)
+    }
+  }
+
+  getStorageSync(key: T) {
+    const fullKey = this.getFullKey(key)
+    if (this.enableCache && this.cache.has(fullKey)) {
+      return this.cache.get(fullKey)
+    }
+    const item = sessionStorage.getItem(fullKey)
+    // 如果setItem设置undefined，结果会返回undefined的字符串
+    if (item == null || item == 'undefined') return null
+    const parsed = this.parse(item)
+    // 更新缓存
+    if (this.enableCache && parsed !== null) {
+      this.cache.set(fullKey, parsed)
+    }
+    return parsed
+  }
+
+  /**
+   * 处理存储空间不足的情况
+   */
+  private handleQuotaExceeded(key: T, value: unknown) {
+    try {
+      // 清理缓存，释放一些空间
+      if (this.enableCache) {
+        this.cache.clear()
+      }
+      // 重试存储
+      sessionStorage.setItem(this.getFullKey(key), this.stringify(value))
+    } catch (error) {
+      console.warn(
+        'SessionStorage quota exceeded, unable to store data:',
+        error,
+      )
+      throw error
+    }
+  }
+
+  /**
+   * 与 localStorage 同步数据
+   */
+  syncToLocalStorage(keys?: T[]) {
+    const keysToSync = keys || this.getKeys()
+    keysToSync.forEach((key) => {
+      const value = this.getStorageSync(key)
+      if (value !== null) {
+        localStorage.setItem(this.getFullKey(key), this.stringify(value))
+      }
+    })
+  }
+
+  /**
+   * 从 localStorage 恢复数据
+   */
+  restoreFromLocalStorage(keys?: T[]) {
+    if (!keys) {
+      // 获取localStorage中所有匹配前缀的key
+      const allKeys = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const fullKey = localStorage.key(i) as string
+        if (!this.prefix || fullKey.startsWith(this.prefix)) {
+          allKeys.push(this.removePrefix(fullKey) as T)
+        }
+      }
+      keys = allKeys
+    }
+
+    keys.forEach((key) => {
+      const value = localStorage.getItem(this.getFullKey(key))
+      if (value) {
+        this.setStorageSync(key, this.parse(value))
+      }
+    })
+  }
+
+  /**
+   * 表单数据自动保存
+   */
+  autoSaveForm(formId: string, interval: number = 5000) {
+    // 检查是否在浏览器环境中
+    if (!isBrowser() || !isDocumentAvailable()) {
+      console.warn('autoSaveForm is only available in browser environment')
+      return () => {}
+    }
+
+    const form = document.getElementById(formId) as HTMLFormElement
+    if (!form) {
+      console.warn(`Form with id '${formId}' not found`)
+      return () => {}
+    }
+
+    const saveFormData = () => {
+      const formData = new FormData(form)
+      const data = Object.fromEntries(formData.entries())
+      this.setStorageSync(`form_${formId}` as T, data)
+    }
+
+    // 定时保存
+    const timer = setInterval(saveFormData, interval)
+
+    // 页面卸载时保存
+    const handleBeforeUnload = () => saveFormData()
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      clearInterval(timer)
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }
+
+  /**
+   * 页面状态快照
+   */
+  createSnapshot(snapshotId: string, state: Record<string, unknown>) {
+    this.setStorageSync(`snapshot_${snapshotId}` as T, {
+      ...state,
+      timestamp: Date.now(),
+    })
+  }
+
+  /**
+   * 恢复页面状态快照
+   */
+  restoreSnapshot(snapshotId: string) {
+    return this.getStorageSync(`snapshot_${snapshotId}` as T)
+  }
+
+  /**
+   * 清理过期的快照数据
+   */
+  cleanExpiredSnapshots(maxAge: number = 24 * 60 * 60 * 1000) {
+    const keys = this.getKeys()
+    const now = Date.now()
+
+    keys.forEach((key) => {
+      if (key.startsWith('snapshot_')) {
+        const data = this.getStorageSync(key)
+        if (data && typeof data === 'object' && 'timestamp' in data) {
+          const timestamp = (data as { timestamp: number }).timestamp
+          if (now - timestamp > maxAge) {
+            this.removeStorageSync(key)
+          }
+        }
+      }
+    })
+  }
+}
+
+export {
+  AbstractStorage,
+  TaroStorage,
+  UniStorage,
+  WebLocalStorage,
+  WebSessionStorage,
+}
