@@ -62,10 +62,6 @@ abstract class AbstractStorage<T extends string = string> {
    */
   abstract getStorageInfo(): Promise<StorageInfo>
 
-  /**
-   * 获取所有存储的key
-   */
-  abstract getKeys(): T[]
   stringify(value: unknown) {
     return JSON.stringify(value)
   }
@@ -245,12 +241,6 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
   setStorageSync(key: T, data: unknown): void {
     this.Taro.setStorageSync(key, data)
   }
-
-  getKeys(): T[] {
-    // Taro平台通常不提供直接获取所有key的方法
-    // 这里返回空数组，具体实现需要根据实际需求调整
-    return []
-  }
 }
 
 /**
@@ -306,12 +296,6 @@ class UniStorage<T extends string = string> extends AbstractStorage {
   }
   setStorageSync(key: T, data: unknown): void {
     this.Uni.setStorageSync(key, data)
-  }
-
-  getKeys(): T[] {
-    // UniApp平台通常不提供直接获取所有key的方法
-    // 这里返回空数组，具体实现需要根据实际需求调整
-    return []
   }
 }
 

@@ -92,10 +92,8 @@ describe('localStorage', () => {
     globalStorage.removeStorage('122')
     globalStorage.setStorageSync('toBeRemove', 'test')
     expect(await globalStorage.getStorage('toBeRemove')).toEqual('test')
-    expect(globalStorage.getKeys()).toEqual(['toBeRemove'])
     globalStorage.removeStorage('toBeRemove')
     expect(await globalStorage.getStorage('toBeRemove')).toBe(null)
-    expect(globalStorage.getKeys()).toEqual([])
   })
 
   test('cache', () => {
@@ -104,12 +102,6 @@ describe('localStorage', () => {
     expect(storage.getStorageSync('cached')).toBe('value')
     localStorage.removeItem('cached') // 模拟外部修改
     expect(storage.getStorageSync('cached')).toBe('value') // 预期从缓存获取
-  })
-
-  test('deprecated Keys method', () => {
-    globalStorage.setStorageSync('test1', 'value1')
-    globalStorage.setStorageSync('test2', 'value2')
-    expect(globalStorage.Keys()).toEqual(['test1', 'test2'])
   })
 
   test('should handle JSON parse errors gracefully', () => {
@@ -148,22 +140,6 @@ describe('localStorage with prefix', () => {
     // 检查通过storage获取时不需要前缀
     expect(prefixStorage.getStorageSync('user')).toBe('john')
     expect(prefixStorage.getStorageSync('token')).toBe('abc123')
-  })
-
-  test('should filter keys by prefix in getKeys', () => {
-    // 添加带前缀的数据
-    prefixStorage.setStorageSync('user', 'john')
-    prefixStorage.setStorageSync('token', 'abc123')
-
-    // 添加不带前缀的数据（模拟其他应用的数据）
-    localStorage.setItem('other_key', 'other_value')
-    localStorage.setItem('global_setting', 'setting_value')
-
-    // getKeys应该只返回当前前缀的key（不包含前缀）
-    const keys = prefixStorage.getKeys()
-    expect(keys).toEqual(['user', 'token'])
-    expect(keys).not.toContain('other_key')
-    expect(keys).not.toContain('global_setting')
   })
 
   test('should filter keys by prefix in getStorageInfo', async () => {
@@ -327,10 +303,8 @@ describe('sessionStorage', () => {
     globalSessionStorage.removeStorage('122')
     globalSessionStorage.setStorageSync('toBeRemove', 'test')
     expect(await globalSessionStorage.getStorage('toBeRemove')).toEqual('test')
-    expect(globalSessionStorage.getKeys()).toEqual(['toBeRemove'])
     globalSessionStorage.removeStorage('toBeRemove')
     expect(await globalSessionStorage.getStorage('toBeRemove')).toBe(null)
-    expect(globalSessionStorage.getKeys()).toEqual([])
   })
 
   test('should work with prefix', () => {
