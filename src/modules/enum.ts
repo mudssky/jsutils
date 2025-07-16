@@ -567,6 +567,69 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
       return this.getLabelByValue(value)
     })
   }
+
+  // ===================================================================
+  //           方法覆盖：阻止不安全的数组修改器方法
+  // ===================================================================
+
+  private throwImmutableError(methodName: string): never {
+    throw new Error(
+      `EnumArray Error: Cannot call '.${methodName}()' on an immutable EnumArray instance. ` +
+        `EnumArray is designed to be a read-only constant. ` +
+        `If you need a new enum with modified data, please create a new instance with createEnum().`,
+    )
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  push(...items: any[]): number {
+    this.throwImmutableError('push')
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  pop(): EnumArrayObj | undefined {
+    this.throwImmutableError('pop')
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  splice(start: number, deleteCount?: number, ...items: any[]): EnumArrayObj[] {
+    this.throwImmutableError('splice')
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  shift(): EnumArrayObj | undefined {
+    this.throwImmutableError('shift')
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  unshift(...items: any[]): number {
+    this.throwImmutableError('unshift')
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+  sort(compareFn?: (a: any, b: any) => number): this {
+    this.throwImmutableError('sort')
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  reverse(): this {
+    this.throwImmutableError('reverse')
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  fill(value: any, start?: number, end?: number): this {
+    this.throwImmutableError('fill')
+  }
+
+  /** @deprecated EnumArray is immutable. This method will throw an error. */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  copyWithin(target: number, start: number, end?: number): this {
+    this.throwImmutableError('copyWithin')
+  }
 }
 
 /**

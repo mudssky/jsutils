@@ -498,4 +498,102 @@ describe('EnumArray', () => {
     expect(duplicateEnum[0].label).toBe('First')
     expect(duplicateEnum[1].label).toBe('Second')
   })
+
+  describe('immutability protection', () => {
+    const testEnum = createEnum([
+      { label: 'A', value: 1 },
+      { label: 'B', value: 2 },
+    ] as const)
+
+    test('should throw error when calling push()', () => {
+      expect(() => {
+        testEnum.push({ label: 'C', value: 3 })
+      }).toThrow(
+        "EnumArray Error: Cannot call '.push()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should throw error when calling pop()', () => {
+      expect(() => {
+        testEnum.pop()
+      }).toThrow(
+        "EnumArray Error: Cannot call '.pop()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should throw error when calling splice()', () => {
+      expect(() => {
+        testEnum.splice(0, 1)
+      }).toThrow(
+        "EnumArray Error: Cannot call '.splice()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should throw error when calling shift()', () => {
+      expect(() => {
+        testEnum.shift()
+      }).toThrow(
+        "EnumArray Error: Cannot call '.shift()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should throw error when calling unshift()', () => {
+      expect(() => {
+        testEnum.unshift({ label: 'Z', value: 0 })
+      }).toThrow(
+        "EnumArray Error: Cannot call '.unshift()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should throw error when calling sort()', () => {
+      expect(() => {
+        testEnum.sort()
+      }).toThrow(
+        "EnumArray Error: Cannot call '.sort()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should throw error when calling reverse()', () => {
+      expect(() => {
+        testEnum.reverse()
+      }).toThrow(
+        "EnumArray Error: Cannot call '.reverse()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should throw error when calling fill()', () => {
+      expect(() => {
+        testEnum.fill({ label: 'X', value: 99 })
+      }).toThrow(
+        "EnumArray Error: Cannot call '.fill()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should throw error when calling copyWithin()', () => {
+      expect(() => {
+        testEnum.copyWithin(0, 1)
+      }).toThrow(
+        "EnumArray Error: Cannot call '.copyWithin()' on an immutable EnumArray instance",
+      )
+    })
+
+    test('should provide helpful error message with solution', () => {
+      expect(() => {
+        testEnum.push({ label: 'C', value: 3 })
+      }).toThrow(
+        'If you need a new enum with modified data, please create a new instance with createEnum()',
+      )
+    })
+
+    test('should still allow safe read-only operations', () => {
+      // 这些操作应该正常工作
+      expect(testEnum.length).toBe(2)
+      expect(testEnum[0].label).toBe('A')
+      expect(testEnum.getLabelByValue(1)).toBe('A')
+      expect([...testEnum.map((item) => item.label)]).toEqual(['A', 'B'])
+      expect(
+        testEnum.filter((item) => (item.value as number) > 1),
+      ).toHaveLength(1)
+    })
+  })
 })
