@@ -225,6 +225,8 @@ describe('EnumArray', () => {
     expect(sexEnum.isEnumValue('1')).toBe(false)
     expect(sexEnum.isEnumValue(null)).toBe(false)
     expect(sexEnum.isEnumValue(undefined)).toBe(false)
+    expect(sexEnum.isEnumValue({})).toBe(false)
+    expect(sexEnum.isEnumValue([])).toBe(false)
 
     // 测试类型收窄功能
     const unknownValue: unknown = 1
@@ -238,6 +240,37 @@ describe('EnumArray', () => {
     const mixedValues = [1, 2, 3, '男', null, undefined, {}]
     const validValues = mixedValues.filter((v) => sexEnum.isEnumValue(v))
     expect(validValues).toEqual([1, 2])
+
+    // 测试数字边界情况
+    expect(sexEnum.isEnumValue(0)).toBe(false)
+    expect(sexEnum.isEnumValue(-1)).toBe(false)
+    expect(sexEnum.isEnumValue(NaN)).toBe(false)
+    expect(sexEnum.isEnumValue(Infinity)).toBe(false)
+    expect(sexEnum.isEnumValue(-Infinity)).toBe(false)
+
+    // 测试字符串类型的枚举值
+    const stringEnum = createEnum([
+      { label: 'Active', value: 'active' },
+      { label: 'Inactive', value: 'inactive' },
+    ] as const)
+
+    expect(stringEnum.isEnumValue('active')).toBe(true)
+    expect(stringEnum.isEnumValue('inactive')).toBe(true)
+    expect(stringEnum.isEnumValue('pending')).toBe(false)
+    expect(stringEnum.isEnumValue('')).toBe(false)
+
+    // 测试混合类型的枚举值
+    const mixedEnum = createEnum([
+      { label: 'Number', value: 1 },
+      { label: 'String', value: 'str' },
+      { label: 'Zero', value: 0 },
+    ] as const)
+
+    expect(mixedEnum.isEnumValue(1)).toBe(true)
+    expect(mixedEnum.isEnumValue('str')).toBe(true)
+    expect(mixedEnum.isEnumValue(0)).toBe(true)
+    expect(mixedEnum.isEnumValue(2)).toBe(false)
+    expect(mixedEnum.isEnumValue('other')).toBe(false)
   })
 
   test('isEnumLabel type guard', () => {
@@ -268,6 +301,47 @@ describe('EnumArray', () => {
     const mixedLabels = ['男', '女', '其他', 1, null, undefined, {}]
     const validLabels = mixedLabels.filter((l) => sexEnum.isEnumLabel(l))
     expect(validLabels).toEqual(['男', '女'])
+
+    // 测试特殊字符串情况
+    expect(sexEnum.isEnumLabel(' 男 ')).toBe(false) // 包含空格
+    expect(sexEnum.isEnumLabel('男\n')).toBe(false) // 包含换行符
+    expect(sexEnum.isEnumLabel('MAN')).toBe(false) // 大小写敏感
+
+    // 测试包含特殊字符的标签
+    const specialEnum = createEnum([
+      { label: 'test-label', value: 1 },
+      { label: 'test_label', value: 2 },
+      { label: 'test.label', value: 3 },
+      { label: 'test label', value: 4 },
+      { label: '测试-标签', value: 5 },
+    ] as const)
+
+    expect(specialEnum.isEnumLabel('test-label')).toBe(true)
+    expect(specialEnum.isEnumLabel('test_label')).toBe(true)
+    expect(specialEnum.isEnumLabel('test.label')).toBe(true)
+    expect(specialEnum.isEnumLabel('test label')).toBe(true)
+    expect(specialEnum.isEnumLabel('测试-标签')).toBe(true)
+
+    expect(specialEnum.isEnumLabel('test')).toBe(false)
+    expect(specialEnum.isEnumLabel('label')).toBe(false)
+
+    // 测试空字符串和特殊值
+    const edgeCaseEnum = createEnum([
+      { label: '', value: 1 }, // 空字符串标签
+      { label: '0', value: 2 }, // 字符串数字
+      { label: 'null', value: 3 }, // 字符串null
+      { label: 'undefined', value: 4 }, // 字符串undefined
+    ] as const)
+
+    expect(edgeCaseEnum.isEnumLabel('')).toBe(true)
+    expect(edgeCaseEnum.isEnumLabel('0')).toBe(true)
+    expect(edgeCaseEnum.isEnumLabel('null')).toBe(true)
+    expect(edgeCaseEnum.isEnumLabel('undefined')).toBe(true)
+
+    // 实际的null和undefined应该返回false
+    expect(edgeCaseEnum.isEnumLabel(null)).toBe(false)
+    expect(edgeCaseEnum.isEnumLabel(undefined)).toBe(false)
+    expect(edgeCaseEnum.isEnumLabel(0)).toBe(false)
   })
 
   test('deprecated methods still work', () => {
@@ -344,5 +418,84 @@ describe('EnumArray', () => {
     expect(sexEnum[0]).toEqual(sexList[0])
     expect(sexEnum[1]).toEqual(sexList[1])
     expect(sexEnum.length).toBe(2)
+
+    // 测试更多数组方法
+    const mapped = sexEnum.map((item) => item.label)
+    // map方法返回的是EnumArray，需要转换为普通数组进行比较
+    expect([...mapped]).toEqual(['男', '女'])
+    expect(mapped.length).toBe(2)
+
+    const filtered = sexEnum.filter((item) => (item.value as number) > 1)
+    expect(filtered).toHaveLength(1)
+    expect(filtered[0]).toEqual(sexList[1])
+
+    // 测试 reduce
+    const totalValue = sexEnum.reduce(
+      (sum, item) => sum + (item.value as number),
+      0,
+    )
+    expect(totalValue).toBe(3)
+
+    // 测试 some 和 every
+    expect(sexEnum.some((item) => (item.value as number) > 1)).toBe(true)
+    expect(sexEnum.every((item) => typeof item.value === 'number')).toBe(true)
+
+    // 测试 includes (注意：这里测试的是对象引用)
+    expect(sexEnum.includes(sexEnum[0])).toBe(true)
+
+    // 测试 indexOf 和 lastIndexOf
+    expect(sexEnum.indexOf(sexEnum[1])).toBe(1)
+    expect(sexEnum.lastIndexOf(sexEnum[0])).toBe(0)
+  })
+
+  test('performance and large dataset', () => {
+    // 创建大数据集
+    const largeDataSet = Array.from({ length: 1000 }, (_, i) => ({
+      label: `Label${i}`,
+      value: i,
+      category: `Category${i % 10}`,
+    }))
+
+    const largeEnum = createEnum(largeDataSet)
+
+    // 测试查找性能
+    const startTime = performance.now()
+
+    // 执行多次查找操作
+    for (let i = 0; i < 100; i++) {
+      const randomValue = Math.floor(Math.random() * 1000)
+      largeEnum.getLabelByValue(randomValue)
+      largeEnum.getItemByValue(randomValue)
+      largeEnum.isEnumValue(randomValue)
+    }
+
+    const endTime = performance.now()
+    const duration = endTime - startTime
+
+    // 性能应该在合理范围内（100次操作应该在100ms内完成）
+    expect(duration).toBeLessThan(100)
+
+    // 验证功能正确性
+    expect(largeEnum.getLabelByValue(500)).toBe('Label500')
+    expect(largeEnum.isEnumValue(999)).toBe(true)
+    expect(largeEnum.isEnumValue(1000)).toBe(false)
+  })
+
+  test('duplicate values handling', () => {
+    // 测试重复值的处理（实际行为：后面的值会覆盖前面的值）
+    const duplicateEnum = createEnum([
+      { label: 'First', value: 1 },
+      { label: 'Second', value: 1 }, // 重复值
+      { label: 'Third', value: 2 },
+    ] as const)
+
+    // 实际返回最后一个匹配的标签（后面覆盖前面）
+    expect(duplicateEnum.getLabelByValue(1)).toBe('Second')
+    expect(duplicateEnum.getItemByValue(1)?.label).toBe('Second')
+
+    // 但是数组中仍然包含所有项目
+    expect(duplicateEnum.length).toBe(3)
+    expect(duplicateEnum[0].label).toBe('First')
+    expect(duplicateEnum[1].label).toBe('Second')
   })
 })
