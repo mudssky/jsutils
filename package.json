@@ -1,6 +1,6 @@
 {
   "name": "@mudssky/jsutils",
-  "version": "1.24.0",
+  "version": "1.25.0",
   "description": "个人通用js库",
   "keywords": [
     "util"

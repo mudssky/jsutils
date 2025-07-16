@@ -1,3 +1,9 @@
+# [1.25.0](https://github.com/mudssky/jsutils/compare/v1.24.0...v1.25.0) (2025-07-16)
+
+### Features
+
+- **enum:** 为 checkDuplicates 选项添加 boolean 类型支持 ([6216200](https://github.com/mudssky/jsutils/commit/62162002520cb8d6086cb038f0da73cc5b914b5b))
+
 # [1.24.0](https://github.com/mudssky/jsutils/compare/v1.23.0...v1.24.0) (2025-07-16)
 
 ### Features
