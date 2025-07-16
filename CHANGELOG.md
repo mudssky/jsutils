@@ -1,3 +1,13 @@
+# [1.24.0](https://github.com/mudssky/jsutils/compare/v1.23.0...v1.24.0) (2025-07-16)
+
+### Features
+
+- **enum:** 为EnumArray添加不可变性保护 ([1bc4b6b](https://github.com/mudssky/jsutils/commit/1bc4b6b797a51a922400abac1daf4c2ef88c625a))
+- **enum:** 优化枚举类性能并增强类型安全 ([a314968](https://github.com/mudssky/jsutils/commit/a314968459438d167ecf93c09ea2f6015b39030e))
+- **enum:** 增加可配置的枚举重复检查功能 ([efa39f0](https://github.com/mudssky/jsutils/commit/efa39f03cc13815f98a9552b0547e2648e474aa5))
+- **enum:** 新增枚举类型定义及增强功能 ([a5d9f4a](https://github.com/mudssky/jsutils/commit/a5d9f4ae95f96c44eac015610113f476ad2c2623))
+- **enum:** 添加类型守卫方法并优化枚举实现 ([092abde](https://github.com/mudssky/jsutils/commit/092abdec7660aaa71fa19229ccd1c1dbdbb14de1))
+
 # [1.23.0](https://github.com/mudssky/jsutils/compare/v1.22.0...v1.23.0) (2025-06-25)
 
 ### Features
