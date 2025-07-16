@@ -17,6 +17,20 @@ interface BaseEnumObj {
 }
 
 /**
+ * 枚举创建时的配置项
+ * @public
+ */
+interface EnumCreationOptions {
+  /**
+   * 配置重复 value 和 label 的检查级别
+   * - 'development': (默认值) 仅在 process.env.NODE_ENV === 'development' 时检查
+   * - 'always': 始终进行检查，无论在什么环境下
+   * - 'never': 从不进行检查
+   */
+  checkDuplicates?: 'always' | 'never' | 'development'
+}
+
+/**
  * 基础枚举对象接口
  * @public
  */
@@ -78,12 +92,60 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   private readonly labelToItemMap = new Map<LabelOf<T>, T[number]>()
 
   /**
+   * 私有方法：执行重复性检查
+   *
+   * 检查当前项的 value 和 label 是否与已存在的项重复，
+   * 如果发现重复则输出警告信息。
+   *
+   * @param item - 要检查的枚举项
+   * @param checkLevel - 检查级别配置
+   */
+  private performDuplicateChecks(
+    item: T[number],
+    checkLevel: EnumCreationOptions['checkDuplicates'],
+  ): void {
+    if (this.valueToItemMap.has(item.value)) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `EnumArray: Duplicate value '${item.value}' found in enum items. (checkLevel: '${checkLevel}')`,
+      )
+    }
+    if (this.labelToItemMap.has(item.label)) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `EnumArray: Duplicate label '${item.label}' found in enum items. (checkLevel: '${checkLevel}')`,
+      )
+    }
+  }
+
+  /**
+   * 私有方法：获取重复检查配置
+   *
+   * 根据传入的配置项决定是否需要执行重复检查。
+   *
+   * @param options - 枚举创建配置项
+   * @returns 是否应该执行重复检查
+   */
+  public shouldPerformDuplicateCheck(options?: EnumCreationOptions): boolean {
+    const checkLevel = options?.checkDuplicates ?? 'development'
+
+    if (checkLevel === 'always') {
+      return true
+    } else if (checkLevel === 'development') {
+      return process.env.NODE_ENV === 'development'
+    }
+    // checkLevel === 'never'
+    return false
+  }
+
+  /**
    * 创建EnumArray实例
    *
    * 构造函数会初始化内部的Map结构以提供高性能查找，
-   * 并在开发环境下检查重复的value和label。
+   * 并根据配置检查重复的value和label。
    *
    * @param list - 符合EnumArrayObj接口的元组，建议使用 as const 断言
+   * @param options - 创建时的配置项
    *
    * @example
    * ```typescript
@@ -92,28 +154,27 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    *   { label: '禁用', value: 0 }
    * ] as const
    * const enumArray = new EnumArray(list)
+   *
+   * // 配置检查级别
+   * const enumArray2 = new EnumArray(list, { checkDuplicates: 'always' })
    * ```
    */
-  constructor(list: T) {
+  constructor(list: T, options?: EnumCreationOptions) {
     super(list.length)
+
+    // 获取重复检查配置
+    const shouldCheck = this.shouldPerformDuplicateCheck(options)
+    const checkLevel = options?.checkDuplicates ?? 'development'
+
     for (let i = 0; i < list.length; i++) {
       const item = list[i]
       this[i] = item
-      // 检查重复值，提供开发时警告
-      if (process.env.NODE_ENV === 'development') {
-        if (this.valueToItemMap.has(item.value)) {
-          // eslint-disable-next-line no-console
-          console.warn(
-            `EnumArray: Duplicate value '${item.value}' found in enum items`,
-          )
-        }
-        if (this.labelToItemMap.has(item.label)) {
-          // eslint-disable-next-line no-console
-          console.warn(
-            `EnumArray: Duplicate label '${item.label}' found in enum items`,
-          )
-        }
+
+      // 在填充 Map 之前执行重复检查
+      if (shouldCheck) {
+        this.performDuplicateChecks(item, checkLevel)
       }
+
       // 构建性能优化的Map
       this.valueToItemMap.set(item.value, item)
       this.labelToItemMap.set(item.label, item)
@@ -640,6 +701,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
  *
  * @template T - 枚举数组类型，必须使用 as const 断言以保留字面量类型
  * @param enumsTuple - 枚举元组，建议使用 as const 修饰以获得最佳类型推断
+ * @param options - 创建时的配置项
  * @returns 返回冻结的EnumArray实例，提供高性能的枚举操作方法
  *
  * @example
@@ -671,6 +733,25 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
  *
  * // 显示文本处理
  * const displayText = statusEnum.getDisplayTextByValue(1) // 如果有displayText则返回，否则返回label
+ * ```
+ *
+ * @example
+ * 配置化重复检查：
+ * ```typescript
+ * const statusList = [
+ *   { label: '待处理', value: 1 },
+ *   { label: '处理中', value: 2 },
+ *   { label: '待处理', value: 3 } // label 重复
+ * ] as const
+ *
+ * // 默认行为：只在开发环境检查
+ * const enum1 = createEnum(statusList)
+ *
+ * // 强制始终检查 (例如，用于生产环境启动脚本)
+ * const enum2 = createEnum(statusList, { checkDuplicates: 'always' })
+ *
+ * // 强制从不检查 (例如，用于特殊测试)
+ * const enum3 = createEnum(statusList, { checkDuplicates: 'never' })
  * ```
  *
  * @example
@@ -711,9 +792,19 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
  *
  * @public
  */
-function createEnum<T extends readonly EnumArrayObj[]>(enumsTuple: T) {
-  return Object.freeze(new EnumArray(enumsTuple))
+function createEnum<T extends readonly EnumArrayObj[]>(
+  enumsTuple: T,
+  options?: EnumCreationOptions,
+) {
+  return Object.freeze(new EnumArray(enumsTuple, options))
 }
 
 export { createEnum, EnumArray }
-export type { EnhancedLabel, EnumArrayObj, ExternalValue, LabelOf, ValueOf }
+export type {
+  EnhancedLabel,
+  EnumArrayObj,
+  EnumCreationOptions,
+  ExternalValue,
+  LabelOf,
+  ValueOf,
+}

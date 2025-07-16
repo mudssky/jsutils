@@ -1,6 +1,11 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 // 直接把根目录作为一个npm包引入
-import { EnumArray, EnumArrayObj, createEnum } from '@mudssky/jsutils'
+import {
+  EnumArray,
+  EnumArrayObj,
+  EnumCreationOptions,
+  createEnum,
+} from '@mudssky/jsutils'
 
 describe('EnumArray', () => {
   const sexList = [
@@ -594,6 +599,182 @@ describe('EnumArray', () => {
       expect(
         testEnum.filter((item) => (item.value as number) > 1),
       ).toHaveLength(1)
+    })
+  })
+
+  describe('configurable duplicate checking', () => {
+    const duplicateList = [
+      { label: '待处理', value: 1 },
+      { label: '处理中', value: 2 },
+      { label: '待处理', value: 3 }, // label 重复
+      { label: '已完成', value: 2 }, // value 重复
+    ] as const
+
+    test('should check duplicates in development mode by default', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      createEnum(duplicateList)
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "EnumArray: Duplicate label '待处理' found in enum items. (checkLevel: 'development')",
+      )
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "EnumArray: Duplicate value '2' found in enum items. (checkLevel: 'development')",
+      )
+
+      consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
+    })
+
+    test('should not check duplicates in production mode by default', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'production'
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      createEnum(duplicateList)
+
+      expect(consoleSpy).not.toHaveBeenCalled()
+
+      consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
+    })
+
+    test('should always check duplicates when checkDuplicates is "always"', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'production'
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      createEnum(duplicateList, { checkDuplicates: 'always' })
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "EnumArray: Duplicate label '待处理' found in enum items. (checkLevel: 'always')",
+      )
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "EnumArray: Duplicate value '2' found in enum items. (checkLevel: 'always')",
+      )
+
+      consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
+    })
+
+    test('should never check duplicates when checkDuplicates is "never"', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      createEnum(duplicateList, { checkDuplicates: 'never' })
+
+      expect(consoleSpy).not.toHaveBeenCalled()
+
+      consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
+    })
+
+    test('should work with EnumArray constructor directly', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      new EnumArray(duplicateList, { checkDuplicates: 'never' })
+
+      expect(consoleSpy).not.toHaveBeenCalled()
+
+      consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
+    })
+
+    test('should handle configuration methods correctly', () => {
+      const testEnum = new EnumArray([
+        { label: 'A', value: 1 },
+        { label: 'B', value: 2 },
+      ] as const)
+
+      // 测试私有方法的逻辑（通过公共接口间接测试）
+      expect(
+        testEnum.shouldPerformDuplicateCheck({ checkDuplicates: 'always' }),
+      ).toBe(true)
+      expect(
+        testEnum.shouldPerformDuplicateCheck({ checkDuplicates: 'never' }),
+      ).toBe(false)
+
+      const originalEnv = process.env.NODE_ENV
+
+      process.env.NODE_ENV = 'development'
+      expect(
+        testEnum.shouldPerformDuplicateCheck({
+          checkDuplicates: 'development',
+        }),
+      ).toBe(true)
+      expect(testEnum.shouldPerformDuplicateCheck()).toBe(true) // 默认值
+
+      process.env.NODE_ENV = 'production'
+      expect(
+        testEnum.shouldPerformDuplicateCheck({
+          checkDuplicates: 'development',
+        }),
+      ).toBe(false)
+      expect(testEnum.shouldPerformDuplicateCheck()).toBe(false) // 默认值
+
+      process.env.NODE_ENV = originalEnv
+    })
+
+    test('should maintain backward compatibility', () => {
+      // 不传 options 参数应该和之前的行为一致
+      const enum1 = createEnum([
+        { label: 'A', value: 1 },
+        { label: 'B', value: 2 },
+      ] as const)
+
+      const enum2 = createEnum(
+        [
+          { label: 'A', value: 1 },
+          { label: 'B', value: 2 },
+        ] as const,
+        undefined,
+      )
+
+      expect(enum1.getLabelByValue(1)).toBe('A')
+      expect(enum2.getLabelByValue(1)).toBe('A')
+      expect(enum1.length).toBe(enum2.length)
+    })
+
+    test('should provide helpful error messages with checkLevel info', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      createEnum(duplicateList, { checkDuplicates: 'always' })
+
+      // 验证错误消息包含 checkLevel 信息
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining("(checkLevel: 'always')"),
+      )
+
+      consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
+    })
+
+    test('should handle edge cases in configuration', () => {
+      // 测试空配置对象
+      const enum1 = createEnum(
+        [{ label: 'A', value: 1 }] as const,
+        {} as EnumCreationOptions,
+      )
+      expect(enum1.getLabelByValue(1)).toBe('A')
+
+      // 测试 undefined checkDuplicates
+      const enum2 = createEnum([{ label: 'A', value: 1 }] as const, {
+        checkDuplicates: undefined,
+      })
+      expect(enum2.getLabelByValue(1)).toBe('A')
     })
   })
 })
