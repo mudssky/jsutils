@@ -662,6 +662,25 @@ describe('EnumArray', () => {
       process.env.NODE_ENV = originalEnv
     })
 
+    test('should always check duplicates when checkDuplicates is true (boolean)', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'production'
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      createEnum(duplicateList, { checkDuplicates: true })
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "EnumArray: Duplicate label '待处理' found in enum items. (checkLevel: 'true')",
+      )
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "EnumArray: Duplicate value '2' found in enum items. (checkLevel: 'true')",
+      )
+
+      consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
+    })
+
     test('should never check duplicates when checkDuplicates is "never"', () => {
       const originalEnv = process.env.NODE_ENV
       process.env.NODE_ENV = 'development'
@@ -669,6 +688,20 @@ describe('EnumArray', () => {
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
       createEnum(duplicateList, { checkDuplicates: 'never' })
+
+      expect(consoleSpy).not.toHaveBeenCalled()
+
+      consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
+    })
+
+    test('should never check duplicates when checkDuplicates is false (boolean)', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      createEnum(duplicateList, { checkDuplicates: false })
 
       expect(consoleSpy).not.toHaveBeenCalled()
 
@@ -702,6 +735,12 @@ describe('EnumArray', () => {
       ).toBe(true)
       expect(
         testEnum.shouldPerformDuplicateCheck({ checkDuplicates: 'never' }),
+      ).toBe(false)
+      expect(
+        testEnum.shouldPerformDuplicateCheck({ checkDuplicates: true }),
+      ).toBe(true)
+      expect(
+        testEnum.shouldPerformDuplicateCheck({ checkDuplicates: false }),
       ).toBe(false)
 
       const originalEnv = process.env.NODE_ENV

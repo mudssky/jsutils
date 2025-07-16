@@ -23,11 +23,13 @@ interface BaseEnumObj {
 interface EnumCreationOptions {
   /**
    * 配置重复 value 和 label 的检查级别
+   * - `true`:  等同于 'always'，强制始终检查
+   * - `false`: 等同于 'never'，强制从不检查
    * - 'development': (默认值) 仅在 process.env.NODE_ENV === 'development' 时检查
-   * - 'always': 始终进行检查，无论在什么环境下
+   * - 'always': 始终进行检查
    * - 'never': 从不进行检查
    */
-  checkDuplicates?: 'always' | 'never' | 'development'
+  checkDuplicates?: boolean | 'always' | 'never' | 'development'
 }
 
 /**
@@ -129,6 +131,12 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   public shouldPerformDuplicateCheck(options?: EnumCreationOptions): boolean {
     const checkLevel = options?.checkDuplicates ?? 'development'
 
+    // 处理 boolean 类型
+    if (typeof checkLevel === 'boolean') {
+      return checkLevel
+    }
+
+    // 处理字符串类型
     if (checkLevel === 'always') {
       return true
     } else if (checkLevel === 'development') {
@@ -749,9 +757,13 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
  *
  * // 强制始终检查 (例如，用于生产环境启动脚本)
  * const enum2 = createEnum(statusList, { checkDuplicates: 'always' })
+ * // 或使用 boolean 简写
+ * const enum2b = createEnum(statusList, { checkDuplicates: true })
  *
  * // 强制从不检查 (例如，用于特殊测试)
  * const enum3 = createEnum(statusList, { checkDuplicates: 'never' })
+ * // 或使用 boolean 简写
+ * const enum3b = createEnum(statusList, { checkDuplicates: false })
  * ```
  *
  * @example
