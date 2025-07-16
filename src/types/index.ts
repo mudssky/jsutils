@@ -1,5 +1,6 @@
 export type * from './array'
 export type * from './class'
+export type * from './enum'
 export type * from './function'
 export type * from './global'
 export type * from './math'
