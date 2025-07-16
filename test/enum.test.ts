@@ -1,11 +1,6 @@
 import { describe, expect, test } from 'vitest'
 // 直接把根目录作为一个npm包引入
-import {
-  EnumArray,
-  EnumArrayObj,
-  createEnum,
-  createTypedEnum,
-} from '@mudssky/jsutils'
+import { EnumArray, EnumArrayObj, createEnum } from '@mudssky/jsutils'
 
 describe('EnumArray', () => {
   const sexList = [
@@ -222,6 +217,59 @@ describe('EnumArray', () => {
     expect(sexEnum.isLabelIn(undefined, ['男'])).toBe(false)
   })
 
+  test('isEnumValue type guard', () => {
+    // 测试基本类型守卫功能
+    expect(sexEnum.isEnumValue(1)).toBe(true)
+    expect(sexEnum.isEnumValue(2)).toBe(true)
+    expect(sexEnum.isEnumValue(3)).toBe(false)
+    expect(sexEnum.isEnumValue('1')).toBe(false)
+    expect(sexEnum.isEnumValue(null)).toBe(false)
+    expect(sexEnum.isEnumValue(undefined)).toBe(false)
+
+    // 测试类型收窄功能
+    const unknownValue: unknown = 1
+    if (sexEnum.isEnumValue(unknownValue)) {
+      // 在这个分支中，unknownValue 应该被收窄为枚举的值类型
+      expect(typeof unknownValue).toBe('number')
+      expect(sexEnum.getItemByValue(unknownValue)).toBeDefined()
+    }
+
+    // 测试边界情况
+    const mixedValues = [1, 2, 3, '男', null, undefined, {}]
+    const validValues = mixedValues.filter((v) => sexEnum.isEnumValue(v))
+    expect(validValues).toEqual([1, 2])
+  })
+
+  test('isEnumLabel type guard', () => {
+    // 测试基本类型守卫功能
+    expect(sexEnum.isEnumLabel('男')).toBe(true)
+    expect(sexEnum.isEnumLabel('女')).toBe(true)
+    expect(sexEnum.isEnumLabel('其他')).toBe(false)
+    expect(sexEnum.isEnumLabel(1)).toBe(false)
+    expect(sexEnum.isEnumLabel(null)).toBe(false)
+    expect(sexEnum.isEnumLabel(undefined)).toBe(false)
+
+    // 测试类型收窄功能
+    const unknownLabel: unknown = '男'
+    if (sexEnum.isEnumLabel(unknownLabel)) {
+      // 在这个分支中，unknownLabel 应该被收窄为枚举的标签类型
+      expect(typeof unknownLabel).toBe('string')
+      expect(sexEnum.getItemByLabel(unknownLabel)).toBeDefined()
+    }
+
+    // 测试外部字符串
+    const externalString: string = '女'
+    expect(sexEnum.isEnumLabel(externalString)).toBe(true)
+
+    const invalidString: string = '未知性别'
+    expect(sexEnum.isEnumLabel(invalidString)).toBe(false)
+
+    // 测试边界情况
+    const mixedLabels = ['男', '女', '其他', 1, null, undefined, {}]
+    const validLabels = mixedLabels.filter((l) => sexEnum.isEnumLabel(l))
+    expect(validLabels).toEqual(['男', '女'])
+  })
+
   test('deprecated methods still work', () => {
     // 确保被标记为deprecated的方法仍然正常工作
     expect(sexEnum.isLabelsMatchValue(['女'], 2)).toBe(true)
@@ -235,14 +283,14 @@ describe('EnumArray', () => {
     expect(sexEnum.toList()).toEqual([...sexEnum])
   })
 
-  test('createTypedEnum with enhanced type safety', () => {
+  test('createEnum with enhanced type safety', () => {
     const statusList = [
       { label: '待审核', value: 1, color: '#faad14', priority: 'low' },
       { label: '已通过', value: 2, color: '#52c41a', priority: 'high' },
       { label: '已拒绝', value: 3, color: '#f5222d', priority: 'medium' },
     ] as const
 
-    const statusEnum = createTypedEnum(statusList)
+    const statusEnum = createEnum(statusList)
     // 测试类型安全的属性访问
     expect(statusEnum.getAttrByValue(1, 'color')).toBe('#faad14')
     expect(statusEnum.getAttrByValue(2, 'priority')).toBe('high')

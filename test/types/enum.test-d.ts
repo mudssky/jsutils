@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type {
-  BaseEnumObj,
   EnhancedLabel,
   EnumArrayObj,
   EnumItemKey,
@@ -12,7 +11,7 @@ import type {
   ReadonlyEnumArray,
   ValueOf,
 } from '@mudssky/jsutils'
-import { createEnum, createTypedEnum } from '@mudssky/jsutils'
+import { createEnum } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
 
 // 测试用的枚举数据
@@ -28,7 +27,7 @@ const sexList = [
 ] as const
 
 const statusEnum = createEnum(statusList)
-const sexEnum = createTypedEnum(sexList)
+const sexEnum = createEnum(sexList)
 
 let n!: never
 
@@ -54,22 +53,7 @@ test('EnumArrayObj 类型测试', () => {
   }
 })
 
-test('BaseEnumObj 类型测试', () => {
-  // 更严格的基础类型
-  const validBaseEnum: BaseEnumObj = {
-    value: 'test',
-    label: '测试',
-    displayText: '测试文本',
-  }
-
-  assertType<BaseEnumObj>(validBaseEnum)
-
-  // boolean 类型的 value 不被 BaseEnumObj 接受，这里应该会产生类型错误
-  // const invalidBaseEnum: BaseEnumObj = {
-  //   value: true,
-  //   label: '测试'
-  // }
-})
+// BaseEnumObj 类型已被移除，使用 EnumArrayObj 替代
 
 test('ValueOf 和 LabelOf 类型提取', () => {
   // 测试 ValueOf 类型提取
@@ -201,20 +185,16 @@ test('EnumLookupResult 类型测试', () => {
   assertType<ColorResult>(123)
 })
 
-test('createEnum 和 createTypedEnum 类型推断', () => {
+test('createEnum 类型推断', () => {
   // createEnum 应该保持类型推断
   const enum1 = createEnum(statusList)
   assertType<any>(enum1)
 
-  // createTypedEnum 应该提供更强的类型安全
-  const enum2 = createTypedEnum(statusList)
-  assertType<any>(enum2)
-
   // 验证方法的类型推断
-  const value = enum2.getValueByLabel('待审核')
+  const value = enum1.getValueByLabel('待审核')
   assertType<any>(value)
 
-  const label = enum2.getLabelByValue(1)
+  const label = enum1.getLabelByValue(1)
   assertType<any>(label)
 })
 
@@ -229,6 +209,67 @@ test('getAttrByValue 和 getAttrByLabel 类型安全', () => {
   // 测试 getAttrByLabel 的类型推断
   const color2 = sexEnum.getAttrByLabel('男', 'color')
   assertType<any>(color2)
+})
+
+test('isEnumValue 类型守卫测试', () => {
+  // 测试类型守卫的基本功能
+  const unknownValue: unknown = 1
+
+  if (statusEnum.isEnumValue(unknownValue)) {
+    // 在这个分支中，unknownValue 应该被收窄为枚举的值类型
+    assertType<ValueOf<typeof statusList>>(unknownValue)
+
+    // 应该能够安全地使用收窄后的值
+    const item = statusEnum.getItemByValue(unknownValue)
+    assertType<(typeof statusList)[number] | undefined>(item)
+  }
+
+  // 测试返回值类型
+  const result1 = statusEnum.isEnumValue(1)
+  assertType<boolean>(result1)
+
+  const result2 = statusEnum.isEnumValue('invalid')
+  assertType<boolean>(result2)
+
+  // 测试各种输入类型
+  assertType<boolean>(statusEnum.isEnumValue(null))
+  assertType<boolean>(statusEnum.isEnumValue(undefined))
+  assertType<boolean>(statusEnum.isEnumValue({}))
+  assertType<boolean>(statusEnum.isEnumValue([]))
+})
+
+test('isEnumLabel 类型守卫测试', () => {
+  // 测试类型守卫的基本功能
+  const unknownLabel: unknown = '待审核'
+
+  if (statusEnum.isEnumLabel(unknownLabel)) {
+    // 在这个分支中，unknownLabel 应该被收窄为枚举的标签类型
+    assertType<LabelOf<typeof statusList>>(unknownLabel)
+
+    // 应该能够安全地使用收窄后的标签
+    const item = statusEnum.getItemByLabel(unknownLabel)
+    assertType<(typeof statusList)[number] | undefined>(item)
+  }
+
+  // 测试返回值类型
+  const result1 = statusEnum.isEnumLabel('待审核')
+  assertType<boolean>(result1)
+
+  const result2 = statusEnum.isEnumLabel('invalid')
+  assertType<boolean>(result2)
+
+  // 测试外部字符串类型
+  const externalString: string = '待审核'
+  if (statusEnum.isEnumLabel(externalString)) {
+    // 外部字符串也应该被正确收窄
+    assertType<LabelOf<typeof statusList>>(externalString)
+  }
+
+  // 测试各种输入类型
+  assertType<boolean>(statusEnum.isEnumLabel(null))
+  assertType<boolean>(statusEnum.isEnumLabel(undefined))
+  assertType<boolean>(statusEnum.isEnumLabel(123))
+  assertType<boolean>(statusEnum.isEnumLabel({}))
 })
 
 test('类型兼容性测试', () => {
