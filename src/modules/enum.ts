@@ -461,11 +461,8 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * const exists2 = enumArray.has('启用') // true
    * ```
    */
-  has(valueOrLabel: ValueOf<T> | LabelOf<T>): boolean {
-    return (
-      this.valueToItemMap.has(valueOrLabel as ValueOf<T>) ||
-      this.labelToItemMap.has(valueOrLabel as LabelOf<T>)
-    )
+  has(valueOrLabel: unknown): boolean {
+    return this.isEnumValue(valueOrLabel) || this.isEnumLabel(valueOrLabel)
   }
 
   /**
