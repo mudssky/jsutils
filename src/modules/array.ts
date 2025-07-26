@@ -355,8 +355,17 @@ const hasIntersects = <T, K extends string | number | symbol>(
  * @public
  */
 function max(array: readonly [number, ...number[]]): number
+/**
+ * @public
+ */
 function max(array: readonly number[]): number | null
+/**
+ * @public
+ */
 function max<T>(array: readonly T[], getter: (item: T) => number): T | null
+/**
+ * @public
+ */
 function max<T>(array: readonly T[], getter?: (item: T) => number): T | null {
   const get = getter ?? ((v: any) => v)
   return boil(array, (a, b) => (get(a) > get(b) ? a : b))
@@ -371,8 +380,17 @@ function max<T>(array: readonly T[], getter?: (item: T) => number): T | null {
  * @public
  */
 function min(array: readonly [number, ...number[]]): number
+/**
+ * @public
+ */
 function min(array: readonly number[]): number | null
+/**
+ * @public
+ */
 function min<T>(array: readonly T[], getter: (item: T) => number): T | null
+/**
+ * @public
+ */
 function min<T>(array: readonly T[], getter?: (item: T) => number): T | null {
   const get = getter ?? ((v: any) => v)
   return boil(array, (a, b) => (get(a) < get(b) ? a : b))
@@ -415,10 +433,16 @@ const toggle = <T>(
  * @public
  */
 function sum<T extends number>(array: readonly T[]): number
+/**
+ * @public
+ */
 function sum<T extends object>(
   array: readonly T[],
   fn: (item: T) => number,
 ): number
+/**
+ * @public
+ */
 function sum<T extends object | number>(
   array: readonly any[],
   fn?: (item: T) => number,
@@ -473,18 +497,30 @@ function zip<T1, T2, T3, T4, T5>(
   array4: T4[],
   array5: T5[],
 ): [T1, T2, T3, T4, T5][]
+/**
+ * @public
+ */
 function zip<T1, T2, T3, T4>(
   array1: T1[],
   array2: T2[],
   array3: T3[],
   array4: T4[],
 ): [T1, T2, T3, T4][]
+/**
+ * @public
+ */
 function zip<T1, T2, T3>(
   array1: T1[],
   array2: T2[],
   array3: T3[],
 ): [T1, T2, T3][]
+/**
+ * @public
+ */
 function zip<T1, T2>(array1: T1[], array2: T2[]): [T1, T2][]
+/**
+ * @public
+ */
 function zip<T>(...arrays: T[][]): T[][] {
   if (!arrays || !arrays.length) return []
   return new Array(Math.max(...arrays.map(({ length }) => length)))
