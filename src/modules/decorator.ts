@@ -12,6 +12,7 @@ import {
  * @param wait - 等待时间（毫秒），默认为 200
  * @param options - 可选参数对象，包含 leading 和 trailing 选项
  * @returns - 返回一个方法装饰器
+ * @public
  *
  * @example
  * ```typescript
@@ -99,6 +100,7 @@ export interface PerformanceDecoratorOptions extends PerformanceTestOptions {
  *
  * @param options - 性能监控选项
  * @returns - 返回一个方法装饰器
+ * @public
  *
  * @example
  * ```typescript
@@ -208,6 +210,7 @@ export function performanceMonitor(options: PerformanceDecoratorOptions = {}) {
  *
  * @param options - 基准测试选项
  * @returns 返回一个方法装饰器
+ * @public
  *
  * @example
  * ```typescript
@@ -256,6 +259,7 @@ export function performanceBenchmark(
  * @param groupName - 比较组名称
  * @param options - 性能监控选项
  * @returns 返回一个方法装饰器
+ * @public
  *
  * @example
  * ```typescript

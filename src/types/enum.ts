@@ -4,16 +4,28 @@
  */
 
 // 枚举项的键类型
+/**
+ * @public
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type EnumItemKey<T extends readonly any[]> = keyof T[number]
 
 // 只读枚举数组类型
+/**
+ * @public
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ReadonlyEnumArray<T extends readonly any[]> = readonly T[number][]
 
 // 枚举映射字典类型
+/**
+ * @public
+ */
 export type EnumMappingDict = Record<string, string>
 
 // 枚举查找结果类型
+/**
+ * @public
+ */
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint, @typescript-eslint/no-explicit-any
 export type EnumLookupResult<T extends any> = T | undefined

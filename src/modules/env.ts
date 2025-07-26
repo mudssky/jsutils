@@ -9,6 +9,7 @@ declare const importScripts: ((...urls: string[]) => void) | undefined
 /**
  * 检查是否在浏览器环境中
  * @returns - 是否在浏览器环境
+ * @public
  */
 export function isBrowser(): boolean {
   return typeof window !== 'undefined'
@@ -17,6 +18,7 @@ export function isBrowser(): boolean {
 /**
  * 检查是否在Node.js环境中
  * @returns - 是否在Node.js环境
+ * @public
  */
 export function isNode(): boolean {
   return (
@@ -29,6 +31,7 @@ export function isNode(): boolean {
 /**
  * 检查是否在Web Worker环境中
  * @returns - 是否在Web Worker环境
+ * @public
  */
 export function isWebWorker(): boolean {
   return typeof importScripts === 'function' && typeof navigator !== 'undefined'
@@ -37,6 +40,7 @@ export function isWebWorker(): boolean {
 /**
  * 检查document对象是否可用
  * @returns - document是否可用
+ * @public
  */
 export function isDocumentAvailable(): boolean {
   return typeof document !== 'undefined'
@@ -45,6 +49,7 @@ export function isDocumentAvailable(): boolean {
 /**
  * 检查localStorage是否可用
  * @returns - localStorage是否可用
+ * @public
  */
 export function isLocalStorageAvailable(): boolean {
   try {
@@ -63,6 +68,7 @@ export function isLocalStorageAvailable(): boolean {
 /**
  * 检查sessionStorage是否可用
  * @returns - sessionStorage是否可用
+ * @public
  */
 export function isSessionStorageAvailable(): boolean {
   try {
@@ -81,6 +87,7 @@ export function isSessionStorageAvailable(): boolean {
 /**
  * 获取当前运行环境信息
  * @returns - 环境信息对象
+ * @public
  */
 export function getEnvironmentInfo() {
   return {
@@ -100,6 +107,7 @@ export function getEnvironmentInfo() {
  * @param callback - 要执行的回调函数
  * @param fallback - 环境不支持时的回退函数
  * @returns - 执行结果
+ * @public
  */
 export function runInBrowser<T>(
   callback: () => T,
@@ -116,6 +124,7 @@ export function runInBrowser<T>(
  * @param callback - 要执行的回调函数
  * @param fallback - 环境不支持时的回退函数
  * @returns - 执行结果
+ * @public
  */
 export function runWithDocument<T>(
   callback: () => T,

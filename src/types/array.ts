@@ -3,6 +3,7 @@ import { Equal } from './utils'
 
 /**
  * 获取数组第一个类型
+ * @public
  */
 export type First<T extends unknown[]> = T extends [infer F, ...unknown[]]
   ? F
@@ -10,6 +11,7 @@ export type First<T extends unknown[]> = T extends [infer F, ...unknown[]]
 
 /**
  * 获取数组最后一个类型
+ * @public
  */
 export type Last<T extends unknown[]> = T extends [...unknown[], infer L]
   ? L
@@ -17,6 +19,7 @@ export type Last<T extends unknown[]> = T extends [...unknown[], infer L]
 
 /**
  * 元组转为键值相等的对象
+ * @public
  */
 export type TupleToObject<T extends readonly PropertyKey[]> = {
   [K in T[number]]: K
@@ -24,11 +27,13 @@ export type TupleToObject<T extends readonly PropertyKey[]> = {
 
 /**
  * 获取元组长度
+ * @public
  */
 export type Length<T extends readonly unknown[]> = T['length']
 
 /**
  * 获取数组除最后一个元素外的其他元素,如果是空数组则返回空数组
+ * @public
  */
 export type PopArray<ARR extends unknown[]> = ARR extends []
   ? []
@@ -38,6 +43,7 @@ export type PopArray<ARR extends unknown[]> = ARR extends []
 
 /**
  * 获取数组除第一个元素外的其他元素,如果是空数组则返回空数组
+ * @public
  */
 export type ShiftArray<ARR extends unknown[]> = ARR extends []
   ? []
@@ -47,6 +53,7 @@ export type ShiftArray<ARR extends unknown[]> = ARR extends []
 
 /**
  * 合并两个元组类型
+ * @public
  */
 export type Concat<Arr1 extends Tuple<unknown>, Arr2 extends Tuple<unknown>> = [
   ...Arr1,
@@ -55,6 +62,7 @@ export type Concat<Arr1 extends Tuple<unknown>, Arr2 extends Tuple<unknown>> = [
 
 /**
  * 判断元组是否包含某个元素
+ * @public
  */
 export type Includes<Arr extends Tuple<unknown>, Item> = Arr extends [
   infer First,
@@ -67,17 +75,20 @@ export type Includes<Arr extends Tuple<unknown>, Item> = Arr extends [
 
 /**
  * 在元组类型尾部添加值
+ * @public
  */
 export type Push<T extends Tuple<unknown>, U> = [...T, U]
 
 /**
  * 在元组类型头部添加值
+ * @public
  */
 export type Unshift<T extends Tuple<unknown>, U> = [U, ...T]
 
 /**
  * zip组合两个元素的元组
  * 如果元组不满足含有两个元素，那么返回\{\}
+ * @public
  */
 export type Zip2<
   One extends [unknown, unknown],
@@ -90,6 +101,7 @@ export type Zip2<
 
 /**
  * zip组合任意多个元素的元组
+ * @public
  */
 export type Zip<One extends unknown[], Other extends unknown[]> = One extends [
   infer OneFirst,
@@ -102,6 +114,7 @@ export type Zip<One extends unknown[], Other extends unknown[]> = One extends [
 
 /**
  *反转数组
+ * @public
  */
 export type ReverseArr<Arr extends unknown[]> = Arr extends [
   infer First,
@@ -112,6 +125,7 @@ export type ReverseArr<Arr extends unknown[]> = Arr extends [
 
 /**
  * 移除数组中的元素
+ * @public
  */
 export type RemoveArrItem<
   Arr extends unknown[],
@@ -125,6 +139,7 @@ export type RemoveArrItem<
 
 /**
  * 创建任意长度相同元素的数组
+ * @public
  */
 export type BuildArray<
   Length extends number,
@@ -134,6 +149,7 @@ export type BuildArray<
 
 /**
  * 对数组做分组，传入两个参数,数组和分组的长度
+ * @public
  */
 export type Chunk<
   Arr extends unknown[],
@@ -155,7 +171,7 @@ export type Chunk<
         \}
     \}
 \}
-
+ * @public
  */
 export type TupleToNestedObject<
   Tuple extends unknown[],

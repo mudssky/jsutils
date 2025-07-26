@@ -70,6 +70,9 @@ function* rangeIter(start: number, end?: number, step = 1) {
 }
 
 type Filter<T> = (item: T) => boolean
+/**
+ * @public
+ */
 class Query<T extends object> extends Array<T> {
   private filters: Filter<T>[] = []
   private sortKeys: (keyof T)[] = []
@@ -125,12 +128,21 @@ class Query<T extends object> extends Array<T> {
   }
 }
 
+/**
+ * @public
+ */
 function createQuery<T extends object>(list: T[]) {
   return new Query<T>(list)
 }
 
+/**
+ * @public
+ */
 type SortDirection = 'asc' | 'desc' | 'none'
 
+/**
+ * @public
+ */
 type CompareFunction<T> = (a: T, b: T) => number
 const defaultAsc = <T = any>(a: T, b: T) => {
   const astr = String(a)
@@ -146,6 +158,7 @@ const defaultAsc = <T = any>(a: T, b: T) => {
 }
 /**
  * sort策略是 a-b的逻辑，如果返回负数比如-1，说明递增，或者a\>b
+ * @public
  */
 const sortStrategies = {
   defaultAsc,
@@ -157,6 +170,7 @@ const sortStrategies = {
  * @param sortedArr - 已排序的数组
  * @param compareFn - 类似sort方法的参数，返回负数说明升序，即b\>a,返回0 b=a，返回正数说明降序，即a\>b
  * @returns 排序方向
+ * @public
  */
 function getSortDirection<T = any>(
   sortedArr: T[],
@@ -180,6 +194,7 @@ function getSortDirection<T = any>(
  * Sort an array without modifying it and return
  * the newly sorted value. Allows for a string
  * sorting value.
+ * @public
  */
 const alphabetical = <T>(
   array: readonly T[],
@@ -198,6 +213,7 @@ const alphabetical = <T>(
  * compare that to the next item in the list with the same
  *
  * Ex. const greatest = () =\> boil(numbers, (a, b) =\> a \> b)
+ * @public
  */
 const boil = <T>(array: readonly T[], compareFunc: (a: T, b: T) => T) => {
   if (!array || (array.length ?? 0) === 0) return null
@@ -208,6 +224,7 @@ const boil = <T>(array: readonly T[], compareFunc: (a: T, b: T) => T) => {
  * Splits a single list into many lists of the desired size. If
  * given a list of 10 items and a size of 2, it will return 5
  * lists with 2 items each
+ * @public
  */
 const chunk = <T>(list: readonly T[], size: number = 2): T[][] => {
   const clusterCount = Math.ceil(list.length / size)
@@ -221,6 +238,7 @@ const chunk = <T>(list: readonly T[], size: number = 2): T[][] => {
  * @param list - 要统计的数组
  * @param identity - 生成key的函数
  * @returns 统计结果对象
+ * @public
  */
 const countBy = <T, TId extends PropertyName>(
   list: readonly T[],
@@ -240,6 +258,7 @@ const countBy = <T, TId extends PropertyName>(
 /**
  * Returns all items from the first list that
  * do not exist in the second list.
+ * @public
  */
 const diff = <T>(
   root: readonly T[],
@@ -262,6 +281,7 @@ const diff = <T>(
 
 /**
  * Get the first item in an array or a default value
+ * @public
  */
 const first = <T>(
   array: readonly T[],
@@ -272,6 +292,7 @@ const first = <T>(
 
 /**
  * Get the last item in an array or a default value
+ * @public
  */
 const last = <T>(
   array: readonly T[],
@@ -283,6 +304,7 @@ const last = <T>(
 /**
  * Split an array into two array based on
  * a true/false condition function
+ * @public
  */
 const fork = <T>(
   list: readonly T[],
@@ -305,6 +327,7 @@ const fork = <T>(
 /**
  * Given two arrays, returns true if any
  * elements intersect
+ * @public
  */
 const hasIntersects = <T, K extends string | number | symbol>(
   listA: readonly T[],
@@ -329,6 +352,7 @@ const hasIntersects = <T, K extends string | number | symbol>(
  * @example
  * max([ 2, 3, 5]) == 5
  * max([\{ num: 1 \}, \{ num: 2 \}], x =\> x.num) == \{ num: 2 \}
+ * @public
  */
 function max(array: readonly [number, ...number[]]): number
 function max(array: readonly number[]): number | null
@@ -344,6 +368,7 @@ function max<T>(array: readonly T[], getter?: (item: T) => number): T | null {
  * @example
  * min([1, 2, 3, 4]) == 1
  * min([\{ num: 1 \}, \{ num: 2 \}], x =\> x.num) == \{ num: 1 \}
+ * @public
  */
 function min(array: readonly [number, ...number[]]): number
 function min(array: readonly number[]): number | null
@@ -357,6 +382,7 @@ function min<T>(array: readonly T[], getter?: (item: T) => number): T | null {
  * If the item matching the condition already exists
  * in the list it will be removed. If it does not it
  * will be added.
+ * @public
  */
 const toggle = <T>(
   list: readonly T[],
@@ -386,6 +412,7 @@ const toggle = <T>(
 /**
  * Sum all numbers in an array. Optionally provide a function
  * to convert objects in the array to number values.
+ * @public
  */
 function sum<T extends number>(array: readonly T[]): number
 function sum<T extends object>(
@@ -405,6 +432,7 @@ function sum<T extends object | number>(
  * Ex. const zipped = zipToObject(['a', 'b'], [1, 2]) // \{ a: 1, b: 2 \}
  * Ex. const zipped = zipToObject(['a', 'b'], (k, i) =\> k + i) // \{ a: 'a0', b: 'b1' \}
  * Ex. const zipped = zipToObject(['a', 'b'], 1) // \{ a: 1, b: 1 \}
+ * @public
  */
 function zipObject<K extends PropertyName, V>(
   keys: K[],
@@ -436,6 +464,7 @@ function zipObject<K extends PropertyName, V>(
  * second elements of the given arrays, and so on.
  *
  * Ex. const zipped = zip(['a', 'b'], [1, 2], [true, false]) // [['a', 1, true], ['b', 2, false]]
+ * @public
  */
 function zip<T1, T2, T3, T4, T5>(
   array1: T1[],
@@ -468,6 +497,7 @@ function zip<T>(...arrays: T[][]): T[][] {
  * unique items. Accepts an optional identity function
  * to convert each item in the list to a comparable identity
  * value
+ * @public
  */
 const unique = <T, K extends PropertyName>(
   array: readonly T[],
@@ -485,6 +515,10 @@ const unique = <T, K extends PropertyName>(
   return Object.values(valueMap)
 }
 
+/**
+ * Randomly shuffle an array
+ * @public
+ */
 const shuffle = <T>(array: readonly T[]): T[] => {
   return array
     .map((a) => ({ rand: Math.random(), value: a }))

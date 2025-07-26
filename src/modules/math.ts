@@ -27,6 +27,12 @@ function randomInt(startInt: number, endInt?: number) {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
+/**
+ * 从数组中随机获取一个元素
+ * @param arr - 源数组
+ * @returns 随机选择的数组元素
+ * @public
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getRandomItemFromArray<T = any>(arr: T[]): T {
   if (arr.length < 1) {

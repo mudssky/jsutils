@@ -3,6 +3,7 @@ import { AnyFunction } from './global'
 
 /**
  * 获取函数的参数类型
+ * @public
  */
 export type ParameterType<Func extends AnyFunction> = Func extends (
   ...args: infer Args
@@ -12,6 +13,7 @@ export type ParameterType<Func extends AnyFunction> = Func extends (
 
 /**
  * 获取函数this的类型
+ * @public
  */
 export type ThisParameterType<Func> = Func extends (
   this: infer ThisType,
@@ -29,6 +31,7 @@ export type ThisParameterType<Func> = Func extends (
  * type Fn = (a: string) => number
  * type NewFn = AppendArgument<Fn, boolean> // (a: string, b: boolean) => number
  * ```
+ * @public
  */
 export type AppendArgument<Func extends AnyFunction, Arg> = Func extends (
   ...args: infer Args
@@ -36,12 +39,16 @@ export type AppendArgument<Func extends AnyFunction, Arg> = Func extends (
   ? (...args: [...Args, Arg]) => ReturnType
   : never
 
+/**
+ * @public
+ */
 export type PromiseFunction<Args extends any[] = any[], R = any> = (
   ...args: Args
 ) => Promise<R>
 
 /**
  * 获取Promise函数的返回值类型
+ * @public
  */
 export type PromiseReturnType<Func extends PromiseFunction> = Func extends (
   ...args: any
@@ -51,6 +58,7 @@ export type PromiseReturnType<Func extends PromiseFunction> = Func extends (
 
 /**
  * 获取Promise函数的参数类型
+ * @public
  */
 export type PromiseParameterType<Func extends PromiseFunction> = Func extends (
   ...args: infer Args

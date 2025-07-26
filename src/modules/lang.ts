@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+/**
+ * 获取值的类型标签
+ * @param value - 要检查的值
+ * @returns 类型标签字符串
+ * @public
+ */
 function getTag(value: any) {
   const toString = Object.prototype.toString
   if (value == null) {

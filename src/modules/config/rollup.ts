@@ -6,6 +6,7 @@
  *       ...vendorRollupOption,
  *     \},
  *   \},
+ * @public
  */
 export const vendorRollupOption = {
   output: {

@@ -35,8 +35,7 @@
  * - `|` (竖线) - 或操作符
  * - `[]` (方括号) - 字符类
  * - `\\` (反斜杠) - 转义字符
- *
-
+ * @public
  */
 export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

@@ -45,6 +45,7 @@ function genAllCasesCombination(str: string): string[] {
 /**
  * 使用随机数生成uuid
  * @returns - UUID字符串
+ * @public
  */
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -62,6 +63,7 @@ const base62Chars =
  * 可以用于生成短链的编码
  * @param len - 生成字符串的长度
  * @returns - base62随机字符串
+ * @public
  */
 function generateBase62Code(len = 6) {
   if (len < 0) {
@@ -81,6 +83,7 @@ function generateBase62Code(len = 6) {
  * @param searchValue - 用于匹配的字符串
  * @param targetString - 匹配的目标字符串
  * @returns - 是否匹配
+ * @public
  */
 function fuzzyMatch(searchValue: string, targetString: string) {
   const pattern = new RegExp(searchValue, 'i')
@@ -91,6 +94,7 @@ function fuzzyMatch(searchValue: string, targetString: string) {
  * 以.分割文件名，返回扩展名
  * @param fileName - 文件名
  * @returns - 文件扩展名
+ * @public
  */
 function getFileExt(fileName: string) {
   const parts = fileName.split('.')
@@ -109,6 +113,7 @@ function getFileExt(fileName: string) {
  * capitalize('hello')   // -> 'Hello'
  * capitalize('va va voom') // -> 'Va va voom'
  * ```
+ * @public
  */
 const capitalize = (str: string): string => {
   if (!str || str.length === 0) return ''
@@ -126,6 +131,7 @@ const capitalize = (str: string): string => {
  * camel('va va-VOOM') // -> 'vaVaVoom'
  * camel('helloWorld') // -> 'helloWorld'
  * ```
+ * @public
  */
 const camelCase = (str: string): string => {
   const parts =
@@ -151,6 +157,7 @@ const camelCase = (str: string): string => {
  * snake('va va-VOOM') // -> 'va_va_voom'
  * snake('helloWord') // -> 'hello_world'
  * ```
+ * @public
  */
 const snake_case = (
   str: string,
@@ -183,6 +190,7 @@ const snake_case = (
  * dash('va va_VOOM') // -> 'va-va-voom'
  * dash('helloWord') // -> 'hello-word'
  * ```
+ * @public
  */
 const dashCase = (str: string): string => {
   const parts =
@@ -206,6 +214,7 @@ const dashCase = (str: string): string => {
  * pascal('hello world') // -> 'HelloWorld'
  * pascal('va va boom') // -> 'VaVaBoom'
  * ```
+ * @public
  */
 const PascalCase = (str: string): string => {
   const parts = str?.split(/[.\-\s_]/).map((x) => x.toLowerCase()) ?? []

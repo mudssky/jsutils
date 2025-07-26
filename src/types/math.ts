@@ -6,6 +6,7 @@ import { Equal } from './utils'
 /**
  * 使用拼接数组获取length实现加法
  * 只能传入正整数
+ * @public
  */
 export type Add<Num1 extends number, Num2 extends number> = [
   ...BuildArray<Num1>,
@@ -15,6 +16,7 @@ export type Add<Num1 extends number, Num2 extends number> = [
 /**
  * 使用数组类型提取获取length实现减法
  * 只能传入正整数
+ * @public
  */
 export type Subtract<Num1 extends number, Num2 extends number> =
   BuildArray<Num1> extends [...arr1: BuildArray<Num2>, ...arr2: infer Rest]
@@ -23,6 +25,7 @@ export type Subtract<Num1 extends number, Num2 extends number> =
 
 /**
  * 使用递归累加实现乘法
+ * @public
  */
 export type Mutiply<
   Num1 extends number,
@@ -32,6 +35,9 @@ export type Mutiply<
   ? ResultArr['length']
   : Mutiply<Num1, Subtract<Num2, 1>, [...BuildArray<Num1>, ...ResultArr]>
 
+/**
+ * @public
+ */
 export type IsNeverOrZero<T> = T extends never
   ? true
   : T extends 0
@@ -40,6 +46,7 @@ export type IsNeverOrZero<T> = T extends never
 /**
  * 使用递归累减实现除法,整除
  * 目前只能接受整数除法，并且不能整除会返回never
+ * @public
  */
 export type Divide<
   Num1 extends number,
@@ -57,6 +64,7 @@ export type Divide<
  * 否则判断计数数组的长度，如果先到了 Num2，那么就是 Num1 大，返回 true。
  * 反之，如果先到了 Num1，那么就是 Num2 大，返回 false。
  * 如果都没到就往计数数组 CountArr 中放入一个元素，继续递归
+ * @public
  */
 export type GreaterThan<
   Num1 extends number,
@@ -72,6 +80,7 @@ export type GreaterThan<
 
 /**
  * 大于或等于
+ * @public
  */
 export type GreaterThanOrEqual<Num1 extends number, Num2 extends number> =
   Equal<Num1, Num2> extends true
@@ -94,4 +103,7 @@ type FibonacciLoop<
       Num
     >
 
+/**
+ * @public
+ */
 export type Fibonacci<Num extends number> = FibonacciLoop<[1], [], [], Num>
