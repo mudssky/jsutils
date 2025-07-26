@@ -1,68 +1,75 @@
 # jsutils 项目规范
 
-## 项目简介
-
-`@mudssky/jsutils` 是一个个人通用JavaScript工具库，采用TypeScript编写，提供了多种常用的工具函数。该库打包为ESM、CJS和UMD三种格式，并包含完整的类型声明，特别适合在TypeScript项目中使用。
-
 ## 代码风格规范
 
-### TypeScript 配置
+### TypeScript 规范
 
-- 目标版本：ES2017
-- 模块系统：ES2022
-- 模块解析策略：Bundler
+- 严格模式：启用所有严格类型检查
+- 导入路径：使用相对路径，避免深层嵌套
+- 类型导出：所有公共类型必须导出
+- TSDoc：所有公共API必须包含完整的TSDoc注释
 
 ### 代码格式化
 
 项目使用以下工具进行代码格式化和检查：
 
 1. **Prettier**
-   - 不使用分号 (semi: false)
-   - 使用单引号 (singleQuote: true)
-   - 使用插件：
-     - prettier-plugin-organize-imports
-     - prettier-plugin-packagejson
-
 2. **ESLint**
    - 扩展：eslint:recommended, plugin:@typescript-eslint/recommended
    - 插件：@typescript-eslint, tsdoc
 
+## 性能规范
+
+### 性能基准和优化指导
+
+1. **性能目标**
+   - 内存使用：避免内存泄漏和不必要的内存占用
+
+2. **代码优化原则**
+   - 优先使用原生 JavaScript API
+   - 避免不必要的循环和递归
+   - 使用适当的数据结构（Map vs Object, Set vs Array）
+   - 实现懒加载和按需导入
+
+3. **性能测试**
+   - 使用 benchmark 测试关键函数性能
+
+4. **优化策略**
+   - 缓存计算结果
+   - 避免重复计算
+
+## 错误处理规范
+
+### 统一的错误处理和日志记录标准
+
+1. **错误分类**
+   - **参数错误**：输入参数类型或值不正确
+   - **运行时错误**：执行过程中发生的异常
+   - **系统错误**：环境或依赖相关的错误
+
+2. **错误文档**
+   - 在 TSDoc 中明确标注可能抛出的错误
+
 ## 提交规范
 
-### Commit 规范
-
-项目使用 Angular 提交规范，通过 commitlint 进行检查。提交信息格式为：
-
-```
-{type}{scope}: {emoji}{subject}
-```
-
-#### 提交类型
-
-- **feat**: 新功能 🎸
-- **fix**: 修复bug 🐛
-- **docs**: 文档更改 ✏️
-- **style**: 代码风格更改（不影响代码运行的变动） 💄
-- **refactor**: 代码重构（既不是新增功能，也不是修复bug的代码变动） 🔨
-- **perf**: 性能优化 ⚡️
-- **test**: 测试相关 💍
-- **chore**: 构建过程或辅助工具的变动 🤖
-- **ci**: CI相关变动 🎡
-
-### 版本发布
-
-项目使用 semantic-release 进行版本管理和发布，配置如下：
-
-- 发布分支：main
-- 插件：
-  - @semantic-release/commit-analyzer
-  - @semantic-release/release-notes-generator
-  - @semantic-release/changelog
-  - @semantic-release/npm
-  - @semantic-release/github
-  - @semantic-release/git
+项目使用 Angular 提交规范
 
 ## 开发指南
+
+### 开发流程
+
+1. 开发功能，并编写tsdoc注释
+2. tests目录下编写测试
+3. 确保所有测试通过：`pnpm test`
+4. 确保所有ci检查通过 `pnpm ci:check`
+5. 在docs文件夹更新文档，之后更新`Readme.md`
+6. 构建验证：`pnpm build`
+
+### 优化代码相关需求开发流程
+
+1. 分析需求：确定优化的目标和范围
+2. 设计方案：根据需求设计优化方案，保存到`todos` 目录下
+3. 之后和正常开发的流程一样
 
 ### 项目结构
 
@@ -109,21 +116,32 @@ src/
     └── utils.ts      # 工具类型定义
 ```
 
-### 开发流程
-
-1. 使用 `pnpm` 作为包管理工具
-2. 开发前运行 `pnpm install` 安装依赖
-3. 使用 `pnpm build` 构建项目
-
-### 测试
+### 测试规范
 
 使用vitest进行单元测试
 
 - 测试文件位于 `test/` 目录下
 - 运行 `pnpm test` 执行测试
-- 类型测试文件使用 `.test-d.ts` 后缀
+- 追求高覆盖率，核心和复杂逻辑必须100%覆盖
+- 单元测试：每个工具函数都需要对应测试
+- 类型测试：使用 `.test-d.ts` 验证类型正确性
+- 测试命名：使用 `describe` 和 `it` 的 BDD 风格
+- 边界测试：包含异常情况和边界值测试
 
-## 文档
+## 安全规范
 
-- 项目文档使用 VitePress 生成，位于 `vitedocs/` 目录
-- API文档自动从代码注释生成
+### 代码安全最佳实践
+
+1. **避免危险函数**
+   - 禁止使用 `eval()`、`Function()` 构造函数
+   - 避免使用 `innerHTML`，优先使用 `textContent` 或 `createElement`
+   - 谨慎使用 `document.write()`
+2. **输入验证**
+   - 所有外部输入必须进行验证和清理
+   - 使用类型检查确保参数类型正确
+   - 对字符串输入进行长度限制和格式验证
+3. **依赖安全**
+   - 避免引入不必要的第三方依赖
+4. **敏感信息处理**
+   - 不在代码中硬编码敏感信息
+   - 避免在日志中输出敏感数据
