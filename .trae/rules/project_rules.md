@@ -62,7 +62,7 @@
 2. tests目录下编写测试
 3. 确保所有测试通过：`pnpm test`
 4. 确保所有ci检查通过 `pnpm ci:check`
-5. 在docs文件夹更新文档，之后更新`Readme.md`
+5. 在aidocs文件夹更新文档，之后更新`Readme.md`
 6. 构建验证：`pnpm build`
 
 ### 优化代码相关需求开发流程
