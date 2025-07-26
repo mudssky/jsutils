@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Highlighter 多关键词高亮示例</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+        .controls input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+        }
+        .controls button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .controls button:hover {
+            background: #0056b3;
+        }
+        .controls button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .highlight {
+            background-color: #ffeb3b;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .highlight-active {
+            background-color: #ff9800;
+            color: white;
+        }
+        .info {
+            margin: 10px 0;
+            padding: 10px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            color: #155724;
+        }
+        .keyword-tag {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 2px 8px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Highlighter 多关键词高亮示例</h1>
+    
+    <div class="controls">
+        <div class="mode-selector">
+            <label>
+                <input type="radio" name="mode" value="keywords" checked> 关键词模式
+            </label>
+            <label>
+                <input type="radio" name="mode" value="regex"> 正则表达式模式
+            </label>
+        </div>
+        
+        <div class="input-group" id="keywordsGroup">
+            <input type="text" id="keywordInput" placeholder="输入关键词，用逗号分隔" value="JavaScript, React, Vue">
+        </div>
+        
+        <div class="input-group" id="regexGroup" style="display: none;">
+            <input type="text" id="regexPattern" placeholder="例如: /\\b\\w+@\\w+\\.\\w+\\b/g" value="/\\b[a-zA-Z]+\\b/g">
+            <small>注意：必须包含全局标志 'g'</small>
+        </div>
+        
+        <div>
+            <button onclick="applyHighlight()">应用高亮</button>
+            <button onclick="clearHighlights()">清除高亮</button>
+        </div>
+        <div>
+            <button onclick="previousMatch()" id="prevBtn" disabled>上一个</button>
+            <button onclick="nextMatch()" id="nextBtn" disabled>下一个</button>
+        </div>
+        <div id="keywordOptions">
+            <label>
+                <input type="checkbox" id="caseSensitive"> 区分大小写
+            </label>
+            <label>
+                <input type="checkbox" id="wholeWord"> 完整单词匹配
+            </label>
+        </div>
+    </div>
+
+    <div class="info" id="info">
+        请输入要高亮的关键词，支持多个关键词同时高亮。
+    </div>
+
+    <div class="container" id="content">
+        <h2>前端开发技术栈</h2>
+        <p>
+            JavaScript 是现代 Web 开发的核心语言。它不仅可以用于前端开发，
+            还可以通过 Node.js 进行后端开发。JavaScript 的生态系统非常丰富，
+            包含了许多优秀的框架和库。
+        </p>
+        <p>
+            React 是由 Facebook 开发的用户界面库，它采用组件化的开发方式，
+            使得构建复杂的用户界面变得更加简单。React 的虚拟 DOM 机制
+            提供了出色的性能表现。
+        </p>
+        <p>
+            Vue.js 是另一个流行的前端框架，它结合了 React 和 Angular 的优点，
+            提供了渐进式的开发体验。Vue 的学习曲线相对平缓，
+            非常适合初学者入门。
+        </p>
+        <p>
+            Angular 是由 Google 维护的全功能框架，它提供了完整的解决方案，
+            包括路由、状态管理、HTTP 客户端等。TypeScript 是 Angular 的首选语言，
+            为大型应用开发提供了类型安全保障。
+        </p>
+        <p>
+            除了这些主流框架，还有许多其他优秀的工具和库，如 Webpack、Vite、
+            ESLint、Prettier 等，它们共同构成了现代前端开发的工具链。
+        </p>
+    </div>
+
+    <script type="module">
+        // 这里应该导入实际的 Highlighter 类
+        // import { Highlighter } from '@mudssky/jsutils';
+        
+        // 为了演示，我们使用一个简化的模拟实现
+        class MockHighlighter {
+            constructor(element) {
+                this.element = element;
+                this.matchCount = 0;
+                this.currentIndex = -1;
+                this.currentKeywords = [];
+                this.currentPattern = [];
+            }
+            
+            apply(keywords, options = {}) {
+                return new Promise(resolve => {
+                    this.remove();
+                    
+                    const keywordArray = Array.isArray(keywords) ? keywords : [keywords];
+                    const validKeywords = keywordArray.filter(k => k && k.trim());
+                    
+                    if (validKeywords.length === 0) {
+                        resolve(0);
+                        return;
+                    }
+                    
+                    this.currentKeywords = validKeywords;
+                    
+                    // 简化的高亮实现
+                    let count = 0;
+                    const walker = document.createTreeWalker(
+                        this.element,
+                        NodeFilter.SHOW_TEXT,
+                        null,
+                        false
+                    );
+                    
+                    const textNodes = [];
+                    let node;
+                    while (node = walker.nextNode()) {
+                        textNodes.push(node);
+                    }
+                    
+                    textNodes.forEach(textNode => {
+                        let text = textNode.textContent;
+                        let hasMatch = false;
+                        
+                        validKeywords.forEach(keyword => {
+                            const flags = options.caseSensitive ? 'g' : 'gi';
+                            const pattern = options.wholeWord 
+                                ? new RegExp(`\\b${this.escapeRegex(keyword)}\\b`, flags)
+                                : new RegExp(this.escapeRegex(keyword), flags);
+                            
+                            if (pattern.test(text)) {
+                                hasMatch = true;
+                                text = text.replace(pattern, match => {
+                                    count++;
+                                    return `<mark class="highlight">${match}</mark>`;
+                                });
+                            }
+                        });
+                        
+                        if (hasMatch) {
+                            const wrapper = document.createElement('span');
+                            wrapper.innerHTML = text;
+                            textNode.parentNode.replaceChild(wrapper, textNode);
+                        }
+                    });
+                    
+                    this.matchCount = count;
+                    if (count > 0) {
+                        this.currentIndex = 0;
+                        this.setActiveHighlight(0);
+                    }
+                    
+                    resolve(count);
+                });
+            }
+            
+            escapeRegex(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+            
+            remove() {
+                const highlights = this.element.querySelectorAll('.highlight');
+                highlights.forEach(highlight => {
+                    const parent = highlight.parentNode;
+                    parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+                    parent.normalize();
+                });
+                this.matchCount = 0;
+                this.currentIndex = -1;
+                this.currentKeywords = [];
+            }
+            
+            next() {
+                if (this.matchCount === 0) return false;
+                this.currentIndex = (this.currentIndex + 1) % this.matchCount;
+                this.setActiveHighlight(this.currentIndex);
+                return true;
+            }
+            
+            previous() {
+                if (this.matchCount === 0) return false;
+                this.currentIndex = this.currentIndex <= 0 ? this.matchCount - 1 : this.currentIndex - 1;
+                this.setActiveHighlight(this.currentIndex);
+                return true;
+            }
+            
+            setActiveHighlight(index) {
+                const highlights = this.element.querySelectorAll('.highlight');
+                highlights.forEach((highlight, i) => {
+                    if (i === index) {
+                        highlight.classList.add('highlight-active');
+                        highlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        highlight.classList.remove('highlight-active');
+                    }
+                });
+            }
+            
+            getMatchCount() {
+                return this.matchCount;
+            }
+            
+            getCurrentIndex() {
+                return this.currentIndex;
+            }
+            
+            getCurrentKeywords() {
+                return [...this.currentKeywords];
+            }
+            
+            getCurrentKeyword() {
+                return this.currentKeywords.join(', ');
+            }
+            
+            getCurrentPattern() {
+                return this.currentPattern instanceof RegExp 
+                    ? this.currentPattern 
+                    : [...this.currentPattern];
+            }
+            
+            // 正则表达式高亮方法
+            async applyRegex(regex) {
+                if (!regex || !(regex instanceof RegExp)) {
+                    console.warn('提供的正则表达式无效');
+                    return 0;
+                }
+                
+                if (!regex.global) {
+                    throw new Error('正则表达式必须包含全局标志 "g"');
+                }
+                
+                this.remove();
+                
+                const text = this.element.textContent;
+                const matches = [...text.matchAll(regex)];
+                
+                if (matches.length === 0) {
+                    return 0;
+                }
+                
+                let html = text;
+                let offset = 0;
+                
+                matches.forEach((match, index) => {
+                    const start = match.index + offset;
+                    const end = start + match[0].length;
+                    const highlightHtml = `<mark class="highlight" data-index="${index}">${match[0]}</mark>`;
+                    html = html.slice(0, start) + highlightHtml + html.slice(end);
+                    offset += highlightHtml.length - match[0].length;
+                });
+                
+                this.element.innerHTML = html;
+                this.matchCount = matches.length;
+                this.currentIndex = this.matchCount > 0 ? 0 : -1;
+                this.currentKeywords = []; // 正则表达式模式下关键词为空
+                this.currentPattern = regex;
+                
+                if (this.matchCount > 0) {
+                    this.setActiveHighlight(0);
+                }
+                
+                return this.matchCount;
+            }
+            
+            applyRegexSync(regex) {
+                return this.applyRegex(regex); // 简化实现，实际中是同步版本
+            }
+        }
+        
+        // 初始化高亮器
+        const contentElement = document.getElementById('content');
+        const highlighter = new MockHighlighter(contentElement);
+        
+        // 模式切换
+        document.querySelectorAll('input[name="mode"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const keywordsGroup = document.getElementById('keywordsGroup');
+                const regexGroup = document.getElementById('regexGroup');
+                const keywordOptions = document.getElementById('keywordOptions');
+                
+                if (this.value === 'keywords') {
+                    keywordsGroup.style.display = 'block';
+                    regexGroup.style.display = 'none';
+                    keywordOptions.style.display = 'block';
+                } else {
+                    keywordsGroup.style.display = 'none';
+                    regexGroup.style.display = 'block';
+                    keywordOptions.style.display = 'none';
+                }
+            });
+        });
+        
+        // 全局函数
+        window.applyHighlight = function() {
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            
+            if (mode === 'keywords') {
+                highlightKeywords();
+            } else {
+                highlightRegex();
+            }
+        };
+        
+        window.highlightKeywords = async function() {
+            const input = document.getElementById('keywordInput');
+            const keywords = input.value.split(',').map(k => k.trim()).filter(k => k);
+            
+            if (keywords.length === 0) {
+                updateInfo('请输入要高亮的关键词');
+                return;
+            }
+            
+            const options = {
+                caseSensitive: document.getElementById('caseSensitive').checked,
+                wholeWord: document.getElementById('wholeWord').checked
+            };
+            
+            const count = await highlighter.apply(keywords, options);
+            
+            updateInfo(`找到 ${count} 个匹配项`, keywords);
+            updateNavigationButtons();
+        };
+        
+        window.highlightRegex = function() {
+            const input = document.getElementById('regexPattern');
+            const regexStr = input.value.trim();
+            
+            if (!regexStr) {
+                updateInfo('请输入正则表达式');
+                return;
+            }
+            
+            try {
+                // 解析正则表达式字符串
+                let regex;
+                if (regexStr.startsWith('/') && regexStr.includes('/g')) {
+                    // 处理 /pattern/flags 格式
+                    const lastSlash = regexStr.lastIndexOf('/');
+                    const pattern = regexStr.slice(1, lastSlash);
+                    const flags = regexStr.slice(lastSlash + 1);
+                    regex = new RegExp(pattern, flags);
+                } else {
+                    // 处理纯模式字符串，默认添加 g 标志
+                    regex = new RegExp(regexStr, 'g');
+                }
+                
+                highlighter.applyRegex(regex).then(count => {
+                    updateInfo(`找到 ${count} 个匹配项`);
+                    updateNavigationButtons();
+                }).catch(error => {
+                    updateInfo('正则表达式错误: ' + error.message);
+                });
+            } catch (error) {
+                updateInfo('正则表达式格式错误: ' + error.message);
+            }
+        };
+        
+        window.clearHighlights = function() {
+            highlighter.remove();
+            updateInfo('已清除所有高亮');
+            updateNavigationButtons();
+        };
+        
+        window.nextMatch = function() {
+            if (highlighter.next()) {
+                updateInfo(`当前: ${highlighter.getCurrentIndex() + 1}/${highlighter.getMatchCount()}`, highlighter.getCurrentKeywords());
+            }
+        };
+        
+        window.previousMatch = function() {
+            if (highlighter.previous()) {
+                updateInfo(`当前: ${highlighter.getCurrentIndex() + 1}/${highlighter.getMatchCount()}`, highlighter.getCurrentKeywords());
+            }
+        };
+        
+        function updateInfo(message, keywords = []) {
+            const info = document.getElementById('info');
+            let html = message;
+            
+            if (keywords.length > 0) {
+                html += '<br>关键词: ';
+                keywords.forEach(keyword => {
+                    html += `<span class="keyword-tag">${keyword}</span>`;
+                });
+            }
+            
+            info.innerHTML = html;
+        }
+        
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const hasMatches = highlighter.getMatchCount() > 0;
+            
+            prevBtn.disabled = !hasMatches;
+            nextBtn.disabled = !hasMatches;
+        }
+        
+        // 键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('keywordInput').focus();
+            } else if (e.key === 'F3') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    previousMatch();
+                } else {
+                    nextMatch();
+                }
+            } else if (e.key === 'Escape') {
+                clearHighlights();
+            }
+        });
+        
+        // 回车键触发搜索
+        document.getElementById('keywordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyHighlight();
+            }
+        });
+        
+        document.getElementById('regexPattern').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyHighlight();
+            }
+        });
+    </script>
+</body>
+</html>

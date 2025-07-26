@@ -65,9 +65,9 @@ interface HighlightCallbacks {
   /**
    * 高亮应用完成时的回调
    * @param matchCount - 匹配项总数
-   * @param keyword - 高亮的关键词
+   * @param keywords - 高亮的关键词数组
    */
-  onHighlightApplied?: (matchCount: number, keyword: string) => void
+  onHighlightApplied?: (matchCount: number, keywords: string[]) => void
   /**
    * 高亮移除时的回调
    */
@@ -93,10 +93,13 @@ interface HighlightCallbacks {
  *
  * @example
  * ```typescript
- * // 基本用法
+ * // 基本用法（单个关键词）
  * const container = document.getElementById('content')
  * const highlighter = new Highlighter(container)
  * highlighter.apply('搜索关键词')
+ *
+ * // 多个关键词高亮
+ * highlighter.apply(['JavaScript', 'TypeScript', 'React'])
  *
  * // 使用配置对象
  * const highlighter = new Highlighter(container, {
@@ -110,16 +113,16 @@ interface HighlightCallbacks {
  * const highlighter = new Highlighter(container, {
  *   highlightClass: 'search-result'
  * }, {
- *   onHighlightApplied: (count, keyword) => {
- *     console.log(`找到 ${count} 个 "${keyword}" 的匹配项`)
+ *   onHighlightApplied: (count, keywords) => {
+ *     console.log(`找到 ${count} 个 "${keywords}" 的匹配项`)
  *   },
  *   onNavigate: (index, total, element) => {
  *     console.log(`当前: ${index + 1}/${total}`)
  *   }
  * })
  *
- * // 高级选项
- * highlighter.apply('JavaScript', {
+ * // 高级选项（多个关键词）
+ * highlighter.apply(['JavaScript', 'API'], {
  *   caseSensitive: true,  // 区分大小写
  *   wholeWord: true       // 只匹配完整单词
  * })
@@ -139,7 +142,8 @@ class Highlighter {
 
   private highlights: HTMLElement[] = []
   private currentIndex: number = -1
-  private currentKeyword: string = ''
+  private currentKeywords: string[] = []
+  private currentPattern: string[] | RegExp = []
 
   /**
    * 创建一个新的高亮器实例
@@ -196,26 +200,95 @@ class Highlighter {
   }
 
   /**
+   * 准备应用正则表达式高亮的内部方法
+   *
+   * @param regex - 正则表达式
+   * @returns 准备好的数据或 null（如果正则表达式无效）
+   */
+  private _prepareApplyRegex(regex: RegExp): {
+    finalRegex: RegExp
+    walker: TreeWalker
+  } | null {
+    // 验证正则表达式
+    if (!regex || !(regex instanceof RegExp)) {
+      // eslint-disable-next-line no-console
+      console.warn('Highlighter: 提供的正则表达式无效')
+      return null
+    }
+
+    // 检查是否包含全局标志
+    if (!regex.global) {
+      throw new Error('Highlighter: 正则表达式必须包含全局标志 "g"')
+    }
+
+    // 清理之前的高亮
+    this.remove()
+
+    // 创建 TreeWalker
+    const walker = document.createTreeWalker(
+      this.targetNode,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: (node: Node) => {
+          // 排除指定标签和已经被高亮的区域
+          if (
+            node.parentElement &&
+            this.config.skipTags.includes(
+              node.parentElement.nodeName.toUpperCase(),
+            )
+          ) {
+            return NodeFilter.FILTER_REJECT
+          }
+          if (
+            (node.parentElement as HTMLElement)?.classList.contains(
+              this.config.highlightClass,
+            )
+          ) {
+            return NodeFilter.FILTER_REJECT
+          }
+          return NodeFilter.FILTER_ACCEPT
+        },
+      },
+    )
+
+    return {
+      finalRegex: regex,
+      walker,
+    }
+  }
+
+  /**
    * 准备高亮应用的前置工作
    * @internal
    */
   private _prepareApply(
-    keyword: string,
+    keywords: string | string[],
     options: HighlightOptions = {},
   ): { finalRegex: RegExp; walker: TreeWalker } | null {
     this.remove() // 清理旧的高亮
 
-    if (!keyword || !keyword.trim()) {
+    // 标准化关键词为数组
+    const keywordArray = Array.isArray(keywords) ? keywords : [keywords]
+    const validKeywords = keywordArray
+      .filter(
+        (keyword) =>
+          keyword != null && typeof keyword === 'string' && keyword.trim(),
+      )
+      .map((keyword) => keyword.trim())
+
+    if (validKeywords.length === 0) {
       return null
     }
 
-    this.currentKeyword = keyword.trim()
+    this.currentKeywords = validKeywords
 
-    const safeKeyword = escapeRegExp(this.currentKeyword)
+    // 创建组合正则表达式
+    const safeKeywords = validKeywords.map((keyword) => escapeRegExp(keyword))
     const regexFlags = options.caseSensitive ? 'g' : 'gi'
+    const keywordPattern = safeKeywords.join('|')
     const finalRegex = options.wholeWord
-      ? new RegExp(`\\b${safeKeyword}\\b`, regexFlags)
-      : new RegExp(safeKeyword, regexFlags)
+      ? new RegExp(`\\b(${keywordPattern})\\b`, regexFlags)
+      : new RegExp(`(${keywordPattern})`, regexFlags)
 
     const walker = document.createTreeWalker(
       this.targetNode,
@@ -247,6 +320,42 @@ class Highlighter {
   }
 
   /**
+   * 完成正则表达式高亮应用的后续工作
+   * @internal
+   */
+  private _finalizeApplyRegex(
+    nodesToReplace: { oldNode: Node; fragment: DocumentFragment }[],
+    regex: RegExp,
+  ): number {
+    // 批量替换节点
+    nodesToReplace.forEach((replacement) => {
+      replacement.oldNode.parentNode?.replaceChild(
+        replacement.fragment,
+        replacement.oldNode,
+      )
+    })
+
+    // 存储所有高亮元素
+    this.highlights = Array.from(
+      this.targetNode.querySelectorAll(`.${this.config.highlightClass}`),
+    )
+
+    if (this.highlights.length > 0) {
+      this.currentIndex = 0
+      this.setActiveHighlight()
+    }
+
+    // 存储当前模式
+    this.currentPattern = regex
+    this.currentKeywords = [] // 正则表达式模式下关键词为空
+
+    // 触发回调
+    this.callbacks.onHighlightApplied?.(this.highlights.length, [])
+
+    return this.highlights.length
+  }
+
+  /**
    * 完成高亮应用的后续工作
    * @internal
    */
@@ -271,11 +380,13 @@ class Highlighter {
       this.setActiveHighlight()
     }
 
+    // 存储当前模式
+    this.currentPattern = this.currentKeywords
+
     // 触发回调
-    this.callbacks.onHighlightApplied?.(
-      this.highlights.length,
-      this.currentKeyword,
-    )
+    this.callbacks.onHighlightApplied?.(this.highlights.length, [
+      ...this.currentKeywords,
+    ])
 
     return this.highlights.length
   }
@@ -287,7 +398,7 @@ class Highlighter {
    * 并为新的匹配项设置高亮样式。完成后会自动定位到第一个匹配项。
    * 异步版本支持性能优化，适合处理大文档。
    *
-   * @param keyword - 要高亮的关键词，空字符串或仅包含空白字符的字符串将被忽略
+   * @param keywords - 要高亮的关键词，可以是单个字符串或字符串数组，空字符串或仅包含空白字符的字符串将被忽略
    * @param options - 高亮选项配置
    * @returns 匹配项的数量
    *
@@ -295,17 +406,20 @@ class Highlighter {
    * ```typescript
    * const highlighter = new Highlighter(document.body)
    *
-   * // 基本高亮
+   * // 基本高亮（单个关键词）
    * const count1 = await highlighter.apply('JavaScript')
    *
+   * // 多个关键词高亮
+   * const count2 = await highlighter.apply(['JavaScript', 'TypeScript', 'React'])
+   *
    * // 区分大小写的高亮
-   * const count2 = await highlighter.apply('JavaScript', { caseSensitive: true })
+   * const count3 = await highlighter.apply(['JavaScript', 'API'], { caseSensitive: true })
    *
    * // 只匹配完整单词
-   * const count3 = await highlighter.apply('script', { wholeWord: true })
+   * const count4 = await highlighter.apply(['script', 'code'], { wholeWord: true })
    *
    * // 组合选项
-   * const count4 = await highlighter.apply('API', {
+   * const count5 = await highlighter.apply(['API', 'SDK'], {
    *   caseSensitive: true,
    *   wholeWord: true
    * })
@@ -317,12 +431,13 @@ class Highlighter {
    * - 使用TreeWalker遍历文本节点以确保性能
    * - 关键词中的正则表达式特殊字符会被自动转义
    * - 支持性能优化，在处理大量节点时会分批处理避免阻塞UI
+   * - 多个关键词会被组合成一个正则表达式进行匹配
    */
   public async apply(
-    keyword: string,
+    keywords: string | string[],
     options: HighlightOptions = {},
   ): Promise<number> {
-    const prepared = this._prepareApply(keyword, options)
+    const prepared = this._prepareApply(keywords, options)
     if (!prepared) {
       return 0
     }
@@ -372,7 +487,7 @@ class Highlighter {
    * 并为新的匹配项设置高亮样式。完成后会自动定位到第一个匹配项。
    * 同步版本不包含性能优化，适合处理小到中等大小的文档。
    *
-   * @param keyword - 要高亮的关键词，空字符串或仅包含空白字符的字符串将被忽略
+   * @param keywords - 要高亮的关键词，可以是单个字符串或字符串数组，空字符串或仅包含空白字符的字符串将被忽略
    * @param options - 高亮选项配置
    * @returns 匹配项的数量
    *
@@ -380,17 +495,20 @@ class Highlighter {
    * ```typescript
    * const highlighter = new Highlighter(document.body)
    *
-   * // 基本高亮
+   * // 基本高亮（单个关键词）
    * const count1 = highlighter.applySync('JavaScript')
    *
+   * // 多个关键词高亮
+   * const count2 = highlighter.applySync(['JavaScript', 'TypeScript', 'React'])
+   *
    * // 区分大小写的高亮
-   * const count2 = highlighter.applySync('JavaScript', { caseSensitive: true })
+   * const count3 = highlighter.applySync(['JavaScript', 'API'], { caseSensitive: true })
    *
    * // 只匹配完整单词
-   * const count3 = highlighter.applySync('script', { wholeWord: true })
+   * const count4 = highlighter.applySync(['script', 'code'], { wholeWord: true })
    *
    * // 组合选项
-   * const count4 = highlighter.applySync('API', {
+   * const count5 = highlighter.applySync(['API', 'SDK'], {
    *   caseSensitive: true,
    *   wholeWord: true
    * })
@@ -402,9 +520,13 @@ class Highlighter {
    * - 使用TreeWalker遍历文本节点以确保性能
    * - 关键词中的正则表达式特殊字符会被自动转义
    * - 同步执行，不会分批处理，适合小到中等大小的文档
+   * - 多个关键词会被组合成一个正则表达式进行匹配
    */
-  public applySync(keyword: string, options: HighlightOptions = {}): number {
-    const prepared = this._prepareApply(keyword, options)
+  public applySync(
+    keywords: string | string[],
+    options: HighlightOptions = {},
+  ): number {
+    const prepared = this._prepareApply(keywords, options)
     if (!prepared) {
       return 0
     }
@@ -425,6 +547,142 @@ class Highlighter {
     }
 
     return this._finalizeApply(nodesToReplace)
+  }
+
+  /**
+   * 使用自定义正则表达式应用高亮（异步版本）
+   *
+   * 使用提供的正则表达式在目标元素中搜索并高亮显示匹配的文本。
+   * 会自动清理之前的高亮，并为新的匹配项设置高亮样式。
+   * 异步版本支持性能优化，适合处理大文档。
+   *
+   * @param regex - 用于匹配的正则表达式，必须包含全局标志 'g'
+   * @returns 匹配项的数量
+   *
+   * @example
+   * ```typescript
+   * const highlighter = new Highlighter(document.body)
+   *
+   * // 高亮所有邮箱地址
+   * const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g
+   * const count1 = await highlighter.applyRegex(emailRegex)
+   *
+   * // 高亮日期格式 YYYY-MM-DD
+   * const dateRegex = /\d{4}-\d{2}-\d{2}/g
+   * const count2 = await highlighter.applyRegex(dateRegex)
+   *
+   * // 高亮 "Chapter" 或 "Section" 后跟数字
+   * const chapterRegex = /(Chapter|Section)\s+\d+/gi
+   * const count3 = await highlighter.applyRegex(chapterRegex)
+   * ```
+   *
+   * @throws 如果传入的正则表达式没有 'g' 标志，则会抛出错误
+   *
+   * @remarks
+   * - 该方法会跳过配置中指定的标签内的文本
+   * - 不会在已经高亮的元素内进行嵌套高亮
+   * - 使用TreeWalker遍历文本节点以确保性能
+   * - 支持性能优化，在处理大量节点时会分批处理避免阻塞UI
+   * - 正则表达式必须包含全局标志 'g' 以确保能匹配所有实例
+   */
+  public async applyRegex(regex: RegExp): Promise<number> {
+    const prepared = this._prepareApplyRegex(regex)
+    if (!prepared) {
+      return 0
+    }
+
+    const { finalRegex, walker } = prepared
+    const nodesToReplace: { oldNode: Node; fragment: DocumentFragment }[] = []
+    let currentNode = walker.nextNode()
+
+    // 性能优化：批量处理节点
+    const batchSize = this.config.enablePerformanceOptimization ? 100 : Infinity
+    let processedCount = 0
+
+    while (currentNode) {
+      const textContent = currentNode.textContent
+      if (textContent && finalRegex.test(textContent)) {
+        const fragment = this.createHighlightedFragment(textContent, finalRegex)
+        nodesToReplace.push({ oldNode: currentNode, fragment })
+      }
+
+      currentNode = walker.nextNode()
+      processedCount++
+
+      // 性能优化：分批处理大量节点
+      if (
+        this.config.enablePerformanceOptimization &&
+        processedCount >= batchSize
+      ) {
+        // 使用 requestIdleCallback 或 setTimeout 来避免阻塞UI
+        if (typeof requestIdleCallback !== 'undefined') {
+          await new Promise<void>((resolve) =>
+            requestIdleCallback(() => resolve()),
+          )
+        } else {
+          await new Promise<void>((resolve) => setTimeout(() => resolve(), 0))
+        }
+        processedCount = 0
+      }
+    }
+
+    return this._finalizeApplyRegex(nodesToReplace, regex)
+  }
+
+  /**
+   * 使用自定义正则表达式应用高亮（同步版本）
+   *
+   * 使用提供的正则表达式在目标元素中搜索并高亮显示匹配的文本。
+   * 会自动清理之前的高亮，并为新的匹配项设置高亮样式。
+   * 同步版本不包含性能优化，适合处理小到中等大小的文档。
+   *
+   * @param regex - 用于匹配的正则表达式，必须包含全局标志 'g'
+   * @returns 匹配项的数量
+   *
+   * @example
+   * ```typescript
+   * const highlighter = new Highlighter(document.body)
+   *
+   * // 高亮所有邮箱地址
+   * const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g
+   * const count1 = highlighter.applyRegexSync(emailRegex)
+   *
+   * // 高亮日期格式 YYYY-MM-DD
+   * const dateRegex = /\d{4}-\d{2}-\d{2}/g
+   * const count2 = highlighter.applyRegexSync(dateRegex)
+   * ```
+   *
+   * @throws 如果传入的正则表达式没有 'g' 标志，则会抛出错误
+   *
+   * @remarks
+   * - 该方法会跳过配置中指定的标签内的文本
+   * - 不会在已经高亮的元素内进行嵌套高亮
+   * - 使用TreeWalker遍历文本节点以确保性能
+   * - 同步执行，不会分批处理，适合小到中等大小的文档
+   * - 正则表达式必须包含全局标志 'g' 以确保能匹配所有实例
+   */
+  public applyRegexSync(regex: RegExp): number {
+    const prepared = this._prepareApplyRegex(regex)
+    if (!prepared) {
+      return 0
+    }
+
+    const { finalRegex, walker } = prepared
+    const nodesToReplace: { oldNode: Node; fragment: DocumentFragment }[] = []
+    let currentNode = walker.nextNode()
+
+    // 同步处理所有节点
+    while (currentNode) {
+      const textContent = currentNode.textContent
+      if (textContent && finalRegex.test(textContent)) {
+        const fragment = this.createHighlightedFragment(textContent, finalRegex)
+        nodesToReplace.push({ oldNode: currentNode, fragment })
+      }
+
+      currentNode = walker.nextNode()
+    }
+
+    return this._finalizeApplyRegex(nodesToReplace, regex)
   }
 
   /**
@@ -457,7 +715,8 @@ class Highlighter {
     })
     this.highlights = []
     this.currentIndex = -1
-    this.currentKeyword = ''
+    this.currentKeywords = []
+    this.currentPattern = []
 
     // 触发回调
     this.callbacks.onHighlightRemoved?.()
@@ -576,17 +835,59 @@ class Highlighter {
   /**
    * 获取当前高亮的关键词
    *
-   * @returns 当前高亮的关键词，如果没有高亮则返回空字符串
+   * @returns 当前高亮的关键词数组，如果没有高亮则返回空数组
    *
    * @example
    * ```typescript
    * const highlighter = new Highlighter(document.body)
-   * highlighter.apply('JavaScript')
+   * highlighter.apply(['JavaScript', 'TypeScript'])
+   * console.log(`当前高亮关键词: ${highlighter.getCurrentKeywords().join(', ')}`)
+   * ```
+   */
+  public getCurrentKeywords(): string[] {
+    return [...this.currentKeywords]
+  }
+
+  /**
+   * 获取当前高亮的模式
+   *
+   * @returns 当前高亮的模式，可能是关键词数组或正则表达式
+   *
+   * @example
+   * ```typescript
+   * const highlighter = new Highlighter(document.body)
+   *
+   * // 使用关键词高亮
+   * await highlighter.apply(['JavaScript', 'tutorial'])
+   * console.log(highlighter.getCurrentPattern()) // ['JavaScript', 'tutorial']
+   *
+   * // 使用正则表达式高亮
+   * const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g
+   * await highlighter.applyRegex(emailRegex)
+   * console.log(highlighter.getCurrentPattern()) // RegExp object
+   * ```
+   */
+  public getCurrentPattern(): string[] | RegExp {
+    return this.currentPattern instanceof RegExp
+      ? this.currentPattern
+      : [...this.currentPattern]
+  }
+
+  /**
+   * 获取当前高亮的关键词（兼容性方法）
+   *
+   * @returns 当前高亮的关键词字符串，多个关键词用逗号分隔，如果没有高亮则返回空字符串
+   * @deprecated 建议使用 getCurrentKeywords() 方法
+   *
+   * @example
+   * ```typescript
+   * const highlighter = new Highlighter(document.body)
+   * highlighter.apply(['JavaScript', 'TypeScript'])
    * console.log(`当前高亮关键词: ${highlighter.getCurrentKeyword()}`)
    * ```
    */
   public getCurrentKeyword(): string {
-    return this.currentKeyword
+    return this.currentKeywords.join(', ')
   }
 
   /**
