@@ -78,7 +78,7 @@ describe('typed module', () => {
   })
 
   describe('isPrimitive function', () => {
-    test('returns true for all the primitives', () => {
+    ;(test('returns true for all the primitives', () => {
       const arr = [
         1.1,
         'How you doin?',
@@ -99,7 +99,7 @@ describe('typed module', () => {
         for (const elm of arr) {
           assert.isFalse(_.isPrimitive(elm))
         }
-      })
+      }))
   })
 
   describe('isFunction function', () => {
@@ -500,7 +500,7 @@ describe('typed module', () => {
       obj: { name: 'object', id: 1, chilren: [0, 1, 2] },
       arr: [0, 1, 2],
       func() {
-        console.log('function')
+        // console.log('function')
       },
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       loop: null as any,

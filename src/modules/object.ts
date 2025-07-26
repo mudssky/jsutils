@@ -4,9 +4,9 @@ import { AnyObject, ObjectIterator, PropertyName } from '../types/index'
 
 /**
  *  从obj中选取属性，返回一个新的对象
- * @param obj
- * @param keys
- * @returns
+ * @param obj - 源对象
+ * @param keys - 要选取的属性键数组
+ * @returns - 包含选取属性的新对象
  */
 function pick<T extends object, K extends keyof T>(
   obj: T | undefined | null,
@@ -27,9 +27,9 @@ function pick<T extends object, K extends keyof T>(
 /**
  * 类似于数组的filter方法，但是作用于对象。
  * 默认情况下predicate，是判断value值是否为真值进行筛选
- * @param obj
- * @param predicate
- * @returns
+ * @param obj - 源对象
+ * @param predicate - 筛选函数
+ * @returns - 筛选后的新对象
  */
 function pickBy<T extends object, K extends keyof T>(
   obj: T | undefined | null,
@@ -55,9 +55,9 @@ function pickBy<T extends object, K extends keyof T>(
 }
 /**
  * 从obj中剔除属性，返回一个新的对象
- * @param obj
- * @param keys
- * @returns
+ * @param obj - 源对象
+ * @param keys - 要剔除的属性键数组
+ * @returns - 剔除指定属性后的新对象
  */
 function omit<T extends object, K extends keyof T>(
   obj: T | null | undefined,
@@ -83,9 +83,9 @@ function omit<T extends object, K extends keyof T>(
 
 /**
  * pickBy的反向，判断剔除的属性
- * @param obj
- * @param predicate
- * @returns
+ * @param obj - 源对象
+ * @param predicate - 筛选函数
+ * @returns - 剔除匹配属性后的新对象
  */
 function omitBy<T extends object, K extends keyof T>(
   obj: T | undefined | null,
@@ -96,6 +96,12 @@ function omitBy<T extends object, K extends keyof T>(
   return pickBy(obj, (value, key) => !predicate(value, key))
 }
 
+/**
+ * 转换对象的键名
+ * @param obj - 源对象
+ * @param iteratee - 键名转换函数
+ * @returns 转换键名后的新对象
+ */
 function mapKeys<T extends object>(
   obj: T,
   iteratee: ObjectIterator<T, string>,
@@ -110,6 +116,12 @@ function mapKeys<T extends object>(
   return result
 }
 
+/**
+ * 转换对象的值
+ * @param obj - 源对象
+ * @param iteratee - 值转换函数
+ * @returns 转换值后的新对象
+ */
 function mapValues<T extends object, U = any>(
   obj: T,
   iteratee: ObjectIterator<T, U>,
@@ -124,15 +136,20 @@ function mapValues<T extends object, U = any>(
   return result as Record<keyof T, U>
 }
 
+/**
+ * 判断是否为对象
+ * @param obj - 要判断的值
+ * @returns 是否为对象
+ */
 function isObject(obj: any): obj is AnyObject {
   return typeof obj === 'object' && obj !== null
 }
 
 /**
  * 对两个对象，进行递归合并
- * @param target
- * @param sources
- * @returns
+ * @param target - 目标对象
+ * @param sources - 源对象数组
+ * @returns - 合并后的对象
  */
 function merge(target: AnyObject, ...sources: AnyObject[]): AnyObject {
   for (const source of sources) {
@@ -148,8 +165,8 @@ function merge(target: AnyObject, ...sources: AnyObject[]): AnyObject {
 }
 /**
  * 移除对象中不能被json序列化的属性
- * @param obj
- * @returns
+ * @param obj - 要处理的对象
+ * @returns - 移除不可序列化属性后的对象
  */
 function removeNonSerializableProps(obj: Record<any, any> | null | undefined) {
   if (obj === null || obj === undefined) {
@@ -196,14 +213,19 @@ function removeNonSerializableProps(obj: Record<any, any> | null | undefined) {
 
 /**
  * 移除对象中不能序列化的属性后，再执行JSON.stringify
- * @param obj
- * @returns
+ * @param obj - 要序列化的对象
+ * @returns - JSON字符串
  */
 function safeJsonStringify(obj: AnyObject | null | undefined): string {
   const serializableObj = removeNonSerializableProps(obj)
   return JSON.stringify(serializableObj)
 }
 
+/**
+ * 反转对象的键值对
+ * @param obj - 源对象
+ * @returns 键值对反转后的新对象
+ */
 const invert = <TKey extends PropertyName, TValue extends PropertyName>(
   obj: Record<TKey, TValue>,
 ): Record<TValue, TKey> => {

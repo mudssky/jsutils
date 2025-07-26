@@ -1,30 +1,24 @@
-import { Nullable } from 'vitest'
-import { omit } from './object'
+import { Nullable } from '@/types'
+import { omit } from '../object'
 
 class RegexChecker {
   /**
    * 用户名正则
    * 数字字母，连接符，下划线
-   * @memberof RegexChecker
    */
   readonly usernamePattern = /^[a-zA-Z0-9_-]{4,16}$/
   /**
    *正数
-   * @memberof RegexChecker
    */
   readonly positivePattern = /^\d*\.?\d+$/
 
   /**
    * 负数
-   *
-   * @memberof RegexChecker
    */
   readonly negativePattern = /^-\d*\.?\d+$/
 
   /**
    * 邮箱,允许中文邮箱
-   *
-   * @memberof RegexChecker
    */
   readonly emailPatternCN =
     /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
@@ -34,8 +28,6 @@ class RegexChecker {
 
   /**
    *手机号码
-   *
-   * @memberof RegexChecker
    */
   readonly mobilePattern = /^1[34578]\d{9}$/
 }
@@ -81,8 +73,9 @@ type AnalyzePasswordStrenthOptions = {
 }
 /**
  * 检查密码强度，返回多个判断的结果对象
- * @param options
- * @returns
+ * @param password - 要检查的密码
+ * @param options - 检查选项
+ * @returns 密码强度分析结果
  */
 function analyzePasswordStrength(
   password: Nullable<string>,
@@ -141,9 +134,9 @@ type CalculatePasswordStrengthLevelOptions = {
  * 计算密码强度等级，可以切换不同的策略
  * 有一个默认策略，若密码强度小于minlength，则返回0
  * 处理minLength以外，其他规则若有一项符合则强度+1，比如大写字母，小写字母，特殊字符，数字
- * @param password
- * @param strategy
- * @returns
+ * @param password - 要检查的密码
+ * @param options - 计算选项
+ * @returns 密码强度等级
  */
 function calculatePasswordStrengthLevel(
   password: string,

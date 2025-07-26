@@ -72,7 +72,7 @@ type EnhancedLabel<T extends string> = T | (string & {})
  * 同时保持了Array的所有原生方法和特性。
  *
  * @template T - 枚举数组的完整字面量类型，必须由 `as const` 断言。
- *              例如：`typeof [{ label: 'A', value: 1 }] as const`
+ *              例如：`typeof [\{ label: 'A', value: 1 \}] as const`
  * @public
  *
  * @example
@@ -297,13 +297,13 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /**
    * 使用映射字典改变枚举类的键，返回新对象组成的数组
    *
-   * @param mapDictionary - 键映射字典，例如 { value: 'id', label: 'name' }
-   * @returns 映射后的对象数组
+   * @param mapDictionary - 键映射字典，例如 \{ value: 'id', label: 'name' \}
+   * @returns - 映射后的对象数组
    *
    * @example
    * ```typescript
-   * const mapped = enumArray.getKeyMappedList({ value: 'id', label: 'name' })
-   * // [{ id: 1, name: '启用' }, { id: 0, name: '禁用' }]
+   * const mapped = enumArray.getKeyMappedList(\{ value: 'id', label: 'name' \})
+   * // [\{ id: 1, name: '启用' \}, \{ id: 0, name: '禁用' \}]
    * ```
    */
   getKeyMappedList(mapDictionary: Record<string, string>) {
@@ -312,7 +312,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /**
    * 获取所有label的列表
    *
-   * @returns 包含所有枚举标签的数组
+   * @returns - 包含所有枚举标签的数组
    *
    * @example
    * ```typescript
@@ -340,7 +340,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /**
    * 获取所有value的列表
    *
-   * @returns 包含所有枚举值的数组
+   * @returns - 包含所有枚举值的数组
    *
    * @example
    * ```typescript
@@ -358,7 +358,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    *
    * @param value - 要检查的值，可以是来自API等外部源的数据
    * @param labels - 允许的标签数组
-   * @returns 如果value对应的label在labels中则返回true
+   * @returns - 如果value对应的label在labels中则返回true
    *
    * @example
    * ```typescript
@@ -386,7 +386,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    *
    * @param label - 要检查的标签，输入时会获得自动补全
    * @param allowedLabels - 包含所有期望的合法标签的数组
-   * @returns 如果label不为null/undefined且存在于allowedLabels中，则返回true
+   * @returns - 如果label不为null/undefined且存在于allowedLabels中，则返回true
    *
    * @example
    * ```typescript
@@ -413,7 +413,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * @template K - 属性键名类型
    * @param value - 枚举值
    * @param key - 属性键名
-   * @returns 属性值，如果未找到则返回undefined
+   * @returns - 属性值，如果未找到则返回undefined
    *
    * @example
    * ```typescript
@@ -453,7 +453,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * 检查给定的值或标签是否存在于枚举中
    *
    * @param valueOrLabel - 要检查的值或标签
-   * @returns 如果存在则返回true
+   * @returns - 如果存在则返回true
    *
    * @example
    * ```typescript
@@ -472,7 +472,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * 在类型守卫通过后，TypeScript会将参数类型缩窄为具体的枚举值类型。
    *
    * @param value - 要检查的值，可以是任意类型
-   * @returns 如果是有效的枚举值则返回true，同时提供类型缩窄
+   * @returns - 如果是有效的枚举值则返回true，同时提供类型缩窄
    *
    * @example
    * ```typescript
@@ -560,7 +560,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /**
    * 使value和label用相同的值
    *
-   * @deprecated 该方法功能特殊，建议在外部通过 map 方法实现: myEnum.map(item => ({ ...item, value: item.label }))
+   * @deprecated 该方法功能特殊，建议在外部通过 map 方法实现: myEnum.map(item =\> (\{ ...item, value: item.label \}))
    * @returns 所有项的label作为value的新数组
    */
   getAllLabelList() {
@@ -588,7 +588,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * @deprecated 请使用 isValueInLabels(value, labels)，参数顺序更符合直觉且类型更安全
    * @param labels - 标签列表
    * @param value - 要检查的值
-   * @returns 是否匹配
+   * @returns - 是否匹配
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   isLabelsMatchValue(labels: LabelOf<T>[], value?: any): boolean {
@@ -601,7 +601,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    *
    * @param labels - 标签列表
    * @param label - 要检查的标签
-   * @returns 是否匹配
+   * @returns - 是否匹配
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   isLabelsMatchLabel(labels: LabelOf<T>[], label?: any): boolean {
@@ -611,9 +611,9 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /**
    * 根据label列表获取value列表
    *
-   * @deprecated 建议在外部通过 labels.map(l => myEnum.getValueByLabel(l)) 实现，以保持API简洁
+   * @deprecated 建议在外部通过 labels.map(l =\> myEnum.getValueByLabel(l)) 实现，以保持API简洁
    * @param labels - 标签列表
-   * @returns value列表
+   * @returns - value列表
    */
   getValuesByLabels(labels: LabelOf<T>[]): (ValueOf<T> | undefined)[] {
     return labels.map((label) => {
@@ -624,9 +624,9 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /**
    * 根据value列表获取label列表
    *
-   * @deprecated 建议在外部通过 values.map(v => myEnum.getLabelByValue(v)) 实现，以保持API简洁
+   * @deprecated 建议在外部通过 values.map(v =\> myEnum.getLabelByValue(v)) 实现，以保持API简洁
    * @param values - 值列表
-   * @returns label列表
+   * @returns - label列表
    */
   getLabelsByValues(values: ValueOf<T>[]): (LabelOf<T> | undefined)[] {
     return values.map((value) => {
@@ -707,7 +707,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
  * @template T - 枚举数组类型，必须使用 as const 断言以保留字面量类型
  * @param enumsTuple - 枚举元组，建议使用 as const 修饰以获得最佳类型推断
  * @param options - 创建时的配置项
- * @returns 返回冻结的EnumArray实例，提供高性能的枚举操作方法
+ * @returns - 返回冻结的EnumArray实例，提供高性能的枚举操作方法
  *
  * @example
  * 基础用法：
@@ -726,7 +726,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
  * const item = statusEnum.getItemByValue(1) // 完整对象
  *
  * // 类型安全的属性访问
- * const color = statusEnum.getAttrByValue(1, 'color') // 类型推断为 'orange' | 'green' | 'red' | undefined
+ * const color = statusEnum.getAttrByValue(1, 'color') // 类型推断为 'orange' \\| 'green' \\| 'red' \\| undefined
  *
  * // 列表操作
  * const allLabels = statusEnum.getLabels() // ['待处理', '已完成', '已取消']
@@ -793,7 +793,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
  *
  * // 获取权限信息
  * const permissions = roleEnum.getAttrByValue('admin', 'permissions')
- * // 类型推断为: ['read', 'write', 'delete'] | ['read', 'write'] | ['read'] | undefined
+ * // 类型推断为: ['read', 'write', 'delete'] \| ['read', 'write'] \| ['read'] \| undefined
  *
  * // 检查角色级别
  * const level = roleEnum.getAttrByLabel('编辑者', 'level') // 2

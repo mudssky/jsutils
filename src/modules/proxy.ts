@@ -1,8 +1,8 @@
 /**
  * 传入一个对象，利用Proxy包装返回一个单例对象
  * 因为使用了Proxy，所以this绑定还是原来的对象不会受影响
- * @param obj
- * @returns
+ * @param obj - 要包装的构造函数
+ * @returns 包装后的单例构造函数
  * @public
  * @example
  * ```ts

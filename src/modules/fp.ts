@@ -5,8 +5,8 @@ import type { AnyFunction } from '../types/global'
 /**
  * pipe方法，用于串联函数的，实现流水线管道，需要传入的函数入参和出参都是一个(一元函数)。
  * 执行从左到右的函数组合。第一个参数可以有任意数量；其余参数必须是一元的。
- * @param functions
- * @returns
+ * @param functions - 要组合的函数列表
+ * @returns 组合后的函数
  */
 function pipe<OUT = any>(...functions: AnyFunction[]) {
   if (functions.length === 0) {
@@ -23,8 +23,8 @@ function pipe<OUT = any>(...functions: AnyFunction[]) {
  * 组合函数
  * 和pipe类似，但是先执行的函数放在最后，更接近数学的函数。
  * 最后一个参数可以有任意数量,其余参数必须是一元的。
- * @param functions
- * @returns
+ * @param functions - 要组合的函数列表
+ * @returns 组合后的函数
  */
 function compose<OUT = any>(...functions: AnyFunction[]) {
   if (functions.length === 0) {
@@ -39,9 +39,9 @@ function compose<OUT = any>(...functions: AnyFunction[]) {
 
 /**
  * 通用柯里化，将任意参数的函数，转化为嵌套调用
- * @param func
- * @param arity
- * @returns
+ * @param func - 要柯里化的函数
+ * @param arity - 函数的参数数量
+ * @returns 柯里化后的函数
  */
 // TODO 暂时能力不足，curry的ts类型留到以后补上。
 function curry(func: (...args: any) => any, arity = func.length) {
@@ -99,8 +99,8 @@ class Monad<T = any> extends AbstractMonad<T> {
   }
   /**
    * Monda使用flatMap函数可以解决Functor嵌套的问题
-   * @param f
-   * @returns
+   * @param f - 映射函数
+   * @returns 展平后的结果
    */
   flatMap(f: (arg0: T) => any) {
     return this.map(f).valueOf()
@@ -111,7 +111,7 @@ class Monad<T = any> extends AbstractMonad<T> {
   }
   /**
    * 展示内部数据
-   * @returns
+   * @returns 内部数据的字符串表示
    */
   inspect() {
     return `Monad {${this.val}}`

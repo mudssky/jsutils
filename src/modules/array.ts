@@ -5,14 +5,14 @@ import { isArray, isFunction } from './typed'
 
 /**
  * 函数“range”返回一个数字数组，该数组从给定的起始值开始，按给定的步长值递增，并以给定的结束值结束（可选）。
- * @param  start - start 参数是范围的起始值
- * @param  end - “end”参数是一个可选参数，用于指定范围的结束值。如果未提供，则范围将是[0,start）。
- * @param step - “step”参数是一个可选参数，用于指定范围内每个值之间的增量。如果未提供，则默认为 1。
- * @returns [start,end)范围的，按照step步长的整数组成的数组
+ * @param start - start 参数是范围的起始值
+ * @param end - "end"参数是一个可选参数，用于指定范围的结束值。如果未提供，则范围将是\[0,start）。
+ * @param step - "step"参数是一个可选参数，用于指定范围内每个值之间的增量。如果未提供，则默认为 1。
+ * @returns \[start,end)范围的，按照step步长的整数组成的数组
  * @example
  * ```ts
  * console.log(range(1,3))
- * // print [1,2]
+ * // print \[1,2\]
  * ```
  * @public
  */
@@ -22,15 +22,15 @@ function range(start: number, end?: number, step = 1) {
 
 /**
  * 函数“range”返回一个数字数组，该数组从给定的起始值开始，按给定的步长值递增，并以给定的结束值结束（可选）。
- * @param  start - start 参数是范围的起始值
- * @param  end - “end”参数是一个可选参数，用于指定范围的结束值。如果未提供，则范围将是[0,start）。
- * @param step - “step”参数是一个可选参数，用于指定范围内每个值之间的增量。如果未提供，则默认为 1。
- * @returns [start,end)范围的，按照step步长的整数生成器。
+ * @param start - start 参数是范围的起始值
+ * @param end - "end"参数是一个可选参数，用于指定范围的结束值。如果未提供，则范围将是\[0,start）。
+ * @param step - "step"参数是一个可选参数，用于指定范围内每个值之间的增量。如果未提供，则默认为 1。
+ * @returns \[start,end)范围的，按照step步长的整数生成器。
  * @example
  * ```ts
- * for (const num of rangeIter(1,8)){
+ * for (const num of rangeIter(1,8))\{
  * console.log(num)
- * }
+ * \}
  * ```
  * @public
  */
@@ -145,7 +145,7 @@ const defaultAsc = <T = any>(a: T, b: T) => {
   }
 }
 /**
- * sort策略是 a-b的逻辑，如果返回负数比如-1，说明递增，或者a>b
+ * sort策略是 a-b的逻辑，如果返回负数比如-1，说明递增，或者a\>b
  */
 const sortStrategies = {
   defaultAsc,
@@ -154,9 +154,9 @@ const sortStrategies = {
 
 /**
  * 判断已排序数组的排序方向，必须传入排序好的数组
- * @param sortedArr
- * @param compareFn  类似sort方法的参数，返回负数说明升序，即b>a,返回0 b=a，返回正数说明降序，即a>b
- * @returns
+ * @param sortedArr - 已排序的数组
+ * @param compareFn - 类似sort方法的参数，返回负数说明升序，即b\>a,返回0 b=a，返回正数说明降序，即a\>b
+ * @returns 排序方向
  */
 function getSortDirection<T = any>(
   sortedArr: T[],
@@ -197,7 +197,7 @@ const alphabetical = <T>(
  * and comparing with the second. Keep the one you want then
  * compare that to the next item in the list with the same
  *
- * Ex. const greatest = () => boil(numbers, (a, b) => a > b)
+ * Ex. const greatest = () =\> boil(numbers, (a, b) =\> a \> b)
  */
 const boil = <T>(array: readonly T[], compareFunc: (a: T, b: T) => T) => {
   if (!array || (array.length ?? 0) === 0) return null
@@ -218,9 +218,9 @@ const chunk = <T>(list: readonly T[], size: number = 2): T[][] => {
 
 /**
  * 计数，根据生成的key值来统计
- * @param list
- * @param identity
- * @returns
+ * @param list - 要统计的数组
+ * @param identity - 生成key的函数
+ * @returns 统计结果对象
  */
 const countBy = <T, TId extends PropertyName>(
   list: readonly T[],
@@ -328,7 +328,7 @@ const hasIntersects = <T, K extends string | number | symbol>(
  *
  * @example
  * max([ 2, 3, 5]) == 5
- * max([{ num: 1 }, { num: 2 }], x => x.num) == { num: 2 }
+ * max([\{ num: 1 \}, \{ num: 2 \}], x =\> x.num) == \{ num: 2 \}
  */
 function max(array: readonly [number, ...number[]]): number
 function max(array: readonly number[]): number | null
@@ -343,7 +343,7 @@ function max<T>(array: readonly T[], getter?: (item: T) => number): T | null {
  *
  * @example
  * min([1, 2, 3, 4]) == 1
- * min([{ num: 1 }, { num: 2 }], x => x.num) == { num: 1 }
+ * min([\{ num: 1 \}, \{ num: 2 \}], x =\> x.num) == \{ num: 1 \}
  */
 function min(array: readonly [number, ...number[]]): number
 function min(array: readonly number[]): number | null
@@ -402,9 +402,9 @@ function sum<T extends object | number>(
 /**
  * Creates an object mapping the specified keys to their corresponding values
  *
- * Ex. const zipped = zipToObject(['a', 'b'], [1, 2]) // { a: 1, b: 2 }
- * Ex. const zipped = zipToObject(['a', 'b'], (k, i) => k + i) // { a: 'a0', b: 'b1' }
- * Ex. const zipped = zipToObject(['a', 'b'], 1) // { a: 1, b: 1 }
+ * Ex. const zipped = zipToObject(['a', 'b'], [1, 2]) // \{ a: 1, b: 2 \}
+ * Ex. const zipped = zipToObject(['a', 'b'], (k, i) =\> k + i) // \{ a: 'a0', b: 'b1' \}
+ * Ex. const zipped = zipToObject(['a', 'b'], 1) // \{ a: 1, b: 1 \}
  */
 function zipObject<K extends PropertyName, V>(
   keys: K[],

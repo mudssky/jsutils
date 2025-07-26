@@ -77,7 +77,7 @@ export type Unshift<T extends Tuple<unknown>, U> = [U, ...T]
 
 /**
  * zip组合两个元素的元组
- * 如果元组不满足含有两个元素，那么返回{】}
+ * 如果元组不满足含有两个元素，那么返回\{\}
  */
 export type Zip2<
   One extends [unknown, unknown],
@@ -148,13 +148,13 @@ export type Chunk<
 
 /**
  * 元组转为嵌套对象
- *  [‘a’, ‘b’, ‘c’] 转为 {
-    a: {
-        b: {
+ *  ['a', 'b', 'c'] 转为 \{
+    a: \{
+        b: \{
             c: 'xxx'
-        }
-    }
-}
+        \}
+    \}
+\}
 
  */
 export type TupleToNestedObject<

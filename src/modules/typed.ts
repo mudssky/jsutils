@@ -16,8 +16,8 @@ export const isObject = (value: any): value is object => {
  *
  * Primitive Types: number , string , boolean , symbol, bigint, undefined, null
  *
- * @param {*} value value to check
- * @returns {boolean} result
+ * @param value - value to check
+ * @returns \{boolean\} - result
  */
 export const isPrimitive = (value: any): boolean => {
   return (

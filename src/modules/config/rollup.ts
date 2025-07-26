@@ -1,11 +1,11 @@
 /**
  * 分包策略，1.把node_modules中的内容单独打包
  * 按下面的方法在vite中配置
- *   build: {
-      rollupOptions: {
-        ...vendorRollupOption,
-      },
-    },
+ *   build: \{
+ *     rollupOptions: \{
+ *       ...vendorRollupOption,
+ *     \},
+ *   \},
  */
 export const vendorRollupOption = {
   output: {
