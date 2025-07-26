@@ -2,6 +2,7 @@
 
 /**
  * 单位转换的字典
+ * @public
  */
 const bytesUnitMap = {
   b: 1,
@@ -14,11 +15,13 @@ const bytesUnitMap = {
 
 /**
  * 单位类型
+ * @public
  */
 type BytesUnitType = keyof typeof bytesUnitMap
 
 /**
  * 配置项
+ * @public
  */
 interface BytesOption {
   unit?: BytesUnitType
@@ -30,6 +33,7 @@ interface BytesOption {
 
 /**
  * 整合了字节单位格式化相关的方法
+ * @public
  */
 class Bytes {
   /**
@@ -149,11 +153,23 @@ class Bytes {
   }
 }
 
+/**
+ * Bytes 类的实例
+ * @public
+ */
 const bytesInstance = new Bytes()
+
+/**
+ * 字节转换函数
+ * @param value - 要转换的值
+ * @param options - 转换选项
+ * @returns - 转换结果
+ * @public
+ */
 function bytes(value: number | string, options?: BytesOption) {
   return bytesInstance.convert(value, options)
 }
 
 export { Bytes, bytes, bytesInstance, bytesUnitMap }
 
-export type { BytesUnitType }
+export type { BytesOption, BytesUnitType }

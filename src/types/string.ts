@@ -3,6 +3,7 @@ import { SpaceString } from './global'
 /**
  * 判断字符串是否以某个前缀开头
  * 模式匹配 $\{string\} 表示任意字符串
+ * @public
  */
 export type StartsWith<
   Str extends string,
@@ -11,6 +12,7 @@ export type StartsWith<
 
 /**
  * 使用模式匹配替换字符串类型
+ * @public
  */
 export type Replace<
   Str extends string,
@@ -22,6 +24,7 @@ export type Replace<
 
 /**
  * 替换字符串中出现的全部匹配
+ * @public
  */
 export type ReplaceAll<
   Str extends string,
@@ -33,6 +36,7 @@ export type ReplaceAll<
 
 /**
  * 移除字符串前缀，不会递归调用
+ * @public
  */
 export type TrimPrefix<
   Str extends string,
@@ -41,6 +45,7 @@ export type TrimPrefix<
 
 /**
  * 移除字符串后缀，不会递归调用
+ * @public
  */
 export type TrimSuffix<
   Str extends string,
@@ -49,23 +54,27 @@ export type TrimSuffix<
 
 /**
  * 移除字符串右边的空白字符
+ * @public
  */
 export type TrimRight<Str extends string> =
   Str extends `${infer Rest}${SpaceString}` ? TrimRight<Rest> : Str
 
 /**
  * 移除字符串左边的空白字符
+ * @public
  */
 export type TrimLeft<Str extends string> =
   Str extends `${SpaceString}${infer Rest}` ? TrimLeft<Rest> : Str
 
 /**
  * 移除字符串两边的空白字符
+ * @public
  */
 export type Trim<Str extends string> = TrimRight<TrimLeft<Str>>
 
 /**
  * 反转字符串
+ * @public
  */
 export type ReverseStr<
   Str extends string,
@@ -76,6 +85,7 @@ export type ReverseStr<
 
 /**
  * 获取字符串长度
+ * @public
  */
 export type StrLen<
   Str extends string,
@@ -87,6 +97,7 @@ export type StrLen<
 /**
  * 传入Block Element，Modifiers，生成所有BEM排列的联合类型
  * bem 是 css 命名规范，用 block__element--modifier 的形式来描述某个区块下面的某个元素的某个状态的样式。
+ * @public
  */
 export type BEM<
   Block extends string,
@@ -96,6 +107,7 @@ export type BEM<
 
 /**
  * 返回两个字符串字面量类型的所有组合
+ * @public
  */
 export type Combination<A extends string, B extends string> =
   | A
@@ -107,6 +119,7 @@ export type Combination<A extends string, B extends string> =
  * 字符串字面量联合类型，所有排列组合
  * A extends A触发分布式(条件类型左边是联合类型的时候就会触发)，将每一个字面量类型与其余的排列组合，
  * 分布式最后会拼起来就是所有排列
+ * @public
  */
 export type AllCombinations<
   A extends string,
@@ -115,6 +128,7 @@ export type AllCombinations<
 
 /**
  * KebabCase 字符串字面量转CamelCase
+ * @public
  */
 export type KebabCaseToCamelCase<Str extends string> =
   Str extends `${infer Item}-${infer Rest}`
@@ -123,6 +137,7 @@ export type KebabCaseToCamelCase<Str extends string> =
 
 /**
  * CamelCase 字符串字面量转KebabCase
+ * @public
  */
 export type CamelCaseToKebabCase<Str extends string> =
   Str extends `${infer First}${infer Rest}`
@@ -133,6 +148,7 @@ export type CamelCaseToKebabCase<Str extends string> =
 
 /**
  * 移除开头的字符
+ * @public
  */
 export type TrimFirst<Str extends string> =
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -140,6 +156,7 @@ export type TrimFirst<Str extends string> =
 
 /**
  * 用分隔符拼接元组为字符串
+ * @public
  */
 export type JoinStr<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -153,6 +170,7 @@ export type JoinStr<
 /**
  * 转换数字字符串为数字
  * 使用infer extend 语法，这个语法是ts4.7引入，4.8完善可以推导字面量类型
+ * @public
  */
 export type StrToNum<Str> = Str extends `${infer Num extends number}`
   ? Num
@@ -160,6 +178,7 @@ export type StrToNum<Str> = Str extends `${infer Num extends number}`
 
 /**
  * 转换布尔字符串为布尔值
+ * @public
  */
 export type StrToBoolean<Str> = Str extends `${infer Bool extends boolean}`
   ? Bool
@@ -167,6 +186,7 @@ export type StrToBoolean<Str> = Str extends `${infer Bool extends boolean}`
 
 /**
  * 转换null字符串为null
+ * @public
  */
 export type StrToNull<Str> = Str extends `${infer Null extends null}`
   ? Null

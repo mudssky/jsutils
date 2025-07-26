@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { AnyObject, ObjectIterator, PropertyName } from '../types/index'
+import { AnyObject, ObjectIterator, PropertyName } from '@/types'
 
 /**
  *  从obj中选取属性，返回一个新的对象
  * @param obj - 源对象
  * @param keys - 要选取的属性键数组
  * @returns - 包含选取属性的新对象
+ * @public
  */
 function pick<T extends object, K extends keyof T>(
   obj: T | undefined | null,
@@ -30,6 +31,7 @@ function pick<T extends object, K extends keyof T>(
  * @param obj - 源对象
  * @param predicate - 筛选函数
  * @returns - 筛选后的新对象
+ * @public
  */
 function pickBy<T extends object, K extends keyof T>(
   obj: T | undefined | null,
@@ -58,6 +60,7 @@ function pickBy<T extends object, K extends keyof T>(
  * @param obj - 源对象
  * @param keys - 要剔除的属性键数组
  * @returns - 剔除指定属性后的新对象
+ * @public
  */
 function omit<T extends object, K extends keyof T>(
   obj: T | null | undefined,
@@ -86,6 +89,7 @@ function omit<T extends object, K extends keyof T>(
  * @param obj - 源对象
  * @param predicate - 筛选函数
  * @returns - 剔除匹配属性后的新对象
+ * @public
  */
 function omitBy<T extends object, K extends keyof T>(
   obj: T | undefined | null,
@@ -101,6 +105,7 @@ function omitBy<T extends object, K extends keyof T>(
  * @param obj - 源对象
  * @param iteratee - 键名转换函数
  * @returns 转换键名后的新对象
+ * @public
  */
 function mapKeys<T extends object>(
   obj: T,
@@ -121,6 +126,7 @@ function mapKeys<T extends object>(
  * @param obj - 源对象
  * @param iteratee - 值转换函数
  * @returns 转换值后的新对象
+ * @public
  */
 function mapValues<T extends object, U = any>(
   obj: T,
@@ -150,6 +156,7 @@ function isObject(obj: any): obj is AnyObject {
  * @param target - 目标对象
  * @param sources - 源对象数组
  * @returns - 合并后的对象
+ * @public
  */
 function merge(target: AnyObject, ...sources: AnyObject[]): AnyObject {
   for (const source of sources) {
@@ -167,6 +174,7 @@ function merge(target: AnyObject, ...sources: AnyObject[]): AnyObject {
  * 移除对象中不能被json序列化的属性
  * @param obj - 要处理的对象
  * @returns - 移除不可序列化属性后的对象
+ * @public
  */
 function removeNonSerializableProps(obj: Record<any, any> | null | undefined) {
   if (obj === null || obj === undefined) {
@@ -215,6 +223,7 @@ function removeNonSerializableProps(obj: Record<any, any> | null | undefined) {
  * 移除对象中不能序列化的属性后，再执行JSON.stringify
  * @param obj - 要序列化的对象
  * @returns - JSON字符串
+ * @public
  */
 function safeJsonStringify(obj: AnyObject | null | undefined): string {
   const serializableObj = removeNonSerializableProps(obj)
@@ -225,6 +234,7 @@ function safeJsonStringify(obj: AnyObject | null | undefined): string {
  * 反转对象的键值对
  * @param obj - 源对象
  * @returns 键值对反转后的新对象
+ * @public
  */
 const invert = <TKey extends PropertyName, TValue extends PropertyName>(
   obj: Record<TKey, TValue>,

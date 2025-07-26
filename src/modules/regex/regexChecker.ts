@@ -1,6 +1,9 @@
 import { Nullable } from '@/types'
 import { omit } from '../object'
 
+/**
+ * @public
+ */
 class RegexChecker {
   /**
    * 用户名正则
@@ -31,13 +34,22 @@ class RegexChecker {
    */
   readonly mobilePattern = /^1[34578]\d{9}$/
 }
+/**
+ * @public
+ */
 const regexChecker = new RegexChecker()
 
+/**
+ * @public
+ */
 interface PasswordStrengthRule {
   key: string
   regex: RegExp
   desp: string
 }
+/**
+ * @public
+ */
 const passwordStrengthRule = [
   {
     key: 'minLength',
@@ -66,8 +78,14 @@ const passwordStrengthRule = [
   },
 ] as const satisfies PasswordStrengthRule[]
 
+/**
+ * @public
+ */
 type PasswordStrengthRuleKey = (typeof passwordStrengthRule)[number]['key']
 
+/**
+ * @public
+ */
 type AnalyzePasswordStrenthOptions = {
   minLength?: number
 }
@@ -76,6 +94,7 @@ type AnalyzePasswordStrenthOptions = {
  * @param password - 要检查的密码
  * @param options - 检查选项
  * @returns 密码强度分析结果
+ * @public
  */
 function analyzePasswordStrength(
   password: Nullable<string>,
@@ -104,9 +123,15 @@ function analyzePasswordStrength(
   return res
 }
 
+/**
+ * @public
+ */
 type PasswordStrengthLevelStrategy<OUT = number> = (
   analyzeResult: Record<PasswordStrengthRuleKey, boolean>,
 ) => OUT
+/**
+ * @public
+ */
 const passwordStrengthLevelStrategys: Record<
   string,
   PasswordStrengthLevelStrategy
@@ -127,6 +152,9 @@ const passwordStrengthLevelStrategys: Record<
   },
 }
 
+/**
+ * @public
+ */
 type CalculatePasswordStrengthLevelOptions = {
   strategy?: PasswordStrengthLevelStrategy
 } & AnalyzePasswordStrenthOptions
@@ -137,6 +165,7 @@ type CalculatePasswordStrengthLevelOptions = {
  * @param password - 要检查的密码
  * @param options - 计算选项
  * @returns 密码强度等级
+ * @public
  */
 function calculatePasswordStrengthLevel(
   password: string,

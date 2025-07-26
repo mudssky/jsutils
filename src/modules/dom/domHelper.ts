@@ -1,3 +1,7 @@
+/**
+ * DOM 操作辅助类
+ * @public
+ */
 export class DOMHelper {
   constructor(private selector: string | HTMLElement) {}
 
@@ -188,4 +192,8 @@ export class DOMHelper {
 }
 
 // 保留原有的 $ 对象导出
+/**
+ * jQuery 风格的 DOM 选择器函数
+ * @public
+ */
 export const $ = DOMHelper.$

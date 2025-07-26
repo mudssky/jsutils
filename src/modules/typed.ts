@@ -1,12 +1,21 @@
 import { AnyFunction } from '@/types'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * @public
+ */
 export const isSymbol = (value: any): value is symbol => {
   return !!value && value.constructor === Symbol
 }
 
+/**
+ * @public
+ */
 export const isArray = Array.isArray
 
+/**
+ * @public
+ */
 export const isObject = (value: any): value is object => {
   return !!value && value.constructor === Object
 }
@@ -18,6 +27,7 @@ export const isObject = (value: any): value is object => {
  *
  * @param value - value to check
  * @returns \{boolean\} - result
+ * @public
  */
 export const isPrimitive = (value: any): boolean => {
   return (
@@ -27,22 +37,37 @@ export const isPrimitive = (value: any): boolean => {
   )
 }
 
+/**
+ * @public
+ */
 export const isFunction = (value: any): value is AnyFunction => {
   return !!(value && value.constructor && value.call && value.apply)
 }
 
+/**
+ * @public
+ */
 export const isString = (value: any): value is string => {
   return typeof value === 'string' || value instanceof String
 }
 
+/**
+ * @public
+ */
 export const isInt = (value: any): value is number => {
   return isNumber(value) && value % 1 === 0
 }
 
+/**
+ * @public
+ */
 export const isFloat = (value: any): value is number => {
   return isNumber(value) && value % 1 !== 0
 }
 
+/**
+ * @public
+ */
 export const isNumber = (value: any): value is number => {
   try {
     return Number(value) === value
@@ -51,6 +76,9 @@ export const isNumber = (value: any): value is number => {
   }
 }
 
+/**
+ * @public
+ */
 export const isDate = (value: any): value is Date => {
   return Object.prototype.toString.call(value) === '[object Date]'
 }
@@ -59,6 +87,7 @@ export const isDate = (value: any): value is Date => {
  * This is really a _best guess_ promise checking. You
  * should probably use Promise.resolve(value) to be 100%
  * sure you're handling it correctly.
+ * @public
  */
 export const isPromise = (value: any): value is Promise<any> => {
   if (!value) return false
@@ -67,6 +96,9 @@ export const isPromise = (value: any): value is Promise<any> => {
   return true
 }
 
+/**
+ * @public
+ */
 export const isEmpty = (value: any) => {
   if (value === true || value === false) return true
   if (value === null || value === undefined) return true
@@ -82,6 +114,9 @@ export const isEmpty = (value: any) => {
   return keys === 0
 }
 
+/**
+ * @public
+ */
 export const isEqual = <TType>(x: TType, y: TType): boolean => {
   if (Object.is(x, y)) return true
   if (x instanceof Date && y instanceof Date) {

@@ -10,6 +10,7 @@ import { sleepAsync } from './async'
  * @param wait - 延迟时间（毫秒）
  * @param options - 配置选项
  * @returns - 防抖函数
+ * @public
  */
 function debounce(
   func: AnyFunction,
@@ -156,6 +157,7 @@ function debounce(
  * @param wait - 间隔时间（毫秒）
  * @param options - 配置选项
  * @returns - 节流函数
+ * @public
  */
 function throttle(
   func: AnyFunction,
@@ -235,6 +237,10 @@ function throttle(
   return throttled
 }
 
+/**
+ * 轮询配置选项接口
+ * @public
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface PollingOptions<T = any> {
   task: () => Promise<T>
@@ -263,6 +269,7 @@ export interface PollingOptions<T = any> {
  *   interval: 2000
  * \});
  * poller.start();
+ * @public
  */
 export function createPolling<T>(options: PollingOptions<T>) {
   const {
@@ -336,6 +343,10 @@ export function createPolling<T>(options: PollingOptions<T>) {
   }
 }
 
+/**
+ * 重试配置选项接口
+ * @public
+ */
 export interface RetryOptions {
   maxRetries?: number
   delay?: number
@@ -357,6 +368,7 @@ export interface RetryOptions {
  *
  * // 自定义重试条件
  * const fetchWithRetry = withRetry(fetchData, \{
+ * @public
  *   maxRetries: 3,
  *   shouldRetry: (error) =\> error.statusCode !== 404
  * \});

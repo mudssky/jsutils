@@ -7,6 +7,7 @@
  * 也就是`{a:1}|{b:1}`变成`{a:1}&{b:1}`
  * TypeScript 有函数参数是有逆变的性质的
  * U extends any 触发分布式，用函数触发你便，转为交叉类型
+ * @public
  */
 export type UnionToIntersection<U> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,6 +22,7 @@ export type UnionToIntersection<U> =
  *
  * 当extends关键字左侧是泛型且传入的是联合类型时，它可以实现分配效果，即对联合类型中的每个类型分别进行处理。
  * 如果左侧不是泛型，直接是一个联合类型，那么extends只是进行简单的条件判断，没有分配效果。
+ * @public
  */
 export type IsUnion<A, B = A> = A extends A
   ? [B] extends [A]
@@ -33,6 +35,7 @@ export type IsUnion<A, B = A> = A extends A
  * T extends any触发分布式，形成函数的联合类型， UnionToIntersection 将联合类型转为交叉类型，ReturnType可以获取函数重载交叉的最后一个返回值类型
  * 之后使用Exculde从联合类型排除这个类型，继续获取最后一个返回值
  * 递归获取所有返回值类型，组成元组
+ * @public
  */
 export type UnionToTuple<T> =
   UnionToIntersection<

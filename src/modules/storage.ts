@@ -20,6 +20,7 @@ interface StorageOptions {
 }
 /**
  * Storage抽象类，提供小程序和web平台统一的接口实现。
+ * @public
  */
 abstract class AbstractStorage<T extends string = string> {
   protected prefix: string
@@ -75,6 +76,7 @@ abstract class AbstractStorage<T extends string = string> {
 }
 /**
  * web端 localStorage的封装
+ * @public
  */
 class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -202,7 +204,7 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
  *   removeStorageSync,
  *   getStorageInfoSync,
  * \})
-
+ * @public
  */
 class TaroStorage<T extends string = string> extends AbstractStorage {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -257,7 +259,7 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
  *   removeStorageSync: uni.removeStorageSync,
  *   getStorageInfoSync: uni.getStorageInfoSync,
  * \})
-
+ * @public
  */
 class UniStorage<T extends string = string> extends AbstractStorage {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -301,6 +303,7 @@ class UniStorage<T extends string = string> extends AbstractStorage {
 
 /**
  * web端 sessionStorage的封装
+ * @public
  */
 class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -590,3 +593,5 @@ export {
   WebLocalStorage,
   WebSessionStorage,
 }
+
+export type { StorageInfo, StorageOptions }

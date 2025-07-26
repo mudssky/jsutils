@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint' // 推荐的导入方式，包含了 pa
 export default tseslint.config(
   // 全局忽略文件，这部分保持不变
   {
-    ignores: ['node_modules', 'dist', 'temp', 'typedoc'],
+    ignores: ['node_modules', 'dist', 'temp', 'typedoc', 'vitedocs/.vitepress'],
   },
 
   // 1. 基础和推荐配置

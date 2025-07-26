@@ -1,5 +1,6 @@
 /**
  * 参数相关的报错
+ * @public
  */
 class ArgumentError extends Error {
   /**

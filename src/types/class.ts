@@ -9,6 +9,7 @@
 
 /**
  *获取class public 属性，利用keyof只能拿到class的public索引
+ * @public
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ClassPublicProps<Obj extends Record<string, any>> = {

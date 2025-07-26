@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArgumentError } from '@/modules/error'
-import type { AnyFunction } from '../types/global'
+import type { AnyFunction } from '@/types'
 
 /**
  * pipe方法，用于串联函数的，实现流水线管道，需要传入的函数入参和出参都是一个(一元函数)。
  * 执行从左到右的函数组合。第一个参数可以有任意数量；其余参数必须是一元的。
  * @param functions - 要组合的函数列表
  * @returns 组合后的函数
+ * @public
  */
 function pipe<OUT = any>(...functions: AnyFunction[]) {
   if (functions.length === 0) {
@@ -25,6 +26,7 @@ function pipe<OUT = any>(...functions: AnyFunction[]) {
  * 最后一个参数可以有任意数量,其余参数必须是一元的。
  * @param functions - 要组合的函数列表
  * @returns 组合后的函数
+ * @public
  */
 function compose<OUT = any>(...functions: AnyFunction[]) {
   if (functions.length === 0) {
@@ -42,6 +44,7 @@ function compose<OUT = any>(...functions: AnyFunction[]) {
  * @param func - 要柯里化的函数
  * @param arity - 函数的参数数量
  * @returns 柯里化后的函数
+ * @public
  */
 // TODO 暂时能力不足，curry的ts类型留到以后补上。
 function curry(func: (...args: any) => any, arity = func.length) {
@@ -65,6 +68,12 @@ function curry(func: (...args: any) => any, arity = func.length) {
   return generateCurried()
 }
 
+/**
+ * 恒等函数，返回传入的参数
+ * @param x - 要返回的值
+ * @returns 传入的值
+ * @public
+ */
 function identity<T>(x: T) {
   return x
 }
@@ -82,6 +91,7 @@ abstract class AbstractMonad<T = any> extends AbstractFunctor<T> {
  *Monad是带有flatMap方法的Functor
  * @class Monad
  * @template T
+ * @public
  */
 class Monad<T = any> extends AbstractMonad<T> {
   private val: T
