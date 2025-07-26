@@ -1,3 +1,9 @@
+# [1.26.0](https://github.com/mudssky/jsutils/compare/v1.25.0...v1.26.0) (2025-07-26)
+
+### Features
+
+- **dom:** 添加DOMHelper工具类和Highlighter高亮器组件 ([14c0b64](https://github.com/mudssky/jsutils/commit/14c0b648c5093f4b67316754532d020d4758c1ba))
+
 # [1.25.0](https://github.com/mudssky/jsutils/compare/v1.24.0...v1.25.0) (2025-07-16)
 
 ### Features
