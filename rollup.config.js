@@ -14,6 +14,9 @@ const babelPluginConfig = {
   extensions: ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx'],
 }
 
+const commonConfig = {
+  external: ['clsx', 'tailwind-merge'],
+}
 const config = defineConfig([
   // 输出两种模式：ES Module和CommonJS
   {
@@ -38,6 +41,7 @@ const config = defineConfig([
       // babel(babelPluginConfig),
       commonjs(),
     ],
+    ...commonConfig,
   },
   // 打包为UMD
   {
@@ -75,7 +79,12 @@ const config = defineConfig([
         entryFileNames: '[name].d.cts',
       },
     ],
-    plugins: [dts()],
+    plugins: [
+      dts({
+        tsconfig: './tsconfig.json',
+      }),
+    ],
+    ...commonConfig,
   },
 ])
 
