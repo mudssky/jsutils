@@ -46,6 +46,7 @@
     "build": "rollup -c",
     "check": "biome check .",
     "check:apply": "biome check --apply .",
+    "ci:check": "pnpm typecheck && pnpm test && pnpm lintfix ",
     "clean:dist": "pwsh -File scripts.ps1 -JobType CleanDist",
     "commit": "git add .&&git cz",
     "copy:style": "pwsh -File scripts.ps1 -JobType CopyStyle",
@@ -67,9 +68,10 @@
     "test:ui": "vitest --ui --typecheck",
     "test:watch": "vitest",
     "trace": "tsc dist/types/index.d.ts --traceResolution > trace.log",
+    "typecheck": "tsc --noEmit",
     "typedoc:gen": "typedoc src/index.ts --out typedoc",
     "typedoc:json": "typedoc src/index.ts --json typedoc/typedoc.json",
-    "typedoc:watch": "pwsh -File scripts.ps1 -JobType WatchTypedoc "
+    "typedoc:watch": "pwsh -File scripts.ps1 -JobType WatchTypedoc"
   },
   "lint-staged": {
     "*.{md,json}": [

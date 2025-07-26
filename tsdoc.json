@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+  "tagDefinitions": [
+    {
+      "tagName": "@template",
+      "syntaxKind": "block"
+    },
+    {
+      "tagName": "@memberof",
+      "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@class",
+      "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@since",
+      "syntaxKind": "block"
+    },
+    {
+      "tagName": "@author",
+      "syntaxKind": "block"
+    },
+    {
+      "tagName": "@version",
+      "syntaxKind": "block"
+    }
+  ]
+}
