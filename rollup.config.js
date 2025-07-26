@@ -55,9 +55,9 @@ const config = defineConfig([
     ],
     plugins: [
       ts(),
-      babel(babelPluginConfig),
-      commonjs(),
       resolve({ preferBuiltins: true, mainFields: ['browser'] }),
+      commonjs(),
+      babel(babelPluginConfig),
       globals(),
       builtins(),
       terser(),
