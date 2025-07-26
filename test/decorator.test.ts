@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { debounceMethod } from '../src/modules/decorator'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  clearPerformanceData,
+  debounceMethod,
+  getPerformanceReport,
+  performanceBenchmark,
+  performanceCompare,
+  performanceMonitor,
+} from '../src/modules/decorator'
 
 describe('debounceMethod decorator', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
 
-  test('should debounce a class method', () => {
+  it('should debounce a class method', () => {
     const mockFn = vi.fn()
 
     class TestClass {
@@ -33,7 +40,7 @@ describe('debounceMethod decorator', () => {
     expect(mockFn).toHaveBeenCalledWith(3)
   })
 
-  test('should work with leading: true option', () => {
+  it('should work with leading: true option', () => {
     const mockFn = vi.fn()
 
     class TestClass {
@@ -58,7 +65,7 @@ describe('debounceMethod decorator', () => {
     expect(mockFn).toHaveBeenNthCalledWith(2, 3)
   })
 
-  test('should work with trailing: true option (default)', () => {
+  it('should work with trailing: true option (default)', () => {
     const mockFn = vi.fn()
 
     class TestClass {
@@ -84,7 +91,7 @@ describe('debounceMethod decorator', () => {
     expect(mockFn).toHaveBeenNthCalledWith(2, 3)
   })
 
-  test('should work with leading: true and trailing: true options', () => {
+  it('should work with leading: true and trailing: true options', () => {
     const mockFn = vi.fn()
 
     class TestClass {
@@ -121,7 +128,7 @@ describe('debounceMethod decorator', () => {
     expect(mockFn).toHaveBeenNthCalledWith(4, 4)
   })
 
-  test.skip('cancel method should work (Stage 3 decorators do not directly expose this)', () => {
+  it.skip('cancel method should work (Stage 3 decorators do not directly expose this)', () => {
     const mockFn = vi.fn()
 
     class TestClass {
@@ -146,7 +153,7 @@ describe('debounceMethod decorator', () => {
     expect(mockFn).not.toHaveBeenCalled() // Should not be called because it was cancelled
   })
 
-  test.skip('flush method should work (Stage 3 decorators do not directly expose this)', () => {
+  it.skip('flush method should work (Stage 3 decorators do not directly expose this)', () => {
     const mockFn = vi.fn()
 
     class TestClass {
@@ -176,7 +183,7 @@ describe('debounceMethod decorator', () => {
     expect(result2).toBe(1) // Should return the result of the last invocation
   })
 
-  test.skip('pending method should work (Stage 3 decorators do not directly expose this)', () => {
+  it.skip('pending method should work (Stage 3 decorators do not directly expose this)', () => {
     const mockFn = vi.fn()
 
     class TestClass {
@@ -200,7 +207,7 @@ describe('debounceMethod decorator', () => {
     expect(mockFn).toHaveBeenCalledTimes(1)
   })
 
-  test('should throw error if not decorating a method', () => {
+  it('should throw error if not decorating a method', () => {
     expect(() => {
       class TestClass {
         // @ts-expect-error: Testing invalid usage
@@ -213,5 +220,200 @@ describe('debounceMethod decorator', () => {
     // depending on how decorators are transpiled and applied. Vitest might not catch errors thrown
     // directly during class definition time in this manner for property decorators.
     // A more robust test might involve checking the descriptor modification.
+  })
+})
+
+describe('Performance Decorators', () => {
+  let consoleSpy: any
+
+  beforeEach(() => {
+    consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    clearPerformanceData()
+  })
+
+  afterEach(() => {
+    consoleSpy.mockRestore()
+    clearPerformanceData()
+  })
+
+  describe('performanceMonitor', () => {
+    it('should monitor method performance', async () => {
+      class TestClass {
+        @performanceMonitor()
+        simpleMethod() {
+          let sum = 0
+          for (let i = 0; i < 1000; i++) {
+            sum += i
+          }
+          return sum
+        }
+      }
+
+      const instance = new TestClass()
+      const result = await instance.simpleMethod()
+
+      expect(typeof result).toBe('number')
+      expect(result).toBeGreaterThan(0)
+    })
+
+    it('should log results when enabled', async () => {
+      class TestClass {
+        @performanceMonitor({ logResult: true })
+        loggedMethod(multiplier: number) {
+          return Array.from({ length: 100 }, (_, i) => i * multiplier)
+        }
+      }
+
+      const instance = new TestClass()
+      await instance.loggedMethod(2)
+
+      expect(consoleSpy).toHaveBeenCalled()
+      const logCall = consoleSpy.mock.calls.find((call: any[]) =>
+        call[0].includes('性能监控'),
+      )
+      expect(logCall).toBeDefined()
+    })
+
+    it('should handle async methods', async () => {
+      class TestClass {
+        @performanceMonitor()
+        async asyncMethod() {
+          return Promise.resolve('done')
+        }
+      }
+
+      const instance = new TestClass()
+      const result = await instance.asyncMethod()
+
+      expect(result).toBe('done')
+    })
+
+    it('should handle methods that throw errors', async () => {
+      class TestClass {
+        @performanceMonitor()
+        errorMethod() {
+          throw new Error('Test error')
+        }
+      }
+
+      const instance = new TestClass()
+
+      await expect(instance.errorMethod()).rejects.toThrow('Test error')
+    })
+  })
+
+  describe('performanceBenchmark', () => {
+    it('should benchmark method performance', async () => {
+      class TestClass {
+        @performanceBenchmark({ timeLimit: 100 })
+        benchmarkMethod() {
+          return Math.sqrt(Math.random() * 1000)
+        }
+      }
+
+      const instance = new TestClass()
+      const result = await instance.benchmarkMethod()
+
+      expect(typeof result).toBe('number')
+    })
+
+    it('should log benchmark results when enabled', async () => {
+      class TestClass {
+        @performanceBenchmark({ iterations: 10, logResult: true })
+        loggedBenchmark() {
+          let sum = 0
+          for (let i = 0; i < 50; i++) {
+            sum += i
+          }
+          return sum
+        }
+      }
+
+      const instance = new TestClass()
+      await instance.loggedBenchmark()
+
+      expect(consoleSpy).toHaveBeenCalled()
+      const logCall = consoleSpy.mock.calls.find((call: any[]) =>
+        call[0].includes('性能监控'),
+      )
+      expect(logCall).toBeDefined()
+    })
+  })
+
+  describe('performanceCompare', () => {
+    it('should collect performance data for comparison', async () => {
+      class TestClass {
+        @performanceCompare('compareGroup')
+        mapMethod() {
+          return [1, 2, 3, 4, 5].map((x) => x * 2)
+        }
+
+        @performanceCompare('compareGroup')
+        forEachMethod() {
+          const result: number[] = []
+          ;[1, 2, 3, 4, 5].forEach((x) => result.push(x * 2))
+          return result
+        }
+      }
+
+      const instance = new TestClass()
+      const result1 = await instance.mapMethod()
+      const result2 = await instance.forEachMethod()
+
+      expect(result1).toEqual([2, 4, 6, 8, 10])
+      expect(result2).toEqual([2, 4, 6, 8, 10])
+
+      const report = getPerformanceReport('compareGroup')
+      expect(report).toContain('mapMethod')
+      expect(report).toContain('forEachMethod')
+    })
+  })
+
+  describe('getPerformanceReport', () => {
+    it('should return empty report when no data', () => {
+      const report = getPerformanceReport('nonexistent')
+      expect(report).toContain('没有找到组')
+    })
+
+    it('should return formatted report with data', async () => {
+      class TestClass {
+        @performanceCompare('testGroup')
+        testMethod() {
+          return Array.from({ length: 100 }, (_, i) => i * 2)
+        }
+      }
+
+      const instance = new TestClass()
+      await instance.testMethod()
+
+      const report = getPerformanceReport('testGroup')
+      expect(report).toContain('性能测试报告')
+      expect(report).toContain('testMethod')
+    })
+  })
+
+  describe('clearPerformanceData', () => {
+    it('should clear all performance data', async () => {
+      class TestClass {
+        @performanceCompare('testGroup')
+        testMethod() {
+          return 42
+        }
+      }
+
+      const instance = new TestClass()
+      await instance.testMethod()
+
+      // 确认有数据
+      let report = getPerformanceReport('testGroup')
+      expect(report).toContain('testMethod')
+
+      // 清除数据
+      clearPerformanceData('testGroup')
+
+      // 确认数据已清除
+      report = getPerformanceReport('testGroup')
+      expect(report).toContain('没有找到组')
+    })
   })
 })

@@ -45,13 +45,7 @@ describe('fuzzyMatch table', () => {
       { input: ['Jk', 'jkl;djaksl'], expect: true },
     ]
     tableTest(testCases, (tcase) => {
-      try {
-        expect(fuzzyMatch(...tcase.input)).toBe(tcase.expect)
-      } catch (e) {
-        console.log(tcase)
-        // console.log({ e })
-        throw e
-      }
+      expect(fuzzyMatch(...tcase.input)).toBe(tcase.expect)
     })
   })
 })
