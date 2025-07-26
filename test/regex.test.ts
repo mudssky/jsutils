@@ -3,6 +3,7 @@ import {
   TestCase,
   analyzePasswordStrength,
   calculatePasswordStrengthLevel,
+  escapeRegExp,
   regexChecker,
   tableTest,
 } from '@mudssky/jsutils'
@@ -34,13 +35,7 @@ describe('regexChecker', () => {
       },
     ]
     tableTest(testCases, (tcase) => {
-      try {
-        expect(regexChecker.emailPattern.test(tcase.input)).toBe(tcase.expect)
-      } catch (e) {
-        console.log(tcase)
-        // console.log({ e })
-        throw e
-      }
+      expect(regexChecker.emailPattern.test(tcase.input)).toBe(tcase.expect)
     })
   })
 })
@@ -157,5 +152,89 @@ describe('calculatePasswordStrengthLevel', () => {
       minLength: 8,
     })
     expect(result).toBe(8) // 4 rules satisfied, so 4 * 2
+  })
+})
+
+describe('escapeRegExp', () => {
+  test('should escape basic regex special characters', () => {
+    expect(escapeRegExp('.')).toBe('\\.')
+    expect(escapeRegExp('*')).toBe('\\*')
+    expect(escapeRegExp('+')).toBe('\\+')
+    expect(escapeRegExp('?')).toBe('\\?')
+    expect(escapeRegExp('^')).toBe('\\^')
+    expect(escapeRegExp('$')).toBe('\\$')
+  })
+
+  test('should escape bracket characters', () => {
+    expect(escapeRegExp('{')).toBe('\\{')
+    expect(escapeRegExp('}')).toBe('\\}')
+    expect(escapeRegExp('(')).toBe('\\(')
+    expect(escapeRegExp(')')).toBe('\\)')
+    expect(escapeRegExp('[')).toBe('\\[')
+    expect(escapeRegExp(']')).toBe('\\]')
+  })
+
+  test('should escape pipe and backslash characters', () => {
+    expect(escapeRegExp('|')).toBe('\\|')
+    expect(escapeRegExp('\\')).toBe('\\\\')
+  })
+
+  test('should escape complex strings with multiple special characters', () => {
+    expect(escapeRegExp('Hello (world)')).toBe('Hello \\(world\\)')
+    expect(escapeRegExp('$100.50')).toBe('\\$100\\.50')
+    expect(escapeRegExp('[a-z]+')).toBe('\\[a-z\\]\\+')
+    expect(escapeRegExp('test.*pattern?')).toBe('test\\.\\*pattern\\?')
+    expect(escapeRegExp('^start.*end$')).toBe('\\^start\\.\\*end\\$')
+  })
+
+  test('should handle strings without special characters', () => {
+    expect(escapeRegExp('hello')).toBe('hello')
+    expect(escapeRegExp('world123')).toBe('world123')
+    expect(escapeRegExp('ABC_def')).toBe('ABC_def')
+    expect(escapeRegExp('')).toBe('')
+  })
+
+  test('should work correctly in regex construction', () => {
+    const userInput = 'Hello (world)'
+    const escapedInput = escapeRegExp(userInput)
+    const regex = new RegExp(escapedInput, 'g')
+    const text = 'Say Hello (world) to everyone Hello (world) again'
+    const matches = text.match(regex)
+    expect(matches).toEqual(['Hello (world)', 'Hello (world)'])
+  })
+
+  test('should handle price patterns correctly', () => {
+    const pricePattern = '$100.50'
+    const escapedPattern = escapeRegExp(pricePattern)
+    const regex = new RegExp(escapedPattern)
+    expect(regex.test('The price is $100.50')).toBe(true)
+    expect(regex.test('The price is $100150')).toBe(false) // 不应该匹配，因为点号被转义了
+  })
+
+  test('should handle character class patterns correctly', () => {
+    const pattern = '[a-z]+'
+    const escapedPattern = escapeRegExp(pattern)
+    const regex = new RegExp(escapedPattern)
+    expect(regex.test('This contains [a-z]+ literally')).toBe(true)
+    expect(regex.test('This contains abc')).toBe(false) // 不应该匹配字符类
+  })
+
+  test('should handle quantifier patterns correctly', () => {
+    const pattern = 'a{2,3}'
+    const escapedPattern = escapeRegExp(pattern)
+    const regex = new RegExp(escapedPattern)
+    expect(regex.test('Pattern a{2,3} appears here')).toBe(true)
+    expect(regex.test('Pattern aa appears here')).toBe(false) // 不应该匹配量词
+  })
+
+  test('should handle all special characters in one string', () => {
+    const allSpecialChars = '.*+?^${}()|[]\\'
+    const escaped = escapeRegExp(allSpecialChars)
+    const expected = '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\\\'
+    expect(escaped).toBe(expected)
+
+    // 验证转义后的字符串可以正确匹配原字符串
+    const regex = new RegExp(escaped)
+    expect(regex.test(allSpecialChars)).toBe(true)
   })
 })

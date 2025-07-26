@@ -17,7 +17,6 @@
 项目使用以下工具进行代码格式化和检查：
 
 1. **Prettier**
-
    - 不使用分号 (semi: false)
    - 使用单引号 (singleQuote: true)
    - 使用插件：
@@ -77,6 +76,8 @@ src/
 │   ├── config/       # 配置相关模块
 │   ├── decorator.ts  # 装饰器相关工具函数
 │   ├── dom.ts        # DOM操作工具函数
+│   │   ├── helper.ts # DOM操作助手函数
+│   │   └── highlighter.ts # 文本高亮器
 │   ├── enum.ts       # 枚举相关工具函数
 │   ├── error.ts      # 错误处理工具函数
 │   ├── fp.ts         # 函数式编程工具函数
