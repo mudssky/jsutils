@@ -48,13 +48,13 @@ describe('PerformanceMonitor', () => {
 
     it('should handle async functions', async () => {
       const asyncFn = async () => {
-        await new Promise((resolve) => setTimeout(resolve, 10))
+        await new Promise((resolve) => setTimeout(resolve, 15))
         return 'done'
       }
 
       const result = await monitor.measureFunction(asyncFn)
 
-      expect(result.duration).toBeGreaterThan(10)
+      expect(result.duration).toBeGreaterThan(8) // 使用更宽松的断言，考虑到不同环境的时间精度差异
       expect(result.iterations).toBeGreaterThan(0)
     })
 
