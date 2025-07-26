@@ -183,25 +183,25 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
 /**
  * 对Taro的Storage API进行封装，主要是为了提供ts类型提示。
  * @example
- * import { TaroStorage } from '@mudssky/jsutils'
-
-import {
-  clearStorageSync,
-  getStorageInfoSync,
-  getStorageSync,
-  removeStorageSync,
-  setStorageSync,
-} from '@tarojs/taro'
-
-export type StorageKey = 'USERINFO'
-
-export const GlobalStorage = new TaroStorage<StorageKey>({
-  getStorageSync,
-  setStorageSync,
-  clearStorageSync,
-  removeStorageSync,
-  getStorageInfoSync,
-})
+ * import \{ TaroStorage \} from '\@mudssky/jsutils'
+ *
+ * import \{
+ *   clearStorageSync,
+ *   getStorageInfoSync,
+ *   getStorageSync,
+ *   removeStorageSync,
+ *   setStorageSync,
+ * \} from '\@tarojs/taro'
+ *
+ * export type StorageKey = 'USERINFO'
+ *
+ * export const GlobalStorage = new TaroStorage\<StorageKey\>(\{
+ *   getStorageSync,
+ *   setStorageSync,
+ *   clearStorageSync,
+ *   removeStorageSync,
+ *   getStorageInfoSync,
+ * \})
 
  */
 class TaroStorage<T extends string = string> extends AbstractStorage {
@@ -246,17 +246,17 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
 /**
  * 对uniapp的Storage API进行封装，主要是为了提供ts类型提示。
  * @example
- * import { UniStorage } from '@mudssky/jsutils'
-
-export type GlobalStorageKey = 'userId'
-
-export const GlobalStorage = new UniStorage<GlobalStorageKey>({
-  getStorageSync: uni.getStorageSync,
-  setStorageSync: uni.setStorageSync,
-  clearStorageSync: uni.clearStorageSync,
-  removeStorageSync: uni.removeStorageSync,
-  getStorageInfoSync: uni.getStorageInfoSync,
-})
+ * import \{ UniStorage \} from '\@mudssky/jsutils'
+ *
+ * export type GlobalStorageKey = 'userId'
+ *
+ * export const GlobalStorage = new UniStorage\<GlobalStorageKey\>(\{
+ *   getStorageSync: uni.getStorageSync,
+ *   setStorageSync: uni.setStorageSync,
+ *   clearStorageSync: uni.clearStorageSync,
+ *   removeStorageSync: uni.removeStorageSync,
+ *   getStorageInfoSync: uni.getStorageInfoSync,
+ * \})
 
  */
 class UniStorage<T extends string = string> extends AbstractStorage {
@@ -462,6 +462,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
       // 重试存储
       sessionStorage.setItem(this.getFullKey(key), this.stringify(value))
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.warn(
         'SessionStorage quota exceeded, unable to store data:',
         error,
@@ -513,12 +514,14 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
   autoSaveForm(formId: string, interval: number = 5000) {
     // 检查是否在浏览器环境中
     if (!isBrowser() || !isDocumentAvailable()) {
+      // eslint-disable-next-line no-console
       console.warn('autoSaveForm is only available in browser environment')
       return () => {}
     }
 
     const form = document.getElementById(formId) as HTMLFormElement
     if (!form) {
+      // eslint-disable-next-line no-console
       console.warn(`Form with id '${formId}' not found`)
       return () => {}
     }

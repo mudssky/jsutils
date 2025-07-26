@@ -2,8 +2,8 @@ import { ArgumentError } from './error'
 
 /**
  * 生成[start,end)范围的整数随机数
- * @param startInt 起始值
- * @param endInt 结束值（不包含）
+ * @param startInt - 起始值
+ * @param endInt - 结束值（不包含）
  * @returns [start,end)中的一个随机数
  * @public
  * @example

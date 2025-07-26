@@ -2,7 +2,7 @@ import { SpaceString } from './global'
 
 /**
  * 判断字符串是否以某个前缀开头
- * 模式匹配 ${string} 表示任意字符串
+ * 模式匹配 $\{string\} 表示任意字符串
  */
 export type StartsWith<
   Str extends string,

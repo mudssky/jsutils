@@ -9,7 +9,7 @@ export type FilterRecordByValue<Obj extends Record<string, any>, ValueType> = {
 /**
  * 提取Record中的可选索引
  * 注意可选在ts里不等于值可能为undefined吗，虽然在js里是一样的
- * 即{age: number | undefined } 和 { age?: number } 不相等
+ * 即\{age: number | undefined \} 和 \{ age?: number \} 不相等
  * 可选表示可以没有这个索引
  */
 
@@ -21,7 +21,7 @@ export type ExtractOptional<Obj extends Record<string, any>> = {
 
 /**
  * 判断Record的某个key是否为必选，也就是排除可选
- * 可选的可以用Record<string,any> ，也就是空的索引{} extends来判断
+ * 可选的可以用Record\<string,any\> ，也就是空的索引\{\} extends来判断
  */
 
 export type IsRequired<Key extends keyof Obj, Obj extends Record<string, any>> =
@@ -79,7 +79,7 @@ export type AllKeyPath<Obj extends Record<string, any>> = {
 }[keyof Obj]
 
 /**
- * 递归给对象字面量类型，添加Record<string, any>，即每一层可以额外添加任意字段
+ * 递归给对象字面量类型，添加Record\<string, any\>，即每一层可以额外添加任意字段
  */
 export type DeepRecord<Obj extends Record<string, any>> = {
   [Key in keyof Obj]: Obj[Key] extends Record<string, any>

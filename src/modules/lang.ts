@@ -10,28 +10,28 @@ function getTag(value: any) {
 
 /**
  *
- * @param value
- * @returns
+ * @param value - 要检查的值
+ * @returns 如果值为空则返回true，否则返回false
  * @example
  * isEmpty(null)
- * // => true
+ * // =\> true
  *  * isEmpty(undefined)
- * // => true
+ * // =\> true
  *
  * isEmpty(true)
- * // => true
+ * // =\> true
  *
  * isEmpty(1)
- * // => true
+ * // =\> true
  *
  * isEmpty([1, 2, 3])
- * // => false
+ * // =\> false
  *
  * isEmpty('abc')
- * // => false
+ * // =\> false
  *
- * isEmpty({ 'a': 1 })
- * // => false
+ * isEmpty(\{ 'a': 1 \})
+ * // =\> false
  */
 // function isEmpty(value: any): boolean {
 //   // 1. 判断 undefined 或 null

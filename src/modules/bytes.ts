@@ -34,7 +34,7 @@ interface BytesOption {
 class Bytes {
   /**
    * 用于格式化千分为字符串
-   * \B非单词边界，也就是说是连续的数字
+   * B非单词边界，也就是说是连续的数字
    * ?= 肯定预查，后面会跟3个数字
    * ?! 否定预查，后面不会跟数字
    * 也就是说，前面多个3个数字连续，加上非数尾部
@@ -47,7 +47,6 @@ class Bytes {
   readonly formatDecimalsRegExp = /(?:\.0*|(\.[^0]+)0+)$/
   /**
    * 提取正负号，数字，和单位
-   * @memberof Bytes
    */
   readonly parseRegExp = /^((-|\+)?(\d+(?:\.\d+)?)) *(kb|mb|gb|tb|pb)$/i
 
@@ -57,9 +56,9 @@ class Bytes {
 
   /**
    * 传入数值转化为字节字符串或是传入字节字符串解析出数值，根据传入变量的类型区分调用方式
-   * @param value
-   * @param options
-   * @returns
+   * @param value - 要转换的值
+   * @param options - 转换选项
+   * @returns - 转换结果
    */
   convert(value: number | string, options?: BytesOption) {
     if (typeof value === 'string') {

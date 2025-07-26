@@ -6,10 +6,10 @@ import { sleepAsync } from './async'
  * 以及flush方法立即调用。
  * options选项中，可以设置options.leading 与|或 options.trailing 决定延迟前后如何触发
  * 如果leading和trailing都为false，则函数不会立刻触发，也不会延迟后触发，而是需要我们手动触发
- * @param func
- * @param wait
- * @param options
- * @returns
+ * @param func - 要防抖的函数
+ * @param wait - 延迟时间（毫秒）
+ * @param options - 配置选项
+ * @returns - 防抖函数
  */
 function debounce(
   func: AnyFunction,
@@ -152,10 +152,10 @@ function debounce(
  * 附带一个cancel方法取消延迟的func调用，以及一个flash立刻调用。
  * 提供 options 以指示是否应在 wait 超时的前缘和/或后沿调用 func 。 func 使用提供给节流函数的最后一个参数进行调用。
  * 对节流函数的后续调用将返回上次 func 调用的结果。
- * @param func
- * @param wait
- * @param options
- * @returns
+ * @param func - 要节流的函数
+ * @param wait - 间隔时间（毫秒）
+ * @param options - 配置选项
+ * @returns - 节流函数
  */
 function throttle(
   func: AnyFunction,
@@ -250,25 +250,18 @@ export interface PollingOptions<T = any> {
 /**
  * 创建轮询控制器
  * @template T 轮询任务返回值的类型
- * @param {PollingOptions<T>} options 轮询配置选项
- * @param {() => Promise<T>} options.task 需要轮询的异步任务函数
- * @param {(result: T) => boolean} options.stopCondition 停止轮询的条件判断函数
- * @param {(error: unknown) => void} [options.errorAction] 错误回调函数
- * @param {(result: T) => void} [options.onProgress] 任务成功时的进度回调
- * @param {boolean} [options.quitOnError=true] 是否在达到最大重试次数后停止轮询
- * @param {number} [options.interval=5000] 轮询间隔时间（毫秒）
- * @param {number} [options.maxRetries=3] 最大重试次数
- * @param {boolean} [options.immediate=false] 是否立即执行首次任务
- * @returns {Object} 轮询控制器对象
- * @returns {Function} return.start 启动轮询
- * @returns {Function} return.stop 停止轮询
+ * @param options - 轮询配置选项
+ * @returns 轮询控制器对象，包含以下方法：
+ * - `start()` - 启动轮询
+ * - `stop()` - 停止轮询
+ * - `status()` - 获取轮询状态
  *
  * @example
- * const poller = createPolling({
+ * const poller = createPolling(\{
  *   task: fetchData,
- *   stopCondition: (data) => data.status === 'done',
+ *   stopCondition: (data) =\> data.status === 'done',
  *   interval: 2000
- * });
+ * \});
  * poller.start();
  */
 export function createPolling<T>(options: PollingOptions<T>) {
@@ -351,25 +344,22 @@ export interface RetryOptions {
 
 /**
  * 创建一个支持重试的函数包装器
- * @param fn 需要重试的函数（支持同步和异步）
- * @param options 重试配置
- * @param options.maxRetries 最大重试次数，默认3次
- * @param options.delay 重试延迟时间（毫秒），默认0
- * @param options.shouldRetry 自定义重试条件函数
- * @returns 包装后的函数
+ * @param fn - 需要重试的函数（支持同步和异步）
+ * @param options - 重试配置
+ * @returns - 包装后的函数
  *
  * @example
  * // 基本用法
- * const fetchWithRetry = withRetry(fetchData, { maxRetries: 3 });
+ * const fetchWithRetry = withRetry(fetchData, \{ maxRetries: 3 \});
  *
  * // 带延迟重试
- * const fetchWithRetry = withRetry(fetchData, { maxRetries: 3, delay: 1000 });
+ * const fetchWithRetry = withRetry(fetchData, \{ maxRetries: 3, delay: 1000 \});
  *
  * // 自定义重试条件
- * const fetchWithRetry = withRetry(fetchData, {
+ * const fetchWithRetry = withRetry(fetchData, \{
  *   maxRetries: 3,
- *   shouldRetry: (error) => error.statusCode !== 404
- * });
+ *   shouldRetry: (error) =\> error.statusCode !== 404
+ * \});
  */
 function withRetry<T extends AnyFunction>(
   fn: T,

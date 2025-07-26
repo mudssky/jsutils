@@ -2,8 +2,8 @@ import { Nullable } from '@/types'
 
 /**
  * 传入字符串，返回字符串中每个字母不同大小写情况的列表
- * @param str 输入字符串
- * @returns 返回列表
+ * @param str - 输入字符串
+ * @returns - 返回列表
  * @example
  * ```ts
  * console.log(genAllCasesCombination('mb'))
@@ -44,7 +44,7 @@ function genAllCasesCombination(str: string): string[] {
 
 /**
  * 使用随机数生成uuid
- * @returns
+ * @returns - UUID字符串
  */
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -60,8 +60,8 @@ const base62Chars =
 /**
  * 生成任意长度的base62随机字符串
  * 可以用于生成短链的编码
- * @param len
- * @returns
+ * @param len - 生成字符串的长度
+ * @returns - base62随机字符串
  */
 function generateBase62Code(len = 6) {
   if (len < 0) {
@@ -78,9 +78,9 @@ function generateBase62Code(len = 6) {
 }
 /**
  * 模糊匹配字符串，忽略大小写
- * @param searchValue 用于匹配的字符串
- * @param targetString 匹配的目标字符串
- * @returns
+ * @param searchValue - 用于匹配的字符串
+ * @param targetString - 匹配的目标字符串
+ * @returns - 是否匹配
  */
 function fuzzyMatch(searchValue: string, targetString: string) {
   const pattern = new RegExp(searchValue, 'i')
@@ -89,8 +89,8 @@ function fuzzyMatch(searchValue: string, targetString: string) {
 
 /**
  * 以.分割文件名，返回扩展名
- * @param fileName
- * @returns
+ * @param fileName - 文件名
+ * @returns - 文件扩展名
  */
 function getFileExt(fileName: string) {
   const parts = fileName.split('.')
@@ -102,9 +102,13 @@ function getFileExt(fileName: string) {
 
 /**
  * Capitalize the first word of the string
- *
- * capitalize('hello')   -> 'Hello'
- * capitalize('va va voom') -> 'Va va voom'
+ * @param str - 输入字符串
+ * @returns 首字母大写的字符串
+ * @example
+ * ```ts
+ * capitalize('hello')   // -> 'Hello'
+ * capitalize('va va voom') // -> 'Va va voom'
+ * ```
  */
 const capitalize = (str: string): string => {
   if (!str || str.length === 0) return ''
@@ -114,10 +118,14 @@ const capitalize = (str: string): string => {
 
 /**
  * Formats the given string in camel case fashion
- *
- * camel('hello world')   -> 'helloWorld'
- * camel('va va-VOOM') -> 'vaVaVoom'
- * camel('helloWorld') -> 'helloWorld'
+ * @param str - 输入字符串
+ * @returns 驼峰格式的字符串
+ * @example
+ * ```ts
+ * camel('hello world')   // -> 'helloWorld'
+ * camel('va va-VOOM') // -> 'vaVaVoom'
+ * camel('helloWorld') // -> 'helloWorld'
+ * ```
  */
 const camelCase = (str: string): string => {
   const parts =
@@ -134,10 +142,15 @@ const camelCase = (str: string): string => {
 
 /**
  * Formats the given string in snake case fashion
- *
- * snake('hello world')   -> 'hello_world'
- * snake('va va-VOOM') -> 'va_va_voom'
- * snake('helloWord') -> 'hello_world'
+ * @param str - 输入字符串
+ * @param options - 配置选项
+ * @returns 蛇形格式的字符串
+ * @example
+ * ```ts
+ * snake('hello world')   // -> 'hello_world'
+ * snake('va va-VOOM') // -> 'va_va_voom'
+ * snake('helloWord') // -> 'hello_world'
+ * ```
  */
 const snake_case = (
   str: string,
@@ -162,10 +175,14 @@ const snake_case = (
 
 /**
  * Formats the given string in dash case fashion
- *
- * dash('hello world')   -> 'hello-world'
- * dash('va va_VOOM') -> 'va-va-voom'
- * dash('helloWord') -> 'hello-word'
+ * @param str - 输入字符串
+ * @returns 短横线格式的字符串
+ * @example
+ * ```ts
+ * dash('hello world')   // -> 'hello-world'
+ * dash('va va_VOOM') // -> 'va-va-voom'
+ * dash('helloWord') // -> 'hello-word'
+ * ```
  */
 const dashCase = (str: string): string => {
   const parts =
@@ -182,9 +199,13 @@ const dashCase = (str: string): string => {
 
 /**
  * Formats the given string in pascal case fashion
- *
- * pascal('hello world') -> 'HelloWorld'
- * pascal('va va boom') -> 'VaVaBoom'
+ * @param str - 输入字符串
+ * @returns 帕斯卡格式的字符串
+ * @example
+ * ```ts
+ * pascal('hello world') // -> 'HelloWorld'
+ * pascal('va va boom') // -> 'VaVaBoom'
+ * ```
  */
 const PascalCase = (str: string): string => {
   const parts = str?.split(/[.\-\s_]/).map((x) => x.toLowerCase()) ?? []
@@ -196,7 +217,7 @@ const PascalCase = (str: string): string => {
  * 解析模板字符串，并将占位符替换为数据对象中的值。
  * @param str - 包含占位符的模板字符串。
  * @param data - 一个记录，其键是占位符的名称（不带括号），值是替换内容。
- * @param regex - 用于匹配占位符的正则表达式。默认为 /\{\{(.+?)\}\}/g，匹配 {{placeholder}} 格式。
+ * @param regex - 用于匹配占位符的正则表达式。默认为 /\\\{\\\{(.+?)\\\}\\\}/g，匹配 \{\{placeholder\}\} 格式。
  * @returns 替换占位符后的字符串。
  * @example
  * ```ts
