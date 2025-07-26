@@ -69,7 +69,11 @@ function* rangeIter(start: number, end?: number, step = 1) {
   }
 }
 
-type Filter<T> = (item: T) => boolean
+/**
+ * 过滤器函数类型
+ * @public
+ */
+export type Filter<T> = (item: T) => boolean
 /**
  * @public
  */

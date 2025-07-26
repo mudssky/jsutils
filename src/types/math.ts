@@ -89,7 +89,10 @@ export type GreaterThanOrEqual<Num1 extends number, Num2 extends number> =
       ? true
       : false
 
-type FibonacciLoop<
+/**
+ * @public
+ */
+export type FibonacciLoop<
   PrevArr extends unknown[], //上一个代表数的数组
   CurrentArr extends unknown[], // 当前数的数组
   IndexArr extends unknown[] = [], //当前index，每次递归加一，默认值是 []，代表从 0 开始。

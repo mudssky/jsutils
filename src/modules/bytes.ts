@@ -172,4 +172,4 @@ function bytes(value: number | string, options?: BytesOption) {
 
 export { Bytes, bytes, bytesInstance, bytesUnitMap }
 
-export type { BytesUnitType }
+export type { BytesOption, BytesUnitType }

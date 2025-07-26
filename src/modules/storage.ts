@@ -593,3 +593,5 @@ export {
   WebLocalStorage,
   WebSessionStorage,
 }
+
+export type { StorageInfo, StorageOptions }
