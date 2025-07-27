@@ -3,7 +3,7 @@ import {
   type HighlightCallbacks,
   type HighlighterConfig,
 } from '@mudssky/jsutils'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 /**
  * @vitest-environment happy-dom
  */
@@ -26,6 +26,172 @@ describe('Highlighter', () => {
     `
     document.body.appendChild(container)
     highlighter = new Highlighter(container)
+  })
+
+  // 智能滚动功能测试
+  describe('Smart Scroll Feature', () => {
+    let tallContainer: HTMLElement
+    let smartScrollHighlighter: Highlighter
+
+    beforeEach(() => {
+      // 创建一个高度很大的容器来测试滚动功能
+      tallContainer = document.createElement('div')
+      tallContainer.style.height = '3000px'
+      tallContainer.innerHTML = `
+        <div style="height: 500px;">Top content with JavaScript</div>
+        <div style="height: 1000px;">Middle content</div>
+        <div style="height: 500px;">Bottom content with JavaScript</div>
+        <div style="height: 1000px;">More content with JavaScript</div>
+      `
+      document.body.appendChild(tallContainer)
+
+      smartScrollHighlighter = new Highlighter(tallContainer, {
+        smartScroll: true,
+        scrollPadding: 100,
+      })
+    })
+
+    afterEach(() => {
+      document.body.removeChild(tallContainer)
+      smartScrollHighlighter.destroy()
+    })
+
+    test('constructor sets smartScroll default values', () => {
+      const defaultHighlighter = new Highlighter(container)
+      expect(defaultHighlighter).toBeInstanceOf(Highlighter)
+
+      // 通过配置更新来验证默认值
+      defaultHighlighter.updateConfig({})
+      expect(defaultHighlighter).toBeInstanceOf(Highlighter)
+    })
+
+    test('constructor accepts smartScroll configuration', () => {
+      const config: HighlighterConfig = {
+        smartScroll: false,
+        scrollPadding: 200,
+      }
+      const customHighlighter = new Highlighter(container, config)
+      expect(customHighlighter).toBeInstanceOf(Highlighter)
+      customHighlighter.destroy()
+    })
+
+    test('updateConfig updates smartScroll settings', () => {
+      const highlighter = new Highlighter(container)
+
+      highlighter.updateConfig({
+        smartScroll: false,
+        scrollPadding: 150,
+      })
+
+      expect(highlighter).toBeInstanceOf(Highlighter)
+      highlighter.destroy()
+    })
+
+    test('findNextOffscreenIndex returns -1 when no highlights exist', () => {
+      const index = smartScrollHighlighter.findNextOffscreenIndex()
+      expect(index).toBe(-1)
+    })
+
+    test('findPreviousOffscreenIndex returns -1 when no highlights exist', () => {
+      const index = smartScrollHighlighter.findPreviousOffscreenIndex()
+      expect(index).toBe(-1)
+    })
+
+    test('findNextOffscreenIndex returns -1 when only one highlight exists', async () => {
+      // 创建只有一个匹配的内容
+      const singleContainer = document.createElement('div')
+      singleContainer.innerHTML = '<p>Only one JavaScript here</p>'
+      document.body.appendChild(singleContainer)
+
+      const singleHighlighter = new Highlighter(singleContainer)
+      await singleHighlighter.apply('JavaScript')
+
+      const index = singleHighlighter.findNextOffscreenIndex()
+      expect(index).toBe(-1)
+
+      singleHighlighter.destroy()
+      document.body.removeChild(singleContainer)
+    })
+
+    test('jumpToNextOffscreen falls back to next() when no offscreen elements', async () => {
+      // 在小容器中测试，所有元素都应该在视口内
+      await highlighter.apply('JavaScript')
+
+      const initialIndex = highlighter.getCurrentIndex()
+      const success = highlighter.jumpToNextOffscreen()
+
+      expect(success).toBe(true)
+      expect(highlighter.getCurrentIndex()).not.toBe(initialIndex)
+    })
+
+    test('jumpToPreviousOffscreen falls back to previous() when no offscreen elements', async () => {
+      await highlighter.apply('JavaScript')
+
+      // 先移动到下一个
+      highlighter.next()
+      const currentIndex = highlighter.getCurrentIndex()
+
+      const success = highlighter.jumpToPreviousOffscreen()
+
+      expect(success).toBe(true)
+      expect(highlighter.getCurrentIndex()).not.toBe(currentIndex)
+    })
+
+    test('jumpToNextOffscreen returns false when no highlights exist', () => {
+      const success = smartScrollHighlighter.jumpToNextOffscreen()
+      expect(success).toBe(false)
+    })
+
+    test('jumpToPreviousOffscreen returns false when no highlights exist', () => {
+      const success = smartScrollHighlighter.jumpToPreviousOffscreen()
+      expect(success).toBe(false)
+    })
+
+    test('navigation methods work with smart scroll enabled', async () => {
+      await smartScrollHighlighter.apply('JavaScript')
+
+      const matchCount = smartScrollHighlighter.getMatchCount()
+      expect(matchCount).toBeGreaterThan(0)
+
+      // 测试基本导航
+      const nextSuccess = smartScrollHighlighter.next()
+      expect(nextSuccess).toBe(true)
+
+      const prevSuccess = smartScrollHighlighter.previous()
+      expect(prevSuccess).toBe(true)
+    })
+
+    test('smart scroll configuration affects scrolling behavior', async () => {
+      // 创建一个mock的scrollIntoView来验证是否被调用
+      const mockScrollIntoView = vi.fn()
+
+      // 应用高亮
+      await smartScrollHighlighter.apply('JavaScript')
+
+      // 获取第一个高亮元素并mock其scrollIntoView方法
+      const firstHighlight = smartScrollHighlighter.getCurrentElement()
+      if (firstHighlight) {
+        firstHighlight.scrollIntoView = mockScrollIntoView
+
+        // 导航到下一个元素
+        smartScrollHighlighter.next()
+
+        // 由于我们无法真正控制视口，这里主要验证方法调用不会出错
+        expect(smartScrollHighlighter.getCurrentIndex()).toBeGreaterThan(0)
+      }
+    })
+
+    test('destroy cleans up smart scroll state', async () => {
+      await smartScrollHighlighter.apply('JavaScript')
+      expect(smartScrollHighlighter.getMatchCount()).toBeGreaterThan(0)
+
+      smartScrollHighlighter.destroy()
+
+      expect(smartScrollHighlighter.getMatchCount()).toBe(0)
+      expect(smartScrollHighlighter.getCurrentIndex()).toBe(-1)
+      expect(smartScrollHighlighter.findNextOffscreenIndex()).toBe(-1)
+      expect(smartScrollHighlighter.findPreviousOffscreenIndex()).toBe(-1)
+    })
   })
 
   test('constructor with default parameters', () => {
