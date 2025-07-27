@@ -1,3 +1,9 @@
+# [1.27.0](https://github.com/mudssky/jsutils/compare/v1.26.0...v1.27.0) (2025-07-26)
+
+### Features
+
+- **highlighter:** 支持多关键词高亮和正则表达式匹配 ([93ef7af](https://github.com/mudssky/jsutils/commit/93ef7af031f4a275f6e9b792bec91ed4f326f7b3))
+
 # [1.26.0](https://github.com/mudssky/jsutils/compare/v1.25.0...v1.26.0) (2025-07-26)
 
 ### Features
