@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/mudssky/jsutils/compare/v1.27.0...v1.28.0) (2025-07-27)
+
+### Features
+
+- **dom:** 新增高亮器模块并重构导出结构 ([ea1a751](https://github.com/mudssky/jsutils/commit/ea1a7511c2b95054fe5a61597a7502d72b38a6cb))
+- **dom:** 添加高亮功能测试页面 ([4f41920](https://github.com/mudssky/jsutils/commit/4f4192048d45942bad4369b7cac06b85a46ba371))
+
 # [1.27.0](https://github.com/mudssky/jsutils/compare/v1.26.0...v1.27.0) (2025-07-26)
 
 ### Features
