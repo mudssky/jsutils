@@ -1,89 +1,5 @@
-import { escapeRegExp } from '../regex'
-
-/**
- * 高亮选项配置接口
- *
- * @public
- */
-interface HighlightOptions {
-  /**
-   * 是否区分大小写
-   * @defaultValue false
-   */
-  caseSensitive?: boolean
-  /**
-   * 是否只匹配完整单词
-   * @defaultValue false
-   */
-  wholeWord?: boolean
-}
-
-/**
- * 高亮器配置接口
- *
- * @public
- */
-interface HighlighterConfig {
-  /**
-   * 用于包装高亮文本的HTML标签名称
-   * @defaultValue 'mark'
-   */
-  highlightTag?: string
-  /**
-   * 高亮元素的CSS类名
-   * @defaultValue 'highlight'
-   */
-  highlightClass?: string
-  /**
-   * 当前激活高亮项的CSS类名
-   * @defaultValue 'highlight-active'
-   */
-  activeClass?: string
-  /**
-   * 需要跳过的标签名称列表
-   * @defaultValue ['SCRIPT', 'STYLE', 'NOSCRIPT']
-   */
-  skipTags?: string[]
-  /**
-   * 滚动行为配置
-   * @defaultValue `{ behavior: 'smooth', block: 'center' }`
-   */
-  scrollOptions?: ScrollIntoViewOptions
-  /**
-   * 是否启用性能优化（对大文档有效）
-   * @defaultValue true
-   */
-  enablePerformanceOptimization?: boolean
-}
-
-/**
- * 高亮事件回调接口
- *
- * @public
- */
-interface HighlightCallbacks {
-  /**
-   * 高亮应用完成时的回调
-   * @param matchCount - 匹配项总数
-   * @param keywords - 高亮的关键词数组
-   */
-  onHighlightApplied?: (matchCount: number, keywords: string[]) => void
-  /**
-   * 高亮移除时的回调
-   */
-  onHighlightRemoved?: () => void
-  /**
-   * 导航到新匹配项时的回调
-   * @param currentIndex - 当前索引
-   * @param totalCount - 总匹配数
-   * @param element - 当前激活的元素
-   */
-  onNavigate?: (
-    currentIndex: number,
-    totalCount: number,
-    element: HTMLElement,
-  ) => void
-}
+import { escapeRegExp } from '../../regex'
+import { HighlightCallbacks, HighlighterConfig, HighlightOptions } from './type'
 
 /**
  * 文本高亮器类
@@ -106,7 +22,9 @@ interface HighlightCallbacks {
  *   highlightTag: 'span',
  *   highlightClass: 'my-highlight',
  *   activeClass: 'my-active',
- *   skipTags: ['SCRIPT', 'STYLE', 'CODE']
+ *   skipTags: ['SCRIPT', 'STYLE', 'CODE'],
+ *   smartScroll: true,      // 启用智能滚动
+ *   scrollPadding: 100      // 设置视口内边距为100px
  * })
  *
  * // 带回调的高级用法
@@ -165,7 +83,9 @@ class Highlighter {
    *   highlightClass: 'search-highlight',
    *   activeClass: 'current-match',
    *   skipTags: ['SCRIPT', 'STYLE', 'CODE'],
-   *   scrollOptions: { behavior: 'auto', block: 'nearest' }
+   *   scrollOptions: { behavior: 'auto', block: 'nearest' },
+   *   smartScroll: false,     // 禁用智能滚动
+   *   scrollPadding: 30       // 设置较小的视口内边距
    * })
    *
    * // 带回调的配置
@@ -194,6 +114,8 @@ class Highlighter {
       skipTags: ['SCRIPT', 'STYLE', 'NOSCRIPT'],
       scrollOptions: { behavior: 'smooth', block: 'center' },
       enablePerformanceOptimization: true,
+      smartScroll: true,
+      scrollPadding: 50,
       ...config,
     }
     this.callbacks = callbacks
@@ -970,6 +892,23 @@ class Highlighter {
   }
 
   /**
+   * 检查元素是否在视口的舒适可见区域内
+   * @param el - 要检查的HTML元素
+   * @returns 如果元素在视口内则返回true，否则返回false
+   * @internal
+   */
+  private _isElementInViewport(el: HTMLElement): boolean {
+    const rect = el.getBoundingClientRect()
+    const padding = this.config.scrollPadding
+
+    return (
+      rect.top >= padding &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) - padding
+    )
+  }
+
+  /**
    * 创建包含高亮标记的文档片段
    *
    * 根据正则表达式匹配结果，将文本分割并创建包含高亮元素的文档片段。
@@ -1012,8 +951,8 @@ class Highlighter {
   /**
    * 设置当前激活的高亮项
    *
-   * 移除所有高亮元素的激活状态，然后为当前索引对应的元素添加激活样式，
-   * 并滚动到该元素位置。
+   * 移除所有高亮元素的激活状态，然后为当前索引对应的元素添加激活样式。
+   * 如果启用了智能滚动，只有当目标元素不在视口内时才会触发滚动。
    *
    * @internal
    */
@@ -1023,11 +962,15 @@ class Highlighter {
       node.classList.remove(this.config.activeClass),
     )
 
-    // 设置新的 active 状态并滚动
     const activeNode = this.highlights[this.currentIndex]
     if (activeNode) {
       activeNode.classList.add(this.config.activeClass)
-      activeNode.scrollIntoView(this.config.scrollOptions)
+
+      // 智能滚动逻辑
+      // 只有在开启了智能滚动，并且目标元素不在视口内时，才执行滚动
+      if (!this.config.smartScroll || !this._isElementInViewport(activeNode)) {
+        activeNode.scrollIntoView(this.config.scrollOptions)
+      }
 
       // 触发导航回调
       this.callbacks.onNavigate?.(
@@ -1035,6 +978,86 @@ class Highlighter {
         this.highlights.length,
         activeNode,
       )
+    }
+  }
+
+  /**
+   * 私有核心查找逻辑
+   * 查找下一个或上一个在视口外的元素的索引。
+   * @param direction - 查找方向, 1 为向前, -1 为向后
+   * @returns 找到的元素的索引，如果没找到则返回 -1
+   * @internal
+   */
+  private _findOffscreenIndex(direction: 1 | -1): number {
+    const total = this.highlights.length
+    if (total <= 1) {
+      return -1 // 如果只有一个或没有元素，不存在“屏幕外”的另一个元素
+    }
+
+    // 从当前位置的下一个/上一个开始，循环遍历所有其他节点
+    for (let i = 1; i < total; i++) {
+      const nextIndex = (this.currentIndex + i * direction + total) % total
+      const nextNode = this.highlights[nextIndex]
+
+      if (!this._isElementInViewport(nextNode)) {
+        return nextIndex // 找到了，返回索引
+      }
+    }
+
+    return -1 // 循环一圈没找到（说明所有元素都在屏幕内）
+  }
+
+  /**
+   * 查找下一个在视口外的匹配项的索引
+   * @returns 找到的元素的索引，如果所有元素都在视口内则返回 -1
+   */
+  public findNextOffscreenIndex(): number {
+    return this._findOffscreenIndex(1)
+  }
+
+  /**
+   * 查找上一个在视口外的匹配项的索引
+   * @returns 找到的元素的索引，如果所有元素都在视口内则返回 -1
+   */
+  public findPreviousOffscreenIndex(): number {
+    return this._findOffscreenIndex(-1)
+  }
+
+  /**
+   * 跳转到下一个在视口外的匹配项
+   *
+   * 如果找到了屏幕外的匹配项，则直接跳转到那里。
+   * 如果所有匹配项都在视口内，则行为与 next() 相同，以确保总有反馈。
+   * @returns 是否成功执行了跳转或导航操作
+   */
+  public jumpToNextOffscreen(): boolean {
+    const targetIndex = this.findNextOffscreenIndex()
+
+    if (targetIndex !== -1) {
+      // 如果找到了，直接跳转到该索引
+      return this.jumpTo(targetIndex)
+    } else {
+      // 如果没找到（所有项都在屏幕内），则执行普通 next() 作为回退
+      return this.next()
+    }
+  }
+
+  /**
+   * 跳转到上一个在视口外的匹配项
+   *
+   * 如果找到了屏幕外的匹配项，则直接跳转到那里。
+   * 如果所有匹配项都在视口内，则行为与 previous() 相同，以确保总有反馈。
+   * @returns 是否成功执行了跳转或导航操作
+   */
+  public jumpToPreviousOffscreen(): boolean {
+    const targetIndex = this.findPreviousOffscreenIndex()
+
+    if (targetIndex !== -1) {
+      // 如果找到了，直接跳转到该索引
+      return this.jumpTo(targetIndex)
+    } else {
+      // 如果没找到，执行普通 previous() 作为回退
+      return this.previous()
     }
   }
 
@@ -1052,5 +1075,9 @@ class Highlighter {
   }
 }
 
+export type {
+  HighlightCallbacks,
+  HighlighterConfig,
+  HighlightOptions,
+} from './type'
 export { Highlighter }
-export type { HighlightCallbacks, HighlighterConfig, HighlightOptions }
