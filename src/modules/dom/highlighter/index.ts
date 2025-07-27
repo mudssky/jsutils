@@ -645,6 +645,27 @@ class Highlighter {
   }
 
   /**
+   * 导航到下一个或上一个高亮项
+   *
+   * 根据指定的方向（1或-1）导航到下一个或上一个高亮项。
+   * 会自动更新当前索引并调用回调函数。
+   *
+   * @param direction - 导航方向，1表示下一个，-1表示上一个
+   * @returns 是否成功导航
+   */
+  private _navigate(direction: 1 | -1): boolean {
+    if (this.highlights.length === 0) return false
+    let nextIndex = this.currentIndex
+    if (direction > 0) {
+      nextIndex = (this.currentIndex + 1) % this.highlights.length
+    } else {
+      nextIndex =
+        (this.currentIndex - 1 + this.highlights.length) %
+        this.highlights.length
+    }
+    return this.jumpTo(nextIndex)
+  }
+  /**
    * 跳转到下一个高亮项
    *
    * 将当前激活的高亮项切换到下一个匹配项。如果当前是最后一个，
@@ -660,10 +681,7 @@ class Highlighter {
    * ```
    */
   public next(): boolean {
-    if (this.highlights.length === 0) return false
-    this.currentIndex = (this.currentIndex + 1) % this.highlights.length
-    this.setActiveHighlight()
-    return true
+    return this._navigate(1)
   }
 
   /**
@@ -682,11 +700,7 @@ class Highlighter {
    * ```
    */
   public previous(): boolean {
-    if (this.highlights.length === 0) return false
-    this.currentIndex =
-      (this.currentIndex - 1 + this.highlights.length) % this.highlights.length
-    this.setActiveHighlight()
-    return true
+    return this._navigate(-1)
   }
 
   /**
