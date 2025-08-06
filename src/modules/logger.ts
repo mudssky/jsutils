@@ -1,147 +1,173 @@
 /* eslint-disable no-console */
 import { omit } from './object'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * 抽象日志器类，定义了所有日志级别的方法。
+
+ */
 abstract class AbstractLogger {
-  abstract log(message?: any, ...optionalParams: any[]): void
-  abstract trace(message?: any, ...optionalParams: any[]): void
-  abstract debug(message?: any, ...optionalParams: any[]): void
-  abstract info(message?: any, ...optionalParams: any[]): void
-  abstract warn(message?: any, ...optionalParams: any[]): void
-  abstract error(message?: any, ...optionalParams: any[]): void
+  abstract log(message?: unknown, ...optionalParams: unknown[]): void
+  abstract trace(message?: unknown, ...optionalParams: unknown[]): void
+  abstract debug(message?: unknown, ...optionalParams: unknown[]): void
+  abstract info(message?: unknown, ...optionalParams: unknown[]): void
+  abstract warn(message?: unknown, ...optionalParams: unknown[]): void
+  abstract error(message?: unknown, ...optionalParams: unknown[]): void
 }
 
-const loggerLevelList = [
-  {
-    name: 'log',
-    value: 0,
-  },
-  {
-    name: 'trace',
-    value: 0,
-  },
-  {
-    name: 'debug',
-    value: 1,
-  },
-  {
-    name: 'info',
-    value: 2,
-  },
-  {
-    name: 'warn',
-    value: 3,
-  },
-  {
-    name: 'error',
-    value: 4,
-  },
-] as const
+const loggerLevels = {
+  trace: 0,
+  log: 0,
+  debug: 1,
+  info: 2,
+  warn: 3,
+  error: 4,
+} as const
 
-export type LogLevel = (typeof loggerLevelList)[number]['name']
+/**
+ * 定义日志级别。
+ */
+export type LogLevel = keyof typeof loggerLevels
+/**
+ * 日志器配置选项接口。
+ */
 export interface LoggerOptions {
   name?: string
   level: LogLevel
+  enableFormat?: boolean
   formatter?: (
     options: LoggerOptions,
-    message?: any,
-    ...optionalParams: any[]
+    message?: unknown,
+    ...optionalParams: unknown[]
   ) => string
 }
-export interface LogContent extends Omit<LoggerOptions, 'formatter'> {
-  message: any
-  timestamp: any
-  [key: string]: any
+/**
+ * 日志内容的接口，用于格式化后的日志输出。
+ */
+export interface LogContent
+  extends Omit<LoggerOptions, 'formatter' | 'enableFormat'> {
+  message: unknown
+  timestamp: unknown
+  context?: unknown[]
 }
+/**
+ * 控制台日志器类，实现了 AbstractLogger 抽象类，用于向控制台输出日志。
+ */
 export class ConsoleLogger extends AbstractLogger {
-  private levelMap: Map<LogLevel, number>
-  private enabelFormat = true
   constructor(private options: LoggerOptions) {
     super()
-    this.levelMap = new Map(
-      loggerLevelList.map((item) => [item.name, item.value]),
-    )
+    // 提供默认值
+    this.options.enableFormat = this.options.enableFormat !== false
   }
-  private formatInfo(message?: any, ...optionalParams: any[]) {
+  private formatInfo(message?: unknown, ...optionalParams: unknown[]) {
     if (this.options.formatter) {
       return this.options.formatter(this.options, message, ...optionalParams)
     }
     const res: LogContent = {
-      ...omit(this.options, ['formatter']),
+      ...omit(this.options, ['formatter', 'enableFormat']),
       message: message,
       timestamp: new Date().toISOString(),
     }
 
-    for (let i = 0; i < optionalParams.length; i++) {
-      const index = `${i}`
-      res[index] = optionalParams[i]
+    // 将额外参数放入一个专用字段
+    if (optionalParams.length > 0) {
+      res.context = optionalParams
     }
+
     return JSON.stringify(res)
   }
 
-  private canLog(level: LogLevel) {
-    const currentLogLevel = this.levelMap.get(level) ?? 0
-    if (currentLogLevel >= this.levelMap.get(this.options.level)!) {
-      return true
-    }
-    return false
+  private canLog(level: LogLevel): boolean {
+    const currentLevelValue = loggerLevels[level]
+    const optionLevelValue = loggerLevels[this.options.level]
+    return currentLevelValue >= optionLevelValue
   }
-  log(message?: any, ...optionalParams: any[]): void {
-    if (this.canLog('log')) {
-      if (this.enabelFormat) {
-        console.log(this.formatInfo(message, ...optionalParams))
-      } else {
-        console.log(message, ...optionalParams)
-      }
-    }
-  }
-  trace(message?: any, ...optionalParams: any[]): void {
-    if (this.canLog('trace')) {
-      if (this.enabelFormat) {
-        console.trace(this.formatInfo(message, ...optionalParams))
-      } else {
-        console.trace(message, ...optionalParams)
-      }
-    }
-  }
-  debug(message?: any, ...optionalParams: any[]): void {
-    if (this.canLog('debug')) {
-      if (this.enabelFormat) {
-        console.debug(this.formatInfo(message, ...optionalParams))
-      } else {
-        console.debug(message, ...optionalParams)
-      }
+
+  /**
+   * 统一的私有日志处理方法
+   * @param level - 日志级别
+   * @param message - 日志消息
+   * @param optionalParams - 可选参数
+   */
+  private performLog(
+    level: LogLevel,
+    message?: unknown,
+    ...optionalParams: unknown[]
+  ): void {
+    if (!this.canLog(level)) return
+
+    // 获取对应的 console 方法，如 console.log, console.info 等
+    const logFn =
+      (console as unknown as Record<string, (...args: unknown[]) => void>)[
+        level
+      ] || console.log
+
+    if (this.options.enableFormat) {
+      logFn(this.formatInfo(message, ...optionalParams))
+    } else {
+      logFn(message, ...optionalParams)
     }
   }
-  info(message?: any, ...optionalParams: any[]): void {
-    if (this.canLog('info')) {
-      if (this.enabelFormat) {
-        console.info(this.formatInfo(message, ...optionalParams))
-      } else {
-        console.info(message, ...optionalParams)
-      }
-    }
+
+  /**
+   * 输出通用日志信息。
+   * @param message - 日志消息。
+   * @param optionalParams - 可选参数。
+   */
+  log(message?: unknown, ...optionalParams: unknown[]): void {
+    this.performLog('log', message, ...optionalParams)
   }
-  warn(message?: any, ...optionalParams: any[]): void {
-    if (this.canLog('warn')) {
-      if (this.enabelFormat) {
-        console.warn(this.formatInfo(message, ...optionalParams))
-      } else {
-        console.warn(message, ...optionalParams)
-      }
-    }
+
+  /**
+   * 输出跟踪日志信息。
+   * @param message - 日志消息。
+   * @param optionalParams - 可选参数。
+   */
+  trace(message?: unknown, ...optionalParams: unknown[]): void {
+    this.performLog('trace', message, ...optionalParams)
   }
-  error(message?: any, ...optionalParams: any[]): void {
-    if (this.canLog('error')) {
-      if (this.enabelFormat) {
-        console.error(this.formatInfo(message, ...optionalParams))
-      } else {
-        console.error(message, ...optionalParams)
-      }
-    }
+
+  /**
+   * 输出调试日志信息。
+   * @param message - 日志消息。
+   * @param optionalParams - 可选参数。
+   */
+  debug(message?: unknown, ...optionalParams: unknown[]): void {
+    this.performLog('debug', message, ...optionalParams)
+  }
+
+  /**
+   * 输出信息日志信息。
+   * @param message - 日志消息。
+   * @param optionalParams - 可选参数。
+   */
+  info(message?: unknown, ...optionalParams: unknown[]): void {
+    this.performLog('info', message, ...optionalParams)
+  }
+
+  /**
+   * 输出警告日志信息。
+   * @param message - 日志消息。
+   * @param optionalParams - 可选参数。
+   */
+  warn(message?: unknown, ...optionalParams: unknown[]): void {
+    this.performLog('warn', message, ...optionalParams)
+  }
+
+  /**
+   * 输出错误日志信息。
+   * @param message - 日志消息。
+   * @param optionalParams - 可选参数。
+   */
+  error(message?: unknown, ...optionalParams: unknown[]): void {
+    this.performLog('error', message, ...optionalParams)
   }
 }
 
+/**
+ * 创建并返回一个 ConsoleLogger 实例。
+ * @param options - 日志器配置选项。
+ * @returns ConsoleLogger 实例。
+ */
 export function createLogger(options: LoggerOptions) {
   return new ConsoleLogger(options)
 }

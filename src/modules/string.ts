@@ -89,19 +89,42 @@ function fuzzyMatch(searchValue: string, targetString: string) {
   const pattern = new RegExp(searchValue, 'i')
   return pattern.test(targetString)
 }
+/**
+ * 获取文件扩展名。
+ * @param filename - 文件名或文件路径。
+ * @returns 小写的扩展名，不带"."。如果文件没有扩展名，则返回空字符串。
+ * @public
+ */
+function getFileExtension(filename: string): string {
+  // 确保我们处理的是一个有效的字符串
+  if (typeof filename !== 'string' || filename.length === 0) {
+    return ''
+  }
 
+  const lastDotIndex = filename.lastIndexOf('.')
+
+  // 如果没有找到"."，或者"."是第一个字符（例如 ".bashrc"），
+  // 或者"."是最后一个字符（例如 "file."），则认为没有扩展名。
+  if (
+    lastDotIndex === -1 ||
+    lastDotIndex === 0 ||
+    lastDotIndex === filename.length - 1
+  ) {
+    return ''
+  }
+
+  // 提取扩展名并转换为小写，因为扩展名通常是大小写不敏感的
+  return filename.slice(lastDotIndex + 1).toLowerCase()
+}
 /**
  * 以.分割文件名，返回扩展名
  * @param fileName - 文件名
  * @returns - 文件扩展名
  * @public
+ * @deprecated 使用 getFileExtension 代替
  */
 function getFileExt(fileName: string) {
-  const parts = fileName.split('.')
-  if (parts.length > 1) {
-    return parts[parts.length - 1]
-  }
-  return ''
+  return getFileExtension(fileName)
 }
 
 /**
@@ -376,6 +399,7 @@ export {
   generateMergePaths,
   generateUUID,
   getFileExt,
+  getFileExtension,
   parseTemplate,
   PascalCase,
   removePrefix,
