@@ -35,16 +35,18 @@ export interface LoggerOptions {
   level: LogLevel
   enableFormat?: boolean
   formatter?: (
-    options: LoggerOptions,
+    level: LogLevel,
     message?: unknown,
     ...optionalParams: unknown[]
   ) => string
+  context?: Record<string, unknown>
 }
 /**
  * 日志内容的接口，用于格式化后的日志输出。
  */
 export interface LogContent
-  extends Omit<LoggerOptions, 'formatter' | 'enableFormat'> {
+  extends Omit<LoggerOptions, 'formatter' | 'enableFormat' | 'context'> {
+  [key: string]: unknown
   message: unknown
   timestamp: unknown
   context?: unknown[]
@@ -58,19 +60,50 @@ export class ConsoleLogger extends AbstractLogger {
     // 提供默认值
     this.options.enableFormat = this.options.enableFormat !== false
   }
-  private formatInfo(message?: unknown, ...optionalParams: unknown[]) {
-    if (this.options.formatter) {
-      return this.options.formatter(this.options, message, ...optionalParams)
+  /**
+   * 处理Error对象，提取其关键信息
+   * @param value - 可能是Error对象的值
+   * @returns 处理后的值
+   */
+  private processErrorObject(value: unknown): unknown {
+    if (value instanceof Error) {
+      const errorInfo: Record<string, unknown> = {
+        message: value.message,
+        stack: value.stack,
+        name: value.name,
+      }
+
+      if (value.cause) {
+        errorInfo.cause = this.processErrorObject(value.cause)
+      }
+
+      return errorInfo
     }
+    return value
+  }
+
+  private formatInfo(
+    level: LogLevel,
+    message?: unknown,
+    ...optionalParams: unknown[]
+  ) {
+    if (this.options.formatter) {
+      return this.options.formatter(level, message, ...optionalParams)
+    }
+
+    const processedMessage = this.processErrorObject(message)
+
     const res: LogContent = {
-      ...omit(this.options, ['formatter', 'enableFormat']),
-      message: message,
+      ...this.options.context,
+      ...omit(this.options, ['formatter', 'enableFormat', 'context']),
+      message: processedMessage,
       timestamp: new Date().toISOString(),
     }
 
-    // 将额外参数放入一个专用字段
     if (optionalParams.length > 0) {
-      res.context = optionalParams
+      res.context = optionalParams.map((param) =>
+        this.processErrorObject(param),
+      )
     }
 
     return JSON.stringify(res)
@@ -102,7 +135,11 @@ export class ConsoleLogger extends AbstractLogger {
       ] || console.log
 
     if (this.options.enableFormat) {
-      const formattedMessage = this.formatInfo(message, ...optionalParams)
+      const formattedMessage = this.formatInfo(
+        level,
+        message,
+        ...optionalParams,
+      )
       logFn(formattedMessage)
     } else {
       logFn(message, ...optionalParams)
@@ -161,6 +198,27 @@ export class ConsoleLogger extends AbstractLogger {
    */
   error(message?: unknown, ...optionalParams: unknown[]): void {
     this.performLog('error', message, ...optionalParams)
+  }
+
+  /**
+   * 创建子日志记录器，深度合并上下文信息
+   * @param context - 要绑定到子日志记录器的上下文对象
+   * @param options - 可选的新配置，用于覆盖level等设置
+   * @returns 新的ConsoleLogger实例
+   */
+  child(
+    context: Record<string, unknown>,
+    options?: Partial<Omit<LoggerOptions, 'context'>>,
+  ): ConsoleLogger {
+    const newOptions: LoggerOptions = {
+      ...this.options,
+      ...options,
+      context: {
+        ...this.options.context,
+        ...context,
+      },
+    }
+    return new ConsoleLogger(newOptions)
   }
 }
 

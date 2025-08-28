@@ -206,11 +206,9 @@ describe('Logger', () => {
 
         logger.info('test message', { extra: 'data' })
 
-        expect(customFormatter).toHaveBeenCalledWith(
-          expect.objectContaining({ level: 'info' }),
-          'test message',
-          { extra: 'data' },
-        )
+        expect(customFormatter).toHaveBeenCalledWith('info', 'test message', {
+          extra: 'data',
+        })
         expect(consoleSpy.info).toHaveBeenCalledWith('custom formatted message')
       })
 
@@ -226,7 +224,7 @@ describe('Logger', () => {
 
         logger.info('test message')
 
-        expect(customFormatter).toHaveBeenCalledWith(options, 'test message')
+        expect(customFormatter).toHaveBeenCalledWith('info', 'test message')
       })
     })
 
@@ -292,6 +290,207 @@ describe('Logger', () => {
       logger.warn('test message')
 
       expect(consoleSpy.warn).toHaveBeenCalledWith('test message')
+    })
+  })
+
+  describe('Error Object Handling', () => {
+    it('should properly serialize Error objects in message', () => {
+      const logger = new ConsoleLogger({ level: 'info' })
+      const error = new Error('Test error message')
+      error.stack = 'Error: Test error message\n    at test'
+
+      logger.info(error)
+
+      const loggedMessage = consoleSpy.info.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.message).toEqual({
+        message: 'Test error message',
+        stack: 'Error: Test error message\n    at test',
+        name: 'Error',
+      })
+    })
+
+    it('should properly serialize Error objects in optional parameters', () => {
+      const logger = new ConsoleLogger({ level: 'info' })
+      const error = new Error('Context error')
+      error.stack = 'Error: Context error\n    at context'
+
+      logger.info('Regular message', error, 'other param')
+
+      const loggedMessage = consoleSpy.info.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.message).toBe('Regular message')
+      expect(parsed.context).toEqual([
+        {
+          message: 'Context error',
+          stack: 'Error: Context error\n    at context',
+          name: 'Error',
+        },
+        'other param',
+      ])
+    })
+
+    it('should handle Error objects with cause property', () => {
+      const logger = new ConsoleLogger({ level: 'info' })
+      const rootCause = new Error('Root cause')
+      const error = new Error('Main error', { cause: rootCause })
+
+      logger.info(error)
+
+      const loggedMessage = consoleSpy.info.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.message.cause).toEqual({
+        message: 'Root cause',
+        stack: rootCause.stack,
+        name: 'Error',
+      })
+    })
+
+    it('should handle nested Error objects in cause chain', () => {
+      const logger = new ConsoleLogger({ level: 'info' })
+      const deepCause = new Error('Deep cause')
+      const middleCause = new Error('Middle cause', { cause: deepCause })
+      const mainError = new Error('Main error', { cause: middleCause })
+
+      logger.info(mainError)
+
+      const loggedMessage = consoleSpy.info.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.message.cause.cause).toEqual({
+        message: 'Deep cause',
+        stack: deepCause.stack,
+        name: 'Error',
+      })
+    })
+
+    it('should not modify non-Error objects', () => {
+      const logger = new ConsoleLogger({ level: 'info' })
+      const regularObject = { key: 'value', nested: { prop: 'test' } }
+
+      logger.info('message', regularObject)
+
+      const loggedMessage = consoleSpy.info.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.context[0]).toEqual(regularObject)
+    })
+  })
+
+  describe('Child Logger', () => {
+    it('should create child logger with merged context', () => {
+      const parentLogger = new ConsoleLogger({
+        level: 'info',
+        context: { service: 'api', version: '1.0' },
+        enableFormat: true,
+      })
+
+      const childLogger = parentLogger.child(
+        { requestId: 'abc-123', userId: 99 },
+        { level: 'debug' },
+      )
+
+      childLogger.debug('debug message')
+
+      const loggedMessage = consoleSpy.debug.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.service).toBe('api')
+      expect(parsed.version).toBe('1.0')
+      expect(parsed.requestId).toBe('abc-123')
+      expect(parsed.userId).toBe(99)
+      expect(parsed.level).toBe('debug')
+    })
+
+    it('should inherit parent configuration when child options are partial', () => {
+      const parentLogger = new ConsoleLogger({
+        level: 'warn',
+        context: { app: 'test' },
+        enableFormat: true,
+      })
+
+      const childLogger = parentLogger.child({ module: 'auth' })
+
+      childLogger.warn('warn message')
+
+      const loggedMessage = consoleSpy.warn.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.app).toBe('test')
+      expect(parsed.module).toBe('auth')
+      expect(parsed.level).toBe('warn') // inherited from parent
+    })
+
+    it('should handle child logger when parent has no context', () => {
+      const parentLogger = new ConsoleLogger({ level: 'info' })
+      const childLogger = parentLogger.child({ requestId: 'test-123' })
+
+      childLogger.info('info message')
+
+      const loggedMessage = consoleSpy.info.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.requestId).toBe('test-123')
+    })
+
+    it('should handle child context overriding parent context fields', () => {
+      const parentLogger = new ConsoleLogger({
+        level: 'info',
+        context: { service: 'api', env: 'dev' },
+      })
+      const childLogger = parentLogger.child({
+        service: 'payment',
+        requestId: 'abc',
+      })
+
+      childLogger.info('info message')
+
+      const loggedMessage = consoleSpy.info.mock.calls[0][0] as string
+      const parsed = JSON.parse(loggedMessage)
+
+      expect(parsed.service).toBe('payment') // overridden
+      expect(parsed.env).toBe('dev') // inherited
+      expect(parsed.requestId).toBe('abc') // new field
+    })
+
+    it('should create independent logger instances', () => {
+      const parentLogger = new ConsoleLogger({
+        level: 'info',
+        context: { service: 'api' },
+      })
+      const childLogger = parentLogger.child(
+        { requestId: 'test' },
+        { level: 'debug' },
+      )
+
+      // Parent should still use its original level
+      parentLogger.debug('parent debug') // should not log
+      childLogger.debug('child debug') // should log
+
+      expect(consoleSpy.debug).toHaveBeenCalledTimes(1)
+      expect(consoleSpy.debug).toHaveBeenCalledWith(
+        expect.stringContaining('child debug'),
+      )
+    })
+
+    it('should allow custom formatter in child logger', () => {
+      const customFormatter = vi.fn().mockReturnValue('custom child format')
+      const parentLogger = new ConsoleLogger({
+        level: 'info',
+        context: { app: 'test' },
+      })
+      const childLogger = parentLogger.child(
+        { module: 'auth' },
+        { formatter: customFormatter },
+      )
+
+      childLogger.info('test message')
+
+      expect(customFormatter).toHaveBeenCalled()
+      expect(consoleSpy.info).toHaveBeenCalledWith('custom child format')
     })
   })
 
