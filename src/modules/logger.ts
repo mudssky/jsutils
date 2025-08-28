@@ -102,7 +102,8 @@ export class ConsoleLogger extends AbstractLogger {
       ] || console.log
 
     if (this.options.enableFormat) {
-      logFn(this.formatInfo(message, ...optionalParams))
+      const formattedMessage = this.formatInfo(message, ...optionalParams)
+      logFn(formattedMessage)
     } else {
       logFn(message, ...optionalParams)
     }
