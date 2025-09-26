@@ -21,6 +21,21 @@ describe('EnumArray', () => {
   ] as const
   const sexEnum = createEnum(sexList)
 
+  const sexListWithAttr = [
+    {
+      label: '男',
+      value: 1,
+      displayText: '性别男',
+      color: 'blue',
+    },
+    {
+      label: '女',
+      value: 2,
+      color: 'red',
+    },
+  ] as const
+
+  const sexEnumWithAttr = createEnum(sexListWithAttr)
   class CustomEnumArray<
     T extends readonly EnumArrayObj[],
   > extends EnumArray<T> {
@@ -191,6 +206,9 @@ describe('EnumArray', () => {
     expect(sexEnum.getAttrByLabel('男', 'displayText')).toBe('性别男')
     // @ts-expect-error 需要测试不合法数据
     expect(sexEnum.getAttrByLabel('不存在', 'value')).toBeUndefined()
+
+    expect(sexEnumWithAttr.getAttrByValue(1, 'color')).toBe('blue')
+    expect(sexEnumWithAttr.getAttrByValue(2, 'color')).toBe('red')
   })
 
   test('isValueInLabels', () => {
