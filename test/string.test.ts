@@ -356,3 +356,45 @@ describe('generateMergePaths function', () => {
     expect(result).toEqual([])
   })
 })
+
+describe('numberToText function', () => {
+  test('english basic cases (explicit system)', () => {
+    expect(_.numberToText(0, { system: 'english' })).toBe('zero')
+    expect(_.numberToText(5, { system: 'english' })).toBe('five')
+    expect(_.numberToText(19, { system: 'english' })).toBe('nineteen')
+    expect(_.numberToText(21, { system: 'english' })).toBe('twenty-one')
+    expect(_.numberToText(101, { system: 'english' })).toBe('one hundred one')
+    expect(_.numberToText(1234567, { system: 'english' })).toBe(
+      'one million two hundred thirty-four thousand five hundred sixty-seven',
+    )
+  })
+
+  test('english with and option', () => {
+    expect(_.numberToText(101, { system: 'english', useAnd: true })).toBe(
+      'one hundred and one',
+    )
+  })
+
+  test('roman numerals', () => {
+    expect(_.numberToText(4, { system: 'roman' })).toBe('IV')
+    expect(_.numberToText(9, { system: 'roman' })).toBe('IX')
+    expect(_.numberToText(58, { system: 'roman' })).toBe('LVIII')
+    expect(_.numberToText(1994, { system: 'roman' })).toBe('MCMXCIV')
+    expect(_.numberToText(0, { system: 'roman' })).toBe('N')
+  })
+
+  test('chinese numerals (default system)', () => {
+    expect(_.numberToText(0)).toBe('零')
+    expect(_.numberToText(10)).toBe('十')
+    expect(_.numberToText(15)).toBe('十五')
+    expect(_.numberToText(20)).toBe('二十')
+    expect(_.numberToText(101)).toBe('一百零一')
+    expect(_.numberToText(110)).toBe('一百一十')
+    expect(_.numberToText(1005)).toBe('一千零五')
+    expect(_.numberToText(10000)).toBe('一万')
+    expect(_.numberToText(10005)).toBe('一万零五')
+    expect(_.numberToText(1234567)).toBe('一百二十三万四千五百六十七')
+    expect(_.numberToText(101000000)).toBe('一亿零一百万')
+    expect(_.numberToText(100100000)).toBe('一亿零十万')
+  })
+})
