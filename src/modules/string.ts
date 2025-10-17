@@ -389,6 +389,215 @@ function generateMergePaths(branches: string[]): string[][] {
   return paths
 }
 
+/**
+ * 将数字转换为文字表示，支持英文、中文数字以及罗马数字
+ * @param value - 要转换的数字（仅整数部分会被处理，会对输入进行截断）
+ * @param options - 配置项
+ * @param options.system - 转换系统，可选 'english' | 'chinese' | 'roman'，默认 'chinese'
+ * @param options.useAnd - 英文模式下是否使用 “and”，如 one hundred and one（默认 false）
+ * @returns 转换后的文字
+ * @example
+ * ```ts
+ * numberToText(1994, { system: 'roman' }) // -> 'MCMXCIV'
+ * numberToText(12345, { system: 'english' }) // -> 'twelve thousand three hundred forty-five'
+ * numberToText(10005) // -> '一万零五'
+ * ```
+ * @public
+ */
+const numberToText = (
+  value: number,
+  options?: {
+    system?: 'roman' | 'english' | 'chinese'
+    useAnd?: boolean
+  },
+): string => {
+  const system = options?.system ?? 'chinese'
+  switch (system) {
+    case 'roman':
+      return toRoman(value)
+    case 'chinese':
+      return toChinese(value)
+    case 'english':
+    default:
+      return toEnglish(value, options?.useAnd ?? false)
+  }
+}
+
+// 将数字转换为罗马数字
+function toRoman(num: number): string {
+  if (!Number.isFinite(num)) return ''
+  const negative = num < 0
+  let n = Math.trunc(Math.abs(num))
+  if (n === 0) return negative ? '-N' : 'N'
+  const map: [string, number][] = [
+    ['M', 1000],
+    ['CM', 900],
+    ['D', 500],
+    ['CD', 400],
+    ['C', 100],
+    ['XC', 90],
+    ['L', 50],
+    ['XL', 40],
+    ['X', 10],
+    ['IX', 9],
+    ['V', 5],
+    ['IV', 4],
+    ['I', 1],
+  ]
+  let res = ''
+  for (const [sym, val] of map) {
+    while (n >= val) {
+      res += sym
+      n -= val
+    }
+  }
+  return negative ? `-${res}` : res
+}
+
+// 将数字转换为英文文字
+function toEnglish(num: number, useAnd = false): string {
+  if (!Number.isFinite(num)) return ''
+  const negative = num < 0
+  let n = Math.trunc(Math.abs(num))
+  if (n === 0) return 'zero'
+  const belowTwenty = [
+    'zero',
+    'one',
+    'two',
+    'three',
+    'four',
+    'five',
+    'six',
+    'seven',
+    'eight',
+    'nine',
+    'ten',
+    'eleven',
+    'twelve',
+    'thirteen',
+    'fourteen',
+    'fifteen',
+    'sixteen',
+    'seventeen',
+    'eighteen',
+    'nineteen',
+  ]
+  const tens = [
+    '',
+    '',
+    'twenty',
+    'thirty',
+    'forty',
+    'fifty',
+    'sixty',
+    'seventy',
+    'eighty',
+    'ninety',
+  ]
+  const scales = ['', 'thousand', 'million', 'billion', 'trillion']
+
+  const chunkToWords = (x: number): string => {
+    let words = ''
+    const h = Math.floor(x / 100)
+    const r = x % 100
+    if (h > 0) {
+      words += `${belowTwenty[h]} hundred`
+      if (r > 0) words += useAnd ? ' and ' : ' '
+    }
+    if (r > 0) {
+      if (r < 20) {
+        words += belowTwenty[r]
+      } else {
+        const t = Math.floor(r / 10)
+        const o = r % 10
+        words += tens[t]
+        if (o > 0) words += `-${belowTwenty[o]}`
+      }
+    }
+    return words
+  }
+
+  const parts: string[] = []
+  let scaleIndex = 0
+  while (n > 0) {
+    const chunk = n % 1000
+    if (chunk > 0) {
+      const chunkWords = chunkToWords(chunk)
+      const scaleWord = scales[scaleIndex]
+      parts.unshift(scaleWord ? `${chunkWords} ${scaleWord}` : chunkWords)
+    }
+    n = Math.floor(n / 1000)
+    scaleIndex++
+  }
+  const result = parts.join(' ').replace(/\s+/g, ' ').trim()
+  return negative ? `minus ${result}` : result
+}
+
+// 将数字转换为中文数字
+function toChinese(num: number): string {
+  if (!Number.isFinite(num)) return ''
+  const negative = num < 0
+  let n = Math.trunc(Math.abs(num))
+  if (n === 0) return '零'
+  const digits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九']
+  const unitsBig = ['', '万', '亿', '兆']
+
+  const groupToChinese = (x: number): string => {
+    if (x === 0) return ''
+    const thousands = Math.floor(x / 1000)
+    const hundreds = Math.floor((x % 1000) / 100)
+    const tens = Math.floor((x % 100) / 10)
+    const ones = x % 10
+    let res = ''
+    if (thousands > 0) res += digits[thousands] + '千'
+    if (hundreds > 0) {
+      res += digits[hundreds] + '百'
+    } else if (thousands > 0 && (tens > 0 || ones > 0)) {
+      res += '零'
+    }
+    if (tens > 0) {
+      if (tens === 1 && thousands === 0 && hundreds === 0) {
+        res += '十'
+      } else {
+        res += digits[tens] + '十'
+      }
+    } else if ((hundreds > 0 || thousands > 0) && ones > 0) {
+      res += '零'
+    }
+    if (ones > 0) res += digits[ones]
+    return res
+  }
+
+  const groups: number[] = []
+  while (n > 0) {
+    groups.push(n % 10000)
+    n = Math.floor(n / 10000)
+  }
+  let result = ''
+  let needZero = false
+  for (let i = groups.length - 1; i >= 0; i--) {
+    const val = groups[i]
+    if (val === 0) {
+      if (result !== '') needZero = true
+      continue
+    }
+    if (needZero) {
+      result += '零'
+      needZero = false
+    }
+    result += groupToChinese(val) + unitsBig[i]
+    if (i > 0) {
+      const nextVal = groups[i - 1]
+      if (nextVal > 0 && nextVal < 1000) {
+        needZero = true
+      }
+    }
+  }
+  result = result.replace(/零+/g, '零')
+  result = result.replace(/零$/, '')
+  return negative ? `负${result}` : result
+}
+
 export {
   camelCase,
   capitalize,
@@ -400,6 +609,7 @@ export {
   generateUUID,
   getFileExt,
   getFileExtension,
+  numberToText,
   parseTemplate,
   PascalCase,
   removePrefix,
