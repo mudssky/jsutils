@@ -1,3 +1,9 @@
+# [1.29.0](https://github.com/mudssky/jsutils/compare/v1.28.0...v1.29.0) (2025-08-06)
+
+### Features
+
+- **字符串模块:** 添加更健壮的文件扩展名获取函数 ([a3fc778](https://github.com/mudssky/jsutils/commit/a3fc778e2a904d2448cbc99fd43a91fc2f1fee18))
+
 # [1.28.0](https://github.com/mudssky/jsutils/compare/v1.27.0...v1.28.0) (2025-07-27)
 
 ### Features
