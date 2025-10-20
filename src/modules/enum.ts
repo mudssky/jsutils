@@ -52,6 +52,10 @@ type ValueOf<T extends readonly EnumArrayObj[]> = T[number]['value']
  */
 type LabelOf<T extends readonly EnumArrayObj[]> = T[number]['label']
 
+type AttributeOf<T extends readonly EnumArrayObj[]> = Extract<
+  keyof T[number],
+  string
+>
 /**
  * 外部数据类型，用于处理来自 API 等外部源的数据
  * @public
@@ -259,6 +263,50 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   }
 
   /**
+   * 根据任意属性键和值获取完整的枚举对象
+   *
+   * 该方法会遍历枚举列表，通过指定的属性键和值查找对应的枚举项
+   *
+   * 时间复杂度：O(n)
+   *
+   * @template K - 属性键名类型
+   * @param key - 枚举对象的属性键
+   * @param attrValue - 属性值
+   * @returns 返回匹配的完整对象，如果未找到则返回undefined
+   *
+   * @example
+   * ```typescript
+   * const item = enumArray.getItemByAttr('color', 'blue')
+   * // { label: '启用', value: 1, color: 'blue', ...其他属性 }
+   * ```
+   */
+  getItemByAttr<K extends AttributeOf<T>, V extends T[number][K]>(
+    key: K,
+    attrValue: V,
+  ): Extract<T[number], Record<K, V>> | undefined {
+    // 针对常用键采用 O(1) 查找以提升性能
+    if (key === 'label') {
+      return this.getItemByLabel(attrValue as unknown as LabelOf<T>) as Extract<
+        T[number],
+        Record<K, V>
+      >
+    }
+    if (key === 'value') {
+      return this.getItemByValue(attrValue as unknown as ValueOf<T>) as Extract<
+        T[number],
+        Record<K, V>
+      >
+    }
+    for (const item of this) {
+      const typedItem = item as T[number]
+      if (typedItem[key] === attrValue) {
+        return typedItem as Extract<T[number], Record<K, V>>
+      }
+    }
+    return undefined
+  }
+
+  /**
    * 根据label获取显示文本
    *
    * 如果枚举对象有displayText属性则返回displayText，否则返回label本身
@@ -406,6 +454,57 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   }
 
   /**
+   * 判断给定的属性值对应的枚举项的label是否在指定的label集合中
+   *
+   * @template K - 属性键名类型
+   * @param key - 枚举对象的属性键
+   * @param attrValue - 属性值
+   * @param allowedLabels - 包含所有期望的合法标签的数组
+   * @returns - 如果找到匹配的枚举项且其label存在于allowedLabels中，则返回true
+   *
+   * @example
+   * ```typescript
+   * const isAllowed = enumArray.isAttrInLabels('color', 'blue', ['启用', '禁用'])
+   * ```
+   */
+  isAttrInLabels<K extends AttributeOf<T>, V extends T[number][K]>(
+    key: K,
+    attrValue: V,
+    allowedLabels: readonly LabelOf<T>[],
+  ): boolean {
+    if (
+      this.length === 0 ||
+      !Array.isArray(allowedLabels) ||
+      allowedLabels.length === 0
+    ) {
+      return false
+    }
+
+    if ((attrValue as unknown) == null) {
+      return false
+    }
+
+    // 针对常用键采用 O(1) 查找以提升性能
+    if (key === 'label') {
+      return this.isLabelIn(
+        attrValue as unknown as EnhancedLabel<LabelOf<T>>,
+        allowedLabels,
+      )
+    }
+    if (key === 'value') {
+      return this.isValueInLabels(
+        attrValue as unknown as ExternalValue,
+        allowedLabels,
+      )
+    }
+
+    const item = this.getItemByAttr(key, attrValue)
+    if (!item) return false
+
+    return allowedLabels.includes(item.label as LabelOf<T>)
+  }
+
+  /**
    * 根据value获取指定属性的值
    *
    * 该方法提供类型安全的属性访问，支持获取枚举对象的任意属性
@@ -420,7 +519,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * const color = enumArray.getAttrByValue(1, 'color') // 类型安全的属性访问
    * ```
    */
-  getAttrByValue<K extends keyof T[number]>(
+  getAttrByValue<K extends AttributeOf<T>>(
     value: ValueOf<T>,
     key: K,
   ): T[number][K] | undefined {
@@ -442,7 +541,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * const color = enumArray.getAttrByLabel('启用', 'color') // 类型安全的属性访问
    * ```
    */
-  getAttrByLabel<K extends keyof T[number]>(
+  getAttrByLabel<K extends AttributeOf<T>>(
     label: LabelOf<T>,
     key: K,
   ): T[number][K] | undefined {
@@ -810,6 +909,7 @@ function createEnum<T extends readonly EnumArrayObj[]>(
 
 export { createEnum, EnumArray }
 export type {
+  AttributeOf,
   EnhancedLabel,
   EnumArrayObj,
   EnumCreationOptions,

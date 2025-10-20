@@ -211,6 +211,47 @@ describe('EnumArray', () => {
     expect(sexEnumWithAttr.getAttrByValue(2, 'color')).toBe('red')
   })
 
+  test('getItemByAttr', () => {
+    expect(sexEnumWithAttr.getItemByAttr('color', 'blue')).toEqual(
+      sexListWithAttr[0],
+    )
+    expect(sexEnumWithAttr.getItemByAttr('color', 'red')).toEqual(
+      sexListWithAttr[1],
+    )
+    // 非法值
+    expect(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sexEnumWithAttr.getItemByAttr('color', 'green' as any),
+    ).toBeUndefined()
+
+    // 使用已有的基础属性进行匹配
+    expect(sexEnum.getItemByAttr('label', '男')).toEqual(sexList[0])
+    expect(sexEnum.getItemByAttr('value', 2)).toEqual(sexList[1])
+  })
+
+  test('isAttrInLabels', () => {
+    expect(sexEnumWithAttr.isAttrInLabels('color', 'blue', ['男'])).toBe(true)
+    expect(sexEnumWithAttr.isAttrInLabels('color', 'red', ['女'])).toBe(true)
+    expect(sexEnumWithAttr.isAttrInLabels('color', 'blue', ['女'])).toBe(false)
+    expect(sexEnumWithAttr.isAttrInLabels('color', 'red', ['男'])).toBe(false)
+
+    // 不合法或不存在的数据
+    expect(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      sexEnumWithAttr.isAttrInLabels('color', 'green' as any, ['男', '女']),
+    ).toBe(false)
+    // @ts-expect-error 需要测试不合法数据
+    expect(sexEnumWithAttr.isAttrInLabels('color', null, ['男'])).toBe(false)
+    // @ts-expect-error 需要测试不合法数据
+    expect(sexEnumWithAttr.isAttrInLabels('color', undefined, ['男'])).toBe(
+      false,
+    )
+
+    // 使用基础属性进行判断
+    expect(sexEnum.isAttrInLabels('value', 1, ['男'])).toBe(true)
+    expect(sexEnum.isAttrInLabels('value', 1, ['女'])).toBe(false)
+  })
+
   test('isValueInLabels', () => {
     // 测试新的类型安全的判断方法
     expect(sexEnum.isValueInLabels(1, ['男'])).toBe(true)
