@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/mudssky/jsutils/compare/v1.29.0...v1.30.0) (2025-10-17)
+
+### Features
+
+- **logger:** 增强日志功能，支持错误对象序列化和子日志记录器 ([647ef24](https://github.com/mudssky/jsutils/commit/647ef2418d7eaaa74a7e5330b9e612573a8e6555))
+- **字符串:** 添加数字转文字功能支持多语言 ([1f4d20d](https://github.com/mudssky/jsutils/commit/1f4d20dab66c0566bf850c9020ac8c9166608811))
+
 # [1.29.0](https://github.com/mudssky/jsutils/compare/v1.28.0...v1.29.0) (2025-08-06)
 
 ### Features
