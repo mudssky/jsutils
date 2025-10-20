@@ -625,6 +625,38 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   }
 
   /**
+   * 获取一个基于属性的匹配器，用于后续的链式调用。
+   *
+   * 这种方式是 `match().attr(key, value)` 的一种备选语法，
+   * 在需要对同一个属性键进行多次匹配时，可以减少代码重复。
+   *
+   * @template K - 属性键名类型
+   * @param key - 要匹配的属性名
+   * @returns 返回一个包含 `value` 方法的对象，用于指定属性值并返回一个 {@link EnumMatcher}
+   *
+   * @example
+   * ```typescript
+   * const colorMatcher = statusEnum.getAttrMatcher('color')
+   * const isWarning = colorMatcher.value('orange').labelIsIn(['待处理'])
+   * const isSuccess = colorMatcher.value('green').labelIsIn(['已完成'])
+   * ```
+   */
+  getAttrMatcher<K extends AttributeOf<T>>(key: K) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const self = this
+    return {
+      /**
+       * 根据指定的属性值进行匹配。
+       * @param attrValue - 要匹配的属性值
+       * @returns 返回一个 `EnumMatcher` 实例，用于最终的断言
+       */
+      value: (attrValue: T[number][K]) => {
+        return new EnumMatcher(self, { type: 'attr', key, value: attrValue })
+      },
+    }
+  }
+
+  /**
    * 根据value获取指定属性的值
    *
    * 该方法提供类型安全的属性访问，支持获取枚举对象的任意属性
