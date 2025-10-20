@@ -573,7 +573,8 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
       case 'attr':
         return this.isAttrInLabels(
           input.key as AttributeOf<T>,
-          input.value as never,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          input.value as any,
           allowedLabels,
         )
       default:
