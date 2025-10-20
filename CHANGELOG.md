@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/mudssky/jsutils/compare/v1.30.0...v1.31.0) (2025-10-20)
+
+### Features
+
+- **enum:** 添加根据属性查找枚举项的功能 ([bd06ecc](https://github.com/mudssky/jsutils/commit/bd06ecc0ad004bcd892538f11f4b7c83d1d65e0e))
+- **enum:** 添加链式匹配API和统一匹配方法 ([c7b91c4](https://github.com/mudssky/jsutils/commit/c7b91c471d1a6193a2fa4d8cc93b4d17aa520416))
+
 # [1.30.0](https://github.com/mudssky/jsutils/compare/v1.29.0...v1.30.0) (2025-10-17)
 
 ### Features
