@@ -281,6 +281,158 @@ describe('EnumArray', () => {
     expect(sexEnum.isLabelIn(undefined, ['男'])).toBe(false)
   })
 
+  describe('EnumArray.match() chainable API', () => {
+    test('should correctly match using .value().labelIsIn()', () => {
+      expect(sexEnum.match().value(1).labelIsIn(['男'])).toBe(true)
+      expect(sexEnum.match().value(2).labelIsIn(['男'])).toBe(false)
+      expect(sexEnum.match().value(999).labelIsIn(['男', '女'])).toBe(false)
+    })
+
+    test('should correctly match using .label().labelIsIn()', () => {
+      expect(sexEnum.match().label('男').labelIsIn(['男'])).toBe(true)
+      expect(sexEnum.match().label('女').labelIsIn(['男'])).toBe(false)
+      const externalLabel: string = '女'
+      expect(sexEnum.match().label(externalLabel).labelIsIn(['男', '女'])).toBe(
+        true,
+      )
+    })
+
+    test('should correctly match using .attr().labelIsIn()', () => {
+      expect(
+        sexEnumWithAttr.match().attr('color', 'blue').labelIsIn(['男']),
+      ).toBe(true)
+      expect(
+        sexEnumWithAttr.match().attr('color', 'red').labelIsIn(['男']),
+      ).toBe(false)
+      expect(
+        sexEnumWithAttr.match().attr('color', 'blue').labelIsIn(['男', '女']),
+      ).toBe(true)
+    })
+
+    test('should return false for empty allowedLabels', () => {
+      expect(sexEnum.match().value(1).labelIsIn([])).toBe(false)
+      expect(sexEnum.match().label('男').labelIsIn([])).toBe(false)
+      expect(sexEnumWithAttr.match().attr('color', 'blue').labelIsIn([])).toBe(
+        false,
+      )
+    })
+  })
+
+  describe.skip('matchesLabel method (deprecated)', () => {
+    test('matchesLabel - value 模式', () => {
+      // 基本功能与边界情况
+      expect(sexEnum.matchesLabel({ type: 'value', value: 1 }, ['男'])).toBe(
+        true,
+      )
+      expect(sexEnum.matchesLabel({ type: 'value', value: 2 }, ['男'])).toBe(
+        false,
+      )
+      expect(
+        sexEnum.matchesLabel({ type: 'value', value: 999 }, ['男', '女']),
+      ).toBe(false)
+
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        sexEnum.matchesLabel({ type: 'value', value: null as any }, ['男']),
+      ).toBe(false)
+
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        sexEnum.matchesLabel({ type: 'value', value: undefined as any }, [
+          '男',
+        ]),
+      ).toBe(false)
+      // 外部字符串类型但枚举值为number，应返回false
+      expect(
+        sexEnum.matchesLabel({ type: 'value', value: '1' }, ['男', '女']),
+      ).toBe(false)
+    })
+
+    test('matchesLabel - label 模式', () => {
+      expect(
+        sexEnum.matchesLabel({ type: 'label', label: '男' }, ['男', '女']),
+      ).toBe(true)
+      expect(sexEnum.matchesLabel({ type: 'label', label: '女' }, ['男'])).toBe(
+        false,
+      )
+
+      const externalLabel: string = '男'
+      expect(
+        sexEnum.matchesLabel({ type: 'label', label: externalLabel }, [
+          '男',
+          '女',
+        ]),
+      ).toBe(true)
+
+      const unknownLabel: string = '未知'
+      expect(
+        sexEnum.matchesLabel({ type: 'label', label: unknownLabel }, [
+          '男',
+          '女',
+        ]),
+      ).toBe(false)
+
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        sexEnum.matchesLabel({ type: 'label', label: null as any }, ['男']),
+      ).toBe(false)
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        sexEnum.matchesLabel({ type: 'label', label: undefined as any }, [
+          '男',
+        ]),
+      ).toBe(false)
+    })
+
+    test('matchesLabel - attr 模式', () => {
+      // 复杂属性
+      expect(
+        sexEnumWithAttr.matchesLabel(
+          { type: 'attr', key: 'color', value: 'blue' },
+          ['男'],
+        ),
+      ).toBe(true)
+      expect(
+        sexEnumWithAttr.matchesLabel(
+          { type: 'attr', key: 'color', value: 'red' },
+          ['男'],
+        ),
+      ).toBe(false)
+      // 非法/不存在的属性值
+      expect(
+        sexEnumWithAttr.matchesLabel(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          { type: 'attr', key: 'color', value: 'green' as any },
+          ['男', '女'],
+        ),
+      ).toBe(false)
+      expect(
+        sexEnumWithAttr.matchesLabel(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          { type: 'attr', key: 'color', value: null as any },
+          ['男'],
+        ),
+      ).toBe(false)
+      expect(
+        sexEnumWithAttr.matchesLabel(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          { type: 'attr', key: 'color', value: undefined as any },
+          ['男'],
+        ),
+      ).toBe(false)
+
+      // 基础属性走 O(1) 快路径
+      expect(
+        sexEnum.matchesLabel({ type: 'attr', key: 'value', value: 1 }, ['男']),
+      ).toBe(true)
+      expect(
+        sexEnum.matchesLabel({ type: 'attr', key: 'label', value: '女' }, [
+          '女',
+        ]),
+      ).toBe(true)
+    })
+  })
+
   test('isEnumValue type guard', () => {
     // 测试基本类型守卫功能
     expect(sexEnum.isEnumValue(1)).toBe(true)

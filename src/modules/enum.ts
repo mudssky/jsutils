@@ -91,6 +91,40 @@ type EnhancedLabel<T extends string> = T | (string & {})
  * const item = statusEnum.getItemByValue(1) // 完整对象
  * ```
  */
+/**
+ * @internal
+ */
+class EnumMatcher<T extends readonly EnumArrayObj[], U> {
+  constructor(
+    private readonly enumArray: EnumArray<T>,
+    private readonly matcher: U,
+  ) {}
+
+  labelIsIn(labels: readonly LabelOf<T>[]): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.enumArray.matchesLabel(this.matcher as any, labels)
+  }
+}
+
+/**
+ * @internal
+ */
+class EnumMatcherBuilder<T extends readonly EnumArrayObj[]> {
+  constructor(private readonly enumArray: EnumArray<T>) {}
+
+  value(value: ExternalValue) {
+    return new EnumMatcher(this.enumArray, { type: 'value', value })
+  }
+
+  label(label: EnhancedLabel<LabelOf<T>>) {
+    return new EnumMatcher(this.enumArray, { type: 'label', label })
+  }
+
+  attr<K extends AttributeOf<T>>(key: K, value: T[number][K]) {
+    return new EnumMatcher(this.enumArray, { type: 'attr', key, value })
+  }
+}
+
 class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /** 性能优化的Map，通过value快速查找完整对象，实现O(1)查找 */
   private readonly valueToItemMap = new Map<ValueOf<T>, T[number]>()
@@ -502,6 +536,64 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
     if (!item) return false
 
     return allowedLabels.includes(item.label as LabelOf<T>)
+  }
+
+  /**
+   * @internal
+   * 统一的标签匹配方法：支持 value、label、attr 三种模式
+   */
+  matchesLabel(
+    input: { type: 'value'; value: ExternalValue },
+    allowedLabels: readonly LabelOf<T>[],
+  ): boolean
+  matchesLabel(
+    input: { type: 'label'; label: EnhancedLabel<LabelOf<T>> },
+    allowedLabels: readonly LabelOf<T>[],
+  ): boolean
+  matchesLabel<K extends AttributeOf<T>, V extends T[number][K]>(
+    input: { type: 'attr'; key: K; value: V },
+    allowedLabels: readonly LabelOf<T>[],
+  ): boolean
+  matchesLabel(
+    input:
+      | { type: 'value'; value: ExternalValue }
+      | { type: 'label'; label: EnhancedLabel<LabelOf<T>> }
+      | { type: 'attr'; key: AttributeOf<T>; value: unknown },
+    allowedLabels: readonly LabelOf<T>[],
+  ): boolean {
+    if (!Array.isArray(allowedLabels) || allowedLabels.length === 0) {
+      return false
+    }
+
+    switch (input.type) {
+      case 'value':
+        return this.isValueInLabels(input.value, allowedLabels)
+      case 'label':
+        return this.isLabelIn(input.label, allowedLabels)
+      case 'attr':
+        return this.isAttrInLabels(
+          input.key as AttributeOf<T>,
+          input.value as never,
+          allowedLabels,
+        )
+      default:
+        return false
+    }
+  }
+
+  /**
+   * 开启一个链式调用，用于更方便地进行多条件匹配
+   *
+   * @returns {EnumMatcherBuilder<T>} 返回一个匹配器构建器，可以继续调用 .value() .label() 或 .attr() 方法
+   *
+   * @example
+   * ```typescript
+   * const isEnabled = statusEnum.match().value(1).labelIsIn(['启用'])
+   * const isWarning = statusEnum.match().attr('color', 'orange').labelIsIn(['待处理'])
+   * ```
+   */
+  match(): EnumMatcherBuilder<T> {
+    return new EnumMatcherBuilder(this)
   }
 
   /**
