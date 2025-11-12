@@ -532,3 +532,26 @@ describe('shuffle function', () => {
     assert.deepEqual(list, [1, 2, 3, 4, 5])
   })
 })
+
+describe('includeIf function', () => {
+  test('wraps single value into array when condition is true', () => {
+    const result = _.includeIf(true, 1)
+    assert.deepEqual(result, [1])
+  })
+
+  test('returns original array when condition is true and value is array', () => {
+    const input = [1, 2]
+    const result = _.includeIf(true, input)
+    assert.deepEqual(result, input)
+  })
+
+  test('returns empty array when condition is false (single value)', () => {
+    const result = _.includeIf(false, 1)
+    assert.deepEqual(result, [])
+  })
+
+  test('returns empty array when condition is false (array)', () => {
+    const result = _.includeIf(false, [1, 2])
+    assert.deepEqual(result, [])
+  })
+})

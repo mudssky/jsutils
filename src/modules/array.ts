@@ -566,6 +566,26 @@ const shuffle = <T>(array: readonly T[]): T[] => {
     .map((a) => a.value)
 }
 
+/**
+ * 根据条件决定是否包含某个值。
+ * 当 condition 为 true 时返回数组形式的值；当 condition 为 false 时返回空数组。
+ * 若传入的 value 已经是数组，则原样返回；否则会将单值包装为数组。
+ * @typeParam T - 值的元素类型
+ * @param condition - 条件布尔值，true 时包含，false 时返回空数组
+ * @param value - 单个值或值数组
+ * @returns 返回一个数组：满足条件则包含对应的值或数组，否则为空数组
+ * @example
+ * ```ts
+ * includeIf(true, 1)        // [1]
+ * includeIf(true, [1, 2])   // [1, 2]
+ * includeIf(false, 1)       // []
+ * ```
+ * @throws 不会抛出错误
+ * @public
+ */
+function includeIf<T>(condition: boolean, value: T | T[]): T[] {
+  return condition ? (Array.isArray(value) ? value : [value]) : []
+}
 export {
   alphabetical,
   boil,
@@ -577,6 +597,7 @@ export {
   fork,
   getSortDirection,
   hasIntersects,
+  includeIf,
   last,
   max,
   min,
