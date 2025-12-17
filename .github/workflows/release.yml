@@ -6,7 +6,8 @@ on:
       - main
 
 permissions:
-  contents: read # for checkout
+  contents: write # for checkout
+  id-token: write # 允许 OIDC 令牌生成 (最重要)
 
 jobs:
   release-and-publish-npm:
@@ -34,5 +35,5 @@ jobs:
       - name: release
         env:
           GITHUB_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: pnpm semantic-release
