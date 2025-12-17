@@ -393,8 +393,8 @@ function generateMergePaths(branches: string[]): string[][] {
  * 将数字转换为文字表示，支持英文、中文数字以及罗马数字
  * @param value - 要转换的数字（仅整数部分会被处理，会对输入进行截断）
  * @param options - 配置项
- * @param options.system - 转换系统，可选 'english' | 'chinese' | 'roman'，默认 'chinese'
- * @param options.useAnd - 英文模式下是否使用 “and”，如 one hundred and one（默认 false）
+ * options.system - 转换系统，可选 'english' | 'chinese' | 'roman'，默认 'chinese'
+ * options.useAnd - 英文模式下是否使用 “and”，如 one hundred and one（默认 false）
  * @returns 转换后的文字
  * @example
  * ```ts

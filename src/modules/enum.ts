@@ -612,7 +612,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /**
    * 开启一个链式调用，用于更方便地进行多条件匹配
    *
-   * @returns {EnumMatcherBuilder<T>} 返回一个匹配器构建器，可以继续调用 .value() .label() 或 .attr() 方法
+   * @returns 返回一个匹配器构建器，可以继续调用 .value() .label() 或 .attr() 方法
    *
    * @example
    * ```typescript
