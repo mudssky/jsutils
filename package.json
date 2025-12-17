@@ -118,8 +118,8 @@
     "@types/node": "^25.0.1",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
-    "@vitest/coverage-v8": "^4.0.15",
-    "@vitest/ui": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
     "cz-conventional-changelog": "^3.3.0",
     "esbuild": "^0.27.1",
     "eslint": "^9.39.2",
@@ -146,7 +146,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.49.0",
     "vitepress": "1.6.4",
-    "vitest": "^4.0.15"
+    "vitest": "4.0.16"
   },
   "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad",
   "publishConfig": {
