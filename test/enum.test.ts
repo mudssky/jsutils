@@ -1028,3 +1028,74 @@ describe('EnumArray', () => {
     })
   })
 })
+
+describe('getAttrMatcher method', () => {
+  const statusList = [
+    {
+      label: '待处理',
+      value: 1,
+      color: 'orange',
+      priority: 'high',
+    },
+    {
+      label: '处理中',
+      value: 2,
+      color: 'blue',
+      priority: 'medium',
+    },
+    {
+      label: '已完成',
+      value: 3,
+      color: 'green',
+      priority: 'low',
+    },
+  ] as const
+
+  const statusEnum = createEnum(statusList)
+
+  test('should return a matcher object with a value method', () => {
+    const colorMatcher = statusEnum.getAttrMatcher('color')
+    expect(colorMatcher).toBeTypeOf('object')
+    expect(colorMatcher.value).toBeTypeOf('function')
+  })
+
+  test('should correctly match attribute and label', () => {
+    const colorMatcher = statusEnum.getAttrMatcher('color')
+    const isWarning = colorMatcher.value('orange').labelIsIn(['待处理'])
+    const isSuccess = colorMatcher.value('green').labelIsIn(['已完成'])
+
+    expect(isWarning).toBe(true)
+    expect(isSuccess).toBe(true)
+  })
+
+  test('should return false for incorrect attribute value', () => {
+    const colorMatcher = statusEnum.getAttrMatcher('color')
+    // @ts-expect-error Testing incorrect value
+    const isFailure = colorMatcher.value('red').labelIsIn(['待处理'])
+    expect(isFailure).toBe(false)
+  })
+
+  test('should return false for correct attribute value but incorrect label', () => {
+    const colorMatcher = statusEnum.getAttrMatcher('color')
+    const isMismatched = colorMatcher.value('orange').labelIsIn(['已完成'])
+    expect(isMismatched).toBe(false)
+  })
+
+  test('should be reusable for different values', () => {
+    const priorityMatcher = statusEnum.getAttrMatcher('priority')
+    const isHigh = priorityMatcher.value('high').labelIsIn(['待处理'])
+    const isMedium = priorityMatcher.value('medium').labelIsIn(['处理中'])
+    const isLow = priorityMatcher.value('low').labelIsIn(['已完成'])
+
+    expect(isHigh).toBe(true)
+    expect(isMedium).toBe(true)
+    expect(isLow).toBe(true)
+  })
+
+  test('should handle non-existent attribute values', () => {
+    const colorMatcher = statusEnum.getAttrMatcher('color')
+    // @ts-expect-error Testing non-existent value
+    const nonExistent = colorMatcher.value('purple').labelIsIn(['待处理'])
+    expect(nonExistent).toBe(false)
+  })
+})

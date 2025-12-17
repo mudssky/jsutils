@@ -70,6 +70,67 @@ type ExternalValue = string | number | null | undefined
 type EnhancedLabel<T extends string> = T | (string & {})
 
 /**
+ * @internal
+ *
+ * 链式调用的终结者，用于执行最终的匹配操作
+ */
+class EnumMatcher<T extends readonly EnumArrayObj[], U> {
+  constructor(
+    private readonly enumArray: EnumArray<T>,
+    private readonly matcher: U,
+  ) {}
+
+  /**
+   * 检查当前匹配项的标签是否存在于指定的标签列表中
+   * @param labels - 允许的标签数组
+   * @returns 如果匹配项的标签在允许的列表中，则返回 true
+   */
+  labelIsIn(labels: readonly LabelOf<T>[]): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.enumArray.matchesLabel(this.matcher as any, labels)
+  }
+}
+
+/**
+ * @internal
+ *
+ * 枚举匹配器的构建器，用于启动链式调用
+ *
+ * 由 `EnumArray.match()` 方法返回，提供 `.value()`、`.label()` 和 `.attr()` 方法来指定匹配的字段
+ */
+class EnumMatcherBuilder<T extends readonly EnumArrayObj[]> {
+  constructor(private readonly enumArray: EnumArray<T>) {}
+
+  /**
+   * 根据 `value` 匹配
+   * @param value - 要匹配的枚举值
+   * @returns 返回一个 `EnumMatcher` 实例，可以继续调用 `.labelIsIn()`
+   */
+  value(value: ExternalValue) {
+    return new EnumMatcher(this.enumArray, { type: 'value', value })
+  }
+
+  /**
+   * 根据 `label` 匹配
+   * @param label - 要匹配的枚举标签
+   * @returns 返回一个 `EnumMatcher` 实例，可以继续调用 `.labelIsIn()`
+   */
+  label(label: EnhancedLabel<LabelOf<T>>) {
+    return new EnumMatcher(this.enumArray, { type: 'label', label })
+  }
+
+  /**
+   * 根据任意属性匹配
+   * @param key - 要匹配的属性名
+   * @param value - 要匹配的属性值
+   * @returns 返回一个 `EnumMatcher` 实例，可以继续调用 `.labelIsIn()`
+   */
+  attr<K extends AttributeOf<T>>(key: K, value: T[number][K]) {
+    return new EnumMatcher(this.enumArray, { type: 'attr', key, value })
+  }
+}
+
+/**
  * 枚举数组类，继承了Array，提供高性能的枚举操作方法
  *
  * 该类通过内部维护的Map结构实现O(1)时间复杂度的查找操作，
@@ -91,40 +152,6 @@ type EnhancedLabel<T extends string> = T | (string & {})
  * const item = statusEnum.getItemByValue(1) // 完整对象
  * ```
  */
-/**
- * @internal
- */
-class EnumMatcher<T extends readonly EnumArrayObj[], U> {
-  constructor(
-    private readonly enumArray: EnumArray<T>,
-    private readonly matcher: U,
-  ) {}
-
-  labelIsIn(labels: readonly LabelOf<T>[]): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.enumArray.matchesLabel(this.matcher as any, labels)
-  }
-}
-
-/**
- * @internal
- */
-class EnumMatcherBuilder<T extends readonly EnumArrayObj[]> {
-  constructor(private readonly enumArray: EnumArray<T>) {}
-
-  value(value: ExternalValue) {
-    return new EnumMatcher(this.enumArray, { type: 'value', value })
-  }
-
-  label(label: EnhancedLabel<LabelOf<T>>) {
-    return new EnumMatcher(this.enumArray, { type: 'label', label })
-  }
-
-  attr<K extends AttributeOf<T>>(key: K, value: T[number][K]) {
-    return new EnumMatcher(this.enumArray, { type: 'attr', key, value })
-  }
-}
-
 class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /** 性能优化的Map，通过value快速查找完整对象，实现O(1)查找 */
   private readonly valueToItemMap = new Map<ValueOf<T>, T[number]>()
@@ -573,7 +600,8 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
       case 'attr':
         return this.isAttrInLabels(
           input.key as AttributeOf<T>,
-          input.value as never,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          input.value as any,
           allowedLabels,
         )
       default:
@@ -584,7 +612,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
   /**
    * 开启一个链式调用，用于更方便地进行多条件匹配
    *
-   * @returns {EnumMatcherBuilder<T>} 返回一个匹配器构建器，可以继续调用 .value() .label() 或 .attr() 方法
+   * @returns 返回一个匹配器构建器，可以继续调用 .value() .label() 或 .attr() 方法
    *
    * @example
    * ```typescript
@@ -594,6 +622,38 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    */
   match(): EnumMatcherBuilder<T> {
     return new EnumMatcherBuilder(this)
+  }
+
+  /**
+   * 获取一个基于属性的匹配器，用于后续的链式调用。
+   *
+   * 这种方式是 `match().attr(key, value)` 的一种备选语法，
+   * 在需要对同一个属性键进行多次匹配时，可以减少代码重复。
+   *
+   * @template K - 属性键名类型
+   * @param key - 要匹配的属性名
+   * @returns 返回一个包含 `value` 方法的对象，用于指定属性值并返回一个 {@link EnumMatcher}
+   *
+   * @example
+   * ```typescript
+   * const colorMatcher = statusEnum.getAttrMatcher('color')
+   * const isWarning = colorMatcher.value('orange').labelIsIn(['待处理'])
+   * const isSuccess = colorMatcher.value('green').labelIsIn(['已完成'])
+   * ```
+   */
+  getAttrMatcher<K extends AttributeOf<T>>(key: K) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const self = this
+    return {
+      /**
+       * 根据指定的属性值进行匹配。
+       * @param attrValue - 要匹配的属性值
+       * @returns 返回一个 `EnumMatcher` 实例，用于最终的断言
+       */
+      value: (attrValue: T[number][K]) => {
+        return new EnumMatcher(self, { type: 'attr', key, value: attrValue })
+      },
+    }
   }
 
   /**
