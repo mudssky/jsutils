@@ -1,3 +1,21 @@
+# [1.32.0](https://github.com/mudssky/jsutils/compare/v1.31.0...v1.32.0) (2025-12-17)
+
+### Bug Fixes
+
+- **enum:** 修复类型断言导致的潜在类型安全问题 ([0f7ab97](https://github.com/mudssky/jsutils/commit/0f7ab979f8130b37bb042261f7f0a75367c140f8))
+- **enum:** 修复类型断言导致的潜在类型安全问题 ([29d6b03](https://github.com/mudssky/jsutils/commit/29d6b030578ae14516468a1c37a9ddf568e05435))
+- **enum:** 修复类型断言导致的潜在类型安全问题 ([357481e](https://github.com/mudssky/jsutils/commit/357481e8c0a8611d8dd28fe3685cb15efef1282e))
+- 更新测试配置并修正文档注释 ([6a8014b](https://github.com/mudssky/jsutils/commit/6a8014b0533906c19edc92766a427f2cd9cd3472))
+
+### Features
+
+- **array:** 添加 includeIf 函数用于条件包含数组元素 ([67d951c](https://github.com/mudssky/jsutils/commit/67d951c73aab0ac1780dd8939dd1253e54012758))
+- **array:** 添加 includeIf 函数用于条件包含数组元素 ([04dc2f1](https://github.com/mudssky/jsutils/commit/04dc2f1f1668d92a05275dd138a876435197656e))
+- **array:** 添加 includeIf 函数用于条件包含数组元素 ([adf5a8b](https://github.com/mudssky/jsutils/commit/adf5a8b6e2f031910d0706530aab32f992cea274))
+- **enum:** 添加getAttrMatcher方法用于属性匹配链式调用 ([b8a8d0a](https://github.com/mudssky/jsutils/commit/b8a8d0a5d73292a7aba3e5fa3f2dbb918028d5db))
+- **enum:** 添加getAttrMatcher方法用于属性匹配链式调用 ([d95f60c](https://github.com/mudssky/jsutils/commit/d95f60c76acdf35351553d0a8cd48b1d2f0f04e0))
+- **enum:** 添加getAttrMatcher方法用于属性匹配链式调用 ([1bba113](https://github.com/mudssky/jsutils/commit/1bba113a27573786845ae52d8e2a76f472047016))
+
 # [1.31.0](https://github.com/mudssky/jsutils/compare/v1.30.0...v1.31.0) (2025-10-20)
 
 ### Features
