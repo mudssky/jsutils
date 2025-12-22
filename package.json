@@ -68,6 +68,7 @@
     "prepare": "husky",
     "prepublishOnly": "pnpm build",
     "push": "pnpm commit&&git push",
+    "qa": "pnpm typecheck && pnpm lintfix && pnpm test",
     "test": "vitest --run --typecheck",
     "test:ui": "vitest --ui --typecheck",
     "test:watch": "vitest",
