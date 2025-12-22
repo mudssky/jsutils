@@ -51,7 +51,6 @@
     "biome:fixAll": "biome check --write .",
     "prebuild": "pnpm clean:dist&&pnpm copy:style",
     "build": "rollup -c",
-    "ci:check": "pnpm typecheck && pnpm test && pnpm lintfix ",
     "clean:dist": "pwsh -File scripts.ps1 -JobType CleanDist",
     "commit": "git add .&&git cz",
     "copy:style": "pwsh -File scripts.ps1 -JobType CopyStyle",
