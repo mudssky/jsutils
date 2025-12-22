@@ -44,8 +44,10 @@ export interface LoggerOptions {
 /**
  * 日志内容的接口，用于格式化后的日志输出。
  */
-export interface LogContent
-  extends Omit<LoggerOptions, 'formatter' | 'enableFormat' | 'context'> {
+export interface LogContent extends Omit<
+  LoggerOptions,
+  'formatter' | 'enableFormat' | 'context'
+> {
   [key: string]: unknown
   message: unknown
   timestamp: unknown
