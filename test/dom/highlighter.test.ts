@@ -742,10 +742,15 @@ describe('Highlighter', () => {
     })
 
     test('invalid regex returns 0 matches', async () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const count = await highlighter.applyRegex(null as any)
       expect(count).toBe(0)
       expect(highlighter.getMatchCount()).toBe(0)
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Highlighter: 提供的正则表达式无效',
+      )
+      consoleSpy.mockRestore()
     })
 
     test('getCurrentPattern() returns regex object', async () => {

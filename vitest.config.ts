@@ -16,7 +16,7 @@ export default defineConfig({
     // reporters: ['html'],
     coverage: {
       // all:false,// 不包括未测试的文件
-      enabled: true,
+      enabled: false,
       include: ['src'],
       exclude: [
         'src/modules/config',

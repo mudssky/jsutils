@@ -12,3 +12,5 @@ tsconfig.vitest-temp.json
 
 
 renameCommit.sh
+
+*.local.json

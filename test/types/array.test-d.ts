@@ -99,7 +99,7 @@ test('test LENGTH', () => {
 const tuple = [1] as const
 
 test('test Concat', () => {
-  assertType<Concat<[], []>>([]),
+  ;(assertType<Concat<[], []>>([]),
     assertType<Concat<[], [1]>>([1]),
     assertType<Concat<typeof tuple, typeof tuple>>([1, 1]),
     assertType<Concat<[1, 2], [3, 4]>>([1, 2, 3, 4]),
@@ -110,7 +110,7 @@ test('test Concat', () => {
       false,
       true,
       '4',
-    ])
+    ]))
 
   // @ts-expect-error not tuple
   assertType<Concat<null, undefined>>

@@ -1,176 +1,209 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Highlighter 测试页面</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+        background-color: #f5f5f5;
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Highlighter 测试页面</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      margin: 20px;
-      background-color: #f5f5f5;
-    }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
+      .highlight-keywords {
+        background-color: #ffeb3b;
+        color: #333;
+        padding: 1px 2px;
+        border-radius: 2px;
+        font-weight: normal;
+      }
 
-    .highlight-keywords {
-      background-color: #ffeb3b;
-      color: #333;
-      padding: 1px 2px;
-      border-radius: 2px;
-      font-weight: normal;
-    }
+      .highlight-active {
+        background-color: #ff9800;
+        color: #fff;
+        font-weight: bold;
+        box-shadow: 0 0 3px rgba(255, 152, 0, 0.5);
+      }
 
-    .highlight-active {
-      background-color: #ff9800;
-      color: #fff;
-      font-weight: bold;
-      box-shadow: 0 0 3px rgba(255, 152, 0, 0.5);
-    }
+      .test-controls {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-radius: 5px;
+      }
 
-    .test-controls {
-      margin-bottom: 20px;
-      padding: 15px;
-      background: #f0f0f0;
-      border-radius: 5px;
-    }
+      .test-controls input {
+        padding: 8px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+      }
 
-    .test-controls input {
-      padding: 8px;
-      margin: 5px;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-    }
+      .test-controls button {
+        padding: 8px 15px;
+        margin: 5px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
 
-    .test-controls button {
-      padding: 8px 15px;
-      margin: 5px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-    }
+      .test-controls button:hover {
+        background: #0056b3;
+      }
 
-    .test-controls button:hover {
-      background: #0056b3;
-    }
+      .test-content {
+        line-height: 1.8;
+      }
+    </style>
+  </head>
 
-    .test-content {
-      line-height: 1.8;
-    }
-  </style>
-</head>
+  <body>
+    <div class="container">
+      <h1>Highlighter 功能测试</h1>
 
-<body>
-  <div class="container">
-    <h1>Highlighter 功能测试</h1>
+      <div class="test-controls">
+        <h3>测试控制面板</h3>
+        <input
+          type="text"
+          id="keyword-input"
+          placeholder="输入要高亮的关键词 (多个用逗号分隔)"
+          value="JavaScript,Python"
+        />
+        <button onclick="testHighlight()">高亮关键词</button>
+        <button onclick="testClear()">清除高亮</button>
+        <button onclick="testNext()">下一个</button>
+        <button onclick="testPrevious()">上一个</button>
+        <div style="margin-top: 10px">
+          <span id="match-info">匹配信息将显示在这里</span>
+        </div>
+      </div>
 
-    <div class="test-controls">
-      <h3>测试控制面板</h3>
-      <input type="text" id="keyword-input" placeholder="输入要高亮的关键词 (多个用逗号分隔)" value="JavaScript,Python">
-      <button onclick="testHighlight()">高亮关键词</button>
-      <button onclick="testClear()">清除高亮</button>
-      <button onclick="testNext()">下一个</button>
-      <button onclick="testPrevious()">上一个</button>
-      <div style="margin-top: 10px;">
-        <span id="match-info">匹配信息将显示在这里</span>
+      <div class="test-content">
+        <h2>测试内容</h2>
+        <p>
+          JavaScript 是一种高级的、解释型的编程语言。JavaScript
+          是一门基于原型、函数先行的语言，是一门多范式的语言，它支持面向对象编程，命令式编程，以及函数式编程。
+        </p>
+
+        <p>
+          JavaScript 最初被设计为在浏览器中运行，但现在也可以在服务器端运行（如
+          Node.js）。JavaScript 引擎负责解析和执行 JavaScript 代码。
+        </p>
+
+        <h3>JavaScript 的特性</h3>
+        <ul>
+          <li>动态类型：JavaScript 是动态类型语言</li>
+          <li>解释型：JavaScript 代码不需要编译</li>
+          <li>面向对象：JavaScript 支持面向对象编程</li>
+          <li>函数式编程：JavaScript 支持函数式编程范式</li>
+        </ul>
+
+        <p>
+          学习 JavaScript
+          需要掌握以下概念：变量、函数、对象、数组、循环、条件语句等。JavaScript
+          的语法相对简单，但要深入掌握需要大量练习。
+        </p>
+
+        <h3>其他编程语言</h3>
+        <p>
+          除了 JavaScript，还有很多其他编程语言，如 Python、Java、C++、Go、Rust
+          等。每种语言都有其特定的用途和优势。
+        </p>
+
+        <p>
+          Python 以其简洁的语法而闻名，Java 在企业级应用中广泛使用，C++
+          在系统编程中很重要。
+        </p>
       </div>
     </div>
 
-    <div class="test-content">
-      <h2>测试内容</h2>
-      <p>JavaScript 是一种高级的、解释型的编程语言。JavaScript 是一门基于原型、函数先行的语言，是一门多范式的语言，它支持面向对象编程，命令式编程，以及函数式编程。</p>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@mudssky/jsutils/dist/umd/index.js"
+    ></script>
+    <script type="module">
+      // 模拟导入 Highlighter（在实际项目中会从 @mudssky/jsutils 导入）
+      // 这里我们创建一个简化版本来测试
+      // 创建全局高亮器实例
+      // import { Highlighter } from 'https://cdn.jsdelivr.net/npm/@mudssky/jsutils/dist/esm/index.js'
+      const highlighter = new utils.Highlighter(
+        document.querySelector('.test-content'),
+      )
+      // const highlighter = new Highlighter(document.querySelector('.test-content'));
+      console.log({ highlighter })
 
-      <p>JavaScript 最初被设计为在浏览器中运行，但现在也可以在服务器端运行（如 Node.js）。JavaScript 引擎负责解析和执行 JavaScript 代码。</p>
+      // 测试函数
+      window.testHighlight = async function () {
+        const keywordInput = document
+          .getElementById('keyword-input')
+          .value.trim()
+        if (!keywordInput) {
+          alert('请输入关键词')
+          return
+        }
+        const keywords = keywordInput
+          .split(',')
+          .map((k) => k.trim())
+          .filter((k) => k.length > 0)
 
-      <h3>JavaScript 的特性</h3>
-      <ul>
-        <li>动态类型：JavaScript 是动态类型语言</li>
-        <li>解释型：JavaScript 代码不需要编译</li>
-        <li>面向对象：JavaScript 支持面向对象编程</li>
-        <li>函数式编程：JavaScript 支持函数式编程范式</li>
-      </ul>
+        try {
+          console.log({ keywords })
 
-      <p>学习 JavaScript 需要掌握以下概念：变量、函数、对象、数组、循环、条件语句等。JavaScript 的语法相对简单，但要深入掌握需要大量练习。</p>
-
-      <h3>其他编程语言</h3>
-      <p>除了 JavaScript，还有很多其他编程语言，如 Python、Java、C++、Go、Rust 等。每种语言都有其特定的用途和优势。</p>
-
-      <p>Python 以其简洁的语法而闻名，Java 在企业级应用中广泛使用，C++ 在系统编程中很重要。</p>
-    </div>
-  </div>
-
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@mudssky/jsutils/dist/umd/index.js"></script>
-  <script type="module">
-    // 模拟导入 Highlighter（在实际项目中会从 @mudssky/jsutils 导入）
-    // 这里我们创建一个简化版本来测试
-    // 创建全局高亮器实例
-    // import { Highlighter } from 'https://cdn.jsdelivr.net/npm/@mudssky/jsutils/dist/esm/index.js'
-    const highlighter = new utils.Highlighter(document.querySelector('.test-content'));
-    // const highlighter = new Highlighter(document.querySelector('.test-content'));
-    console.log({ highlighter });
-
-
-    // 测试函数
-    window.testHighlight = async function () {
-      const keywordInput = document.getElementById('keyword-input').value.trim();
-      if (!keywordInput) {
-        alert('请输入关键词');
-        return;
+          const count = await highlighter.apply(keywords)
+          document.getElementById('match-info').textContent =
+            `找到 ${count} 个 "${keywordInput}" 的匹配项`
+        } catch (error) {
+          console.error('高亮失败:', error)
+          document.getElementById('match-info').textContent = '高亮失败'
+        }
       }
-      const keywords = keywordInput.split(',').map(k => k.trim()).filter(k => k.length > 0);
 
-      try {
-        console.log({ keywords });
-
-        const count = await highlighter.apply(keywords);
-        document.getElementById('match-info').textContent = `找到 ${count} 个 "${keywordInput}" 的匹配项`;
-      } catch (error) {
-        console.error('高亮失败:', error);
-        document.getElementById('match-info').textContent = '高亮失败';
+      window.testClear = function () {
+        highlighter.remove()
+        document.getElementById('match-info').textContent = '已清除所有高亮'
       }
-    };
 
-    window.testClear = function () {
-      highlighter.remove();
-      document.getElementById('match-info').textContent = '已清除所有高亮';
-    };
-
-    window.testNext = function () {
-      if (highlighter.next()) {
-        const current = highlighter.getCurrentIndex() + 1;
-        const total = highlighter.getMatchCount();
-        document.getElementById('match-info').textContent = `当前: ${current}/${total}`;
-      } else {
-        document.getElementById('match-info').textContent = '没有可导航的高亮项';
+      window.testNext = function () {
+        if (highlighter.next()) {
+          const current = highlighter.getCurrentIndex() + 1
+          const total = highlighter.getMatchCount()
+          document.getElementById('match-info').textContent =
+            `当前: ${current}/${total}`
+        } else {
+          document.getElementById('match-info').textContent =
+            '没有可导航的高亮项'
+        }
       }
-    };
 
-    window.testPrevious = function () {
-      if (highlighter.previous()) {
-        const current = highlighter.getCurrentIndex() + 1;
-        const total = highlighter.getMatchCount();
-        document.getElementById('match-info').textContent = `当前: ${current}/${total}`;
-      } else {
-        document.getElementById('match-info').textContent = '没有可导航的高亮项';
+      window.testPrevious = function () {
+        if (highlighter.previous()) {
+          const current = highlighter.getCurrentIndex() + 1
+          const total = highlighter.getMatchCount()
+          document.getElementById('match-info').textContent =
+            `当前: ${current}/${total}`
+        } else {
+          document.getElementById('match-info').textContent =
+            '没有可导航的高亮项'
+        }
       }
-    };
 
-    // 页面加载完成后自动测试
-    document.addEventListener('DOMContentLoaded', function () {
-      console.log('测试页面已加载，可以开始测试 Highlighter 功能');
-    });
-  </script>
-</body>
-
+      // 页面加载完成后自动测试
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('测试页面已加载，可以开始测试 Highlighter 功能')
+      })
+    </script>
+  </body>
 </html>
