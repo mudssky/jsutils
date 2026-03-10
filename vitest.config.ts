@@ -13,17 +13,31 @@ export default defineConfig({
       '@mudssky/jsutils': path.resolve(__dirname, './src/index.ts'),
       '@': path.resolve(__dirname, './src'),
     },
+    typecheck: {
+      include: ['test/types/**/*.test-d.ts'],
+    },
     // reporters: ['html'],
     coverage: {
       // all:false,// 不包括未测试的文件
       enabled: false,
       include: ['src'],
       exclude: [
-        'src/modules/config',
-        'src/modules/style',
-        'src/style',
+        'src/index.ts',
+        'src/types/**',
+        'src/modules/config/**',
+        'src/modules/style.ts',
+        'src/style/**',
+        'src/modules/dom/index.ts',
+        'src/modules/regex/index.ts',
+        'src/modules/dom/highlighter/type.ts',
         'src/**/*.html',
       ],
+      thresholds: {
+        statements: 90,
+        lines: 90,
+        functions: 88,
+        branches: 83,
+      },
     },
   },
 })

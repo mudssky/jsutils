@@ -5,7 +5,7 @@
 - 需要查官方文档或库用法时，使用 `context7` tools。
 - 写代码时，请用中文写注释。重点解释复杂的业务逻辑和设计意图，不要解释显而易见的语法，所有函数都需要包含标准的参数和返回值说明
 
-任务开发完成后，必须执行pnpm qa (format,lint,typecheck,test)，确保通过
+任务开发完成后，必须执行 `pnpm qa`，确保通过；如果改动涉及 CI、coverage、发布链路或跨模块质量门禁，还需要执行 `pnpm ci:strict`，必要时再执行 `pnpm release:check`。
 
 ## Project Structure & Module Organization
 
@@ -29,9 +29,14 @@ Use `pnpm` for all local work.
   file changes.
 - `pnpm test` runs Vitest in run mode with type-aware checks.
 - `pnpm test:silent` is the fast dot-reporter variant used by `pnpm qa`.
+- `pnpm test:types` runs Vitest type tests for `test/types/*.test-d.ts`.
 - `pnpm typecheck`, `pnpm lint`, and `pnpm biome:check` validate TypeScript,
   ESLint, and formatting rules.
-- `pnpm qa` is the pre-PR gate: typecheck, lint fix, and silent tests.
+- `pnpm qa` is the local fast gate: typecheck, lint fix, runtime tests, and
+  type tests.
+- `pnpm ci:strict` is the PR gate: `pnpm qa` plus coverage validation.
+- `pnpm release:check` is the pre-release gate: `pnpm ci:strict` plus build and
+  Typedoc generation.
 - `pnpm docs:dev` starts the local VitePress site.
 
 ## Coding Style & Naming Conventions

@@ -18,6 +18,12 @@ pnpm add @mudssky/jsutil
 
 ```
 
+## 质量校验
+
+- `pnpm qa`: 本地快速校验，覆盖 `typecheck`、`lint:fix`、runtime tests 和 type tests
+- `pnpm ci:strict`: PR 严格门禁，在 `qa` 基础上增加 coverage 校验
+- `pnpm release:check`: 发布前校验，在 `ci:strict` 基础上增加构建与 Typedoc 生成校验
+
 ## 使用方法
 
 和lodash-es类似  
