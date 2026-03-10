@@ -655,14 +655,11 @@ class Highlighter {
    */
   private _navigate(direction: 1 | -1): boolean {
     if (this.highlights.length === 0) return false
-    let nextIndex = this.currentIndex
-    if (direction > 0) {
-      nextIndex = (this.currentIndex + 1) % this.highlights.length
-    } else {
-      nextIndex =
-        (this.currentIndex - 1 + this.highlights.length) %
-        this.highlights.length
-    }
+    const nextIndex =
+      direction > 0
+        ? (this.currentIndex + 1) % this.highlights.length
+        : (this.currentIndex - 1 + this.highlights.length) %
+          this.highlights.length
     return this.jumpTo(nextIndex)
   }
   /**

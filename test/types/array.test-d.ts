@@ -19,7 +19,7 @@ import type {
   Zip,
 } from '@mudssky/jsutils'
 import { assertType, test } from 'vitest'
-let n!: never
+declare const n: never
 test('test First', () => {
   assertType<First<[3, 2, 1]>>(3)
   assertType<First<[() => 123, { a: string }]>>(() => 123)
