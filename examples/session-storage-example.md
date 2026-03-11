@@ -38,6 +38,8 @@ userStorage.setStorageSync('profile', { name: 'Alice' })
 const keys = userStorage.getKeys() // ['profile']
 ```
 
+当实例配置了 `prefix` 时，`clearStorage()` 和 `clearStorageSync()` 只会清除当前前缀下的数据，不会影响其他模块或无前缀的数据；未配置 `prefix` 时，行为仍与原生 `sessionStorage.clear()` 一致。
+
 ## 类型安全的存储
 
 ```typescript

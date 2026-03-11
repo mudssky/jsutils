@@ -46,6 +46,30 @@ abstract class AbstractStorage<T extends string = string> {
     return fullKey
   }
 
+  /**
+   * 按当前实例的命名空间清理存储区键值。
+   * @param storage - 要清理的存储对象
+   * @returns 无返回值
+   */
+  protected clearPrefixedStorageKeys(storage: Storage): void {
+    if (!this.prefix) {
+      storage.clear()
+      return
+    }
+
+    const keysToRemove: string[] = []
+    for (let i = 0; i < storage.length; i++) {
+      const fullKey = storage.key(i)
+      if (fullKey && fullKey.startsWith(this.prefix)) {
+        keysToRemove.push(fullKey)
+      }
+    }
+
+    for (const key of keysToRemove) {
+      storage.removeItem(key)
+    }
+  }
+
   abstract getStorageSync(key: T): unknown
   abstract getStorage(key: T): Promise<unknown>
   abstract setStorageSync(key: T, value: unknown): void
@@ -134,17 +158,22 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
     return this.getStorageInfoSync()
   }
 
+  /**
+   * 异步清理localStorage；配置 prefix 时只清当前命名空间，否则清空整个存储区。
+   * @returns Promise 对象，完成后无返回值
+   */
   async clearStorage() {
     this.clearStorageSync()
   }
   /**
-   * 清理localStorage，并清理缓存
+   * 同步清理localStorage；配置 prefix 时只清当前命名空间，否则清空整个存储区，并清理缓存。
+   * @returns 无返回值
    */
   clearStorageSync() {
     if (this.enableCache) {
       this.cache.clear()
     }
-    localStorage.clear()
+    this.clearPrefixedStorageKeys(localStorage)
   }
   removeStorageSync(key: T): void {
     const fullKey = this.getFullKey(key)
@@ -388,18 +417,23 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
     return this.getStorageInfoSync()
   }
 
+  /**
+   * 异步清理sessionStorage；配置 prefix 时只清当前命名空间，否则清空整个存储区。
+   * @returns Promise 对象，完成后无返回值
+   */
   async clearStorage() {
     this.clearStorageSync()
   }
 
   /**
-   * 清理sessionStorage，并清理缓存
+   * 同步清理sessionStorage；配置 prefix 时只清当前命名空间，否则清空整个存储区，并清理缓存。
+   * @returns 无返回值
    */
   clearStorageSync() {
     if (this.enableCache) {
       this.cache.clear()
     }
-    sessionStorage.clear()
+    this.clearPrefixedStorageKeys(sessionStorage)
   }
 
   removeStorageSync(key: T): void {

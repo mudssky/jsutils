@@ -164,6 +164,30 @@ describe('localStorage with prefix', () => {
     expect(localStorage.getItem('app_temp')).toBe(null)
   })
 
+  test('clearStorageSync should only remove keys with current prefix', () => {
+    prefixStorage.setStorageSync('user', 'john')
+    localStorage.setItem('other_user', '"doe"')
+    localStorage.setItem('plain', '"value"')
+
+    prefixStorage.clearStorageSync()
+
+    expect(localStorage.getItem('app_user')).toBe(null)
+    expect(localStorage.getItem('other_user')).toBe('"doe"')
+    expect(localStorage.getItem('plain')).toBe('"value"')
+  })
+
+  test('clearStorage should only remove keys with current prefix', async () => {
+    prefixStorage.setStorageSync('token', 'abc123')
+    localStorage.setItem('other_token', '"def456"')
+    localStorage.setItem('plain_async', '"value"')
+
+    await prefixStorage.clearStorage()
+
+    expect(localStorage.getItem('app_token')).toBe(null)
+    expect(localStorage.getItem('other_token')).toBe('"def456"')
+    expect(localStorage.getItem('plain_async')).toBe('"value"')
+  })
+
   test('should work with cache and prefix', () => {
     const cachedPrefixStorage = new WebLocalStorage({
       prefix: 'cache_',
@@ -192,6 +216,16 @@ describe('localStorage with prefix', () => {
 
     expect(localStorage.getItem('test')).toBe('"value"')
     expect(undefinedPrefixStorage.getStorageSync('test')).toBe('value')
+  })
+
+  test('local clearStorageSync without prefix should still clear all keys', () => {
+    const noPrefixStorage = new WebLocalStorage()
+    noPrefixStorage.setStorageSync('global_key', 'value')
+    localStorage.setItem('other_key', '"other_value"')
+
+    noPrefixStorage.clearStorageSync()
+
+    expect(localStorage.length).toBe(0)
   })
 
   test('should calculate correct size with prefix', async () => {
@@ -313,6 +347,30 @@ describe('sessionStorage', () => {
     expect(prefixSessionStorage.getStorageSync('data')).toBe('test_value')
   })
 
+  test('session clearStorageSync should only remove keys with current prefix', () => {
+    prefixSessionStorage.setStorageSync('data', 'test_value')
+    sessionStorage.setItem('other_data', '"other_value"')
+    sessionStorage.setItem('plain', '"value"')
+
+    prefixSessionStorage.clearStorageSync()
+
+    expect(sessionStorage.getItem('test_data')).toBe(null)
+    expect(sessionStorage.getItem('other_data')).toBe('"other_value"')
+    expect(sessionStorage.getItem('plain')).toBe('"value"')
+  })
+
+  test('session clearStorage should only remove keys with current prefix', async () => {
+    prefixSessionStorage.setStorageSync('token', 'abc123')
+    sessionStorage.setItem('other_token', '"def456"')
+    sessionStorage.setItem('plain_async', '"value"')
+
+    await prefixSessionStorage.clearStorage()
+
+    expect(sessionStorage.getItem('test_token')).toBe(null)
+    expect(sessionStorage.getItem('other_token')).toBe('"def456"')
+    expect(sessionStorage.getItem('plain_async')).toBe('"value"')
+  })
+
   test('should handle cache correctly', () => {
     const cachedSessionStorage = new WebSessionStorage({
       prefix: 'cache_',
@@ -339,6 +397,15 @@ describe('sessionStorage', () => {
     expect(globalSessionStorage.getStorageSync('restore_test')).toBe(
       'restore_value',
     )
+  })
+
+  test('session clearStorageSync without prefix should still clear all keys', () => {
+    globalSessionStorage.setStorageSync('global_key', 'value')
+    sessionStorage.setItem('other_key', '"other_value"')
+
+    globalSessionStorage.clearStorageSync()
+
+    expect(sessionStorage.length).toBe(0)
   })
 
   test('should create and restore snapshot', () => {
