@@ -1,8 +1,7 @@
 node_modules
 dist
-# typedoc生成的文档
+# typedoc 生成的文档
 typedoc
-docs
 temp
 coverage
 etc/*.md

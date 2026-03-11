@@ -82,7 +82,7 @@ class Bytes {
     // }
     const results = this.parseRegExp.exec(val)
     let floatValue
-    let unit: BytesUnitType = 'b'
+    let unit: BytesUnitType
 
     if (!results) {
       // 解析不到单位的时候，单位设为b

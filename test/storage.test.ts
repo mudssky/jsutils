@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WebLocalStorage, WebSessionStorage } from '../src/modules/storage'
 
 class LocalStorageMock {
@@ -164,6 +164,30 @@ describe('localStorage with prefix', () => {
     expect(localStorage.getItem('app_temp')).toBe(null)
   })
 
+  test('clearStorageSync should only remove keys with current prefix', () => {
+    prefixStorage.setStorageSync('user', 'john')
+    localStorage.setItem('other_user', '"doe"')
+    localStorage.setItem('plain', '"value"')
+
+    prefixStorage.clearStorageSync()
+
+    expect(localStorage.getItem('app_user')).toBe(null)
+    expect(localStorage.getItem('other_user')).toBe('"doe"')
+    expect(localStorage.getItem('plain')).toBe('"value"')
+  })
+
+  test('clearStorage should only remove keys with current prefix', async () => {
+    prefixStorage.setStorageSync('token', 'abc123')
+    localStorage.setItem('other_token', '"def456"')
+    localStorage.setItem('plain_async', '"value"')
+
+    await prefixStorage.clearStorage()
+
+    expect(localStorage.getItem('app_token')).toBe(null)
+    expect(localStorage.getItem('other_token')).toBe('"def456"')
+    expect(localStorage.getItem('plain_async')).toBe('"value"')
+  })
+
   test('should work with cache and prefix', () => {
     const cachedPrefixStorage = new WebLocalStorage({
       prefix: 'cache_',
@@ -192,6 +216,16 @@ describe('localStorage with prefix', () => {
 
     expect(localStorage.getItem('test')).toBe('"value"')
     expect(undefinedPrefixStorage.getStorageSync('test')).toBe('value')
+  })
+
+  test('local clearStorageSync without prefix should still clear all keys', () => {
+    const noPrefixStorage = new WebLocalStorage()
+    noPrefixStorage.setStorageSync('global_key', 'value')
+    localStorage.setItem('other_key', '"other_value"')
+
+    noPrefixStorage.clearStorageSync()
+
+    expect(localStorage.length).toBe(0)
   })
 
   test('should calculate correct size with prefix', async () => {
@@ -260,6 +294,11 @@ describe('sessionStorage', () => {
   beforeEach(() => {
     globalSessionStorage.clearStorageSync()
     prefixSessionStorage.clearStorageSync()
+    localStorage.clear()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
   })
 
   test('should return null when storage not exist', () => {
@@ -313,6 +352,30 @@ describe('sessionStorage', () => {
     expect(prefixSessionStorage.getStorageSync('data')).toBe('test_value')
   })
 
+  test('session clearStorageSync should only remove keys with current prefix', () => {
+    prefixSessionStorage.setStorageSync('data', 'test_value')
+    sessionStorage.setItem('other_data', '"other_value"')
+    sessionStorage.setItem('plain', '"value"')
+
+    prefixSessionStorage.clearStorageSync()
+
+    expect(sessionStorage.getItem('test_data')).toBe(null)
+    expect(sessionStorage.getItem('other_data')).toBe('"other_value"')
+    expect(sessionStorage.getItem('plain')).toBe('"value"')
+  })
+
+  test('session clearStorage should only remove keys with current prefix', async () => {
+    prefixSessionStorage.setStorageSync('token', 'abc123')
+    sessionStorage.setItem('other_token', '"def456"')
+    sessionStorage.setItem('plain_async', '"value"')
+
+    await prefixSessionStorage.clearStorage()
+
+    expect(sessionStorage.getItem('test_token')).toBe(null)
+    expect(sessionStorage.getItem('other_token')).toBe('"def456"')
+    expect(sessionStorage.getItem('plain_async')).toBe('"value"')
+  })
+
   test('should handle cache correctly', () => {
     const cachedSessionStorage = new WebSessionStorage({
       prefix: 'cache_',
@@ -339,6 +402,97 @@ describe('sessionStorage', () => {
     expect(globalSessionStorage.getStorageSync('restore_test')).toBe(
       'restore_value',
     )
+  })
+
+  test('should retry quota exceeded writes once and keep cache consistent', () => {
+    const storage = new WebSessionStorage({
+      enableCache: true,
+    })
+    const originalSetItem = sessionStorage.setItem.bind(sessionStorage)
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const setItemSpy = vi.spyOn(sessionStorage, 'setItem')
+    let attemptCount = 0
+
+    setItemSpy.mockImplementation((key: string, value: string) => {
+      if (attemptCount === 0) {
+        attemptCount += 1
+        throw new Error('QuotaExceededError')
+      }
+
+      attemptCount += 1
+      originalSetItem(key, value)
+    })
+
+    storage.setStorageSync('quota_retry', {
+      ok: true,
+    })
+
+    sessionStorage.removeItem('quota_retry')
+
+    expect(storage.getStorageSync('quota_retry')).toEqual({
+      ok: true,
+    })
+    expect(setItemSpy).toHaveBeenCalledTimes(2)
+    expect(errorSpy).toHaveBeenCalledTimes(1)
+  })
+
+  test('should throw when quota retry also fails', () => {
+    const storage = new WebSessionStorage({
+      enableCache: true,
+    })
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const setItemSpy = vi
+      .spyOn(sessionStorage, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('QuotaExceededError')
+      })
+
+    expect(() => {
+      storage.setStorageSync('quota_throw', 'value')
+    }).toThrow('QuotaExceededError')
+    expect(setItemSpy).toHaveBeenCalledTimes(2)
+    expect(errorSpy).toHaveBeenCalledTimes(1)
+    expect(warnSpy).toHaveBeenCalledTimes(1)
+  })
+
+  test('should restore all prefixed keys from localStorage when keys are omitted', () => {
+    const storage = new WebSessionStorage({
+      prefix: 'restore_',
+      enableCache: true,
+    })
+
+    localStorage.setItem('restore_name', '"mudssky"')
+    localStorage.setItem('restore_theme', '"light"')
+
+    storage.restoreFromLocalStorage()
+
+    expect(storage.getStorageSync('name')).toBe('mudssky')
+    expect(storage.getStorageSync('theme')).toBe('light')
+  })
+
+  test('should ignore non-prefixed keys when restoring without explicit keys', () => {
+    const storage = new WebSessionStorage({
+      prefix: 'restore_',
+      enableCache: true,
+    })
+
+    localStorage.setItem('restore_name', '"mudssky"')
+    localStorage.setItem('other_name', '"ignored"')
+
+    storage.restoreFromLocalStorage()
+
+    expect(storage.getStorageSync('name')).toBe('mudssky')
+    expect(storage.getStorageSync('other_name')).toBe(null)
+  })
+
+  test('session clearStorageSync without prefix should still clear all keys', () => {
+    globalSessionStorage.setStorageSync('global_key', 'value')
+    sessionStorage.setItem('other_key', '"other_value"')
+
+    globalSessionStorage.clearStorageSync()
+
+    expect(sessionStorage.length).toBe(0)
   })
 
   test('should create and restore snapshot', () => {
