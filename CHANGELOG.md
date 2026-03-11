@@ -1,3 +1,9 @@
+## [1.32.1](https://github.com/mudssky/jsutils/compare/v1.32.0...v1.32.1) (2026-03-11)
+
+### Bug Fixes
+
+- scope prefixed storage clear ([109e812](https://github.com/mudssky/jsutils/commit/109e812fc2e750acebade7f37392ef045236ec4d))
+
 # [1.32.0](https://github.com/mudssky/jsutils/compare/v1.31.0...v1.32.0) (2025-12-17)
 
 ### Bug Fixes
