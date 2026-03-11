@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it } from 'vitest'
 import {
   PerformanceMonitor,
   comparePerformance,
   createPerformanceMonitor,
   measurePerformance,
   type PerformanceResult,
-} from '../src/modules/performance'
+} from '@mudssky/jsutils'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 describe('PerformanceMonitor', () => {
   let monitor: PerformanceMonitor

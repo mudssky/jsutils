@@ -139,6 +139,17 @@ test('isLabelIn 方法类型测试', () => {
   assertType<boolean>(result3)
 })
 
+test('match 和 getAttrMatcher 链式调用类型测试', () => {
+  const matchResult = statusEnum.match().value(1).labelIsIn(['待审核'])
+  const attrMatchResult = statusEnum
+    .getAttrMatcher('color')
+    .value('#faad14')
+    .labelIsIn(['待审核'])
+
+  assertType<boolean>(matchResult)
+  assertType<boolean>(attrMatchResult)
+})
+
 test('EnumItemKey 类型测试', () => {
   type StatusItemKey = EnumItemKey<typeof statusList>
 
