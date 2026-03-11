@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   getEnvironmentInfo,
   isBrowser,
@@ -10,6 +10,46 @@ import {
   runInBrowser,
   runWithDocument,
 } from '../src/modules/env'
+
+const browserGlobalKeys = [
+  'window',
+  'document',
+  'navigator',
+  'localStorage',
+  'sessionStorage',
+] as const
+
+type BrowserGlobalKey = (typeof browserGlobalKeys)[number]
+
+const originalBrowserDescriptors = new Map<
+  BrowserGlobalKey,
+  PropertyDescriptor | undefined
+>()
+
+const createStorageMock = (): Storage =>
+  ({
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    removeItem: vi.fn(),
+    clear: vi.fn(),
+    key: vi.fn(),
+    length: 0,
+  }) as Storage
+
+const restoreBrowserGlobals = () => {
+  for (const key of browserGlobalKeys) {
+    const descriptor = originalBrowserDescriptors.get(key)
+
+    if (descriptor) {
+      Object.defineProperty(globalThis, key, descriptor)
+      continue
+    }
+
+    Reflect.deleteProperty(globalThis, key)
+  }
+
+  originalBrowserDescriptors.clear()
+}
 
 describe('Environment Detection', () => {
   describe('isBrowser', () => {
@@ -115,6 +155,111 @@ describe('Environment Detection', () => {
 
     it('should handle sessionStorage errors gracefully', () => {
       // 在Node.js环境中，sessionStorage不存在，应该返回false
+      expect(isSessionStorageAvailable()).toBe(false)
+    })
+  })
+
+  describe('browser branches', () => {
+    beforeEach(() => {
+      for (const key of browserGlobalKeys) {
+        originalBrowserDescriptors.set(
+          key,
+          Object.getOwnPropertyDescriptor(globalThis, key),
+        )
+      }
+
+      Object.defineProperty(globalThis, 'window', {
+        configurable: true,
+        value: {},
+      })
+      Object.defineProperty(globalThis, 'document', {
+        configurable: true,
+        value: {},
+      })
+      Object.defineProperty(globalThis, 'navigator', {
+        configurable: true,
+        value: {
+          platform: 'unit-test-platform',
+          userAgent: 'UnitTestBrowser/1.0',
+        },
+      })
+      Object.defineProperty(globalThis, 'localStorage', {
+        configurable: true,
+        value: createStorageMock(),
+      })
+      Object.defineProperty(globalThis, 'sessionStorage', {
+        configurable: true,
+        value: createStorageMock(),
+      })
+    })
+
+    afterEach(() => {
+      restoreBrowserGlobals()
+      vi.restoreAllMocks()
+    })
+
+    it('should return true for isBrowser when window exists', () => {
+      expect(isBrowser()).toBe(true)
+    })
+
+    it('should return true for isDocumentAvailable when document exists', () => {
+      expect(isDocumentAvailable()).toBe(true)
+    })
+
+    it('should return browser fields from getEnvironmentInfo', () => {
+      const info = getEnvironmentInfo()
+
+      expect(info.isBrowser).toBe(true)
+      expect(info.isDocumentAvailable).toBe(true)
+      expect(info.isLocalStorageAvailable).toBe(true)
+      expect(info.isSessionStorageAvailable).toBe(true)
+      expect(info.userAgent).toBeDefined()
+      expect(info.platform).toBeDefined()
+    })
+
+    it('should execute callback in runInBrowser when window exists', () => {
+      const callback = vi.fn(() => 'browser result')
+
+      const result = runInBrowser(callback)
+
+      expect(callback).toHaveBeenCalledOnce()
+      expect(result).toBe('browser result')
+    })
+
+    it('should execute callback in runWithDocument when document exists', () => {
+      const callback = vi.fn(() => 'document result')
+
+      const result = runWithDocument(callback)
+
+      expect(callback).toHaveBeenCalledOnce()
+      expect(result).toBe('document result')
+    })
+
+    it('should return false when localStorage.setItem throws', () => {
+      Object.defineProperty(globalThis, 'localStorage', {
+        configurable: true,
+        value: {
+          ...createStorageMock(),
+          setItem: vi.fn(() => {
+            throw new Error('quota exceeded')
+          }),
+        } as Storage,
+      })
+
+      expect(isLocalStorageAvailable()).toBe(false)
+    })
+
+    it('should return false when sessionStorage.setItem throws', () => {
+      Object.defineProperty(globalThis, 'sessionStorage', {
+        configurable: true,
+        value: {
+          ...createStorageMock(),
+          setItem: vi.fn(() => {
+            throw new Error('quota exceeded')
+          }),
+        } as Storage,
+      })
+
       expect(isSessionStorageAvailable()).toBe(false)
     })
   })

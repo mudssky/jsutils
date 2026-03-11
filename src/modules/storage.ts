@@ -492,12 +492,17 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
    */
   private handleQuotaExceeded(key: T, value: unknown) {
     try {
+      const fullKey = this.getFullKey(key)
       // 清理缓存，释放一些空间
       if (this.enableCache) {
         this.cache.clear()
       }
       // 重试存储
-      sessionStorage.setItem(this.getFullKey(key), this.stringify(value))
+      sessionStorage.setItem(fullKey, this.stringify(value))
+      // 重试成功后恢复当前键的缓存，避免后续读取回退到空存储。
+      if (this.enableCache) {
+        this.cache.set(fullKey, value)
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.warn(

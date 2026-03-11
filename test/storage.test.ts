@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WebLocalStorage, WebSessionStorage } from '../src/modules/storage'
 
 class LocalStorageMock {
@@ -294,6 +294,11 @@ describe('sessionStorage', () => {
   beforeEach(() => {
     globalSessionStorage.clearStorageSync()
     prefixSessionStorage.clearStorageSync()
+    localStorage.clear()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
   })
 
   test('should return null when storage not exist', () => {
@@ -397,6 +402,88 @@ describe('sessionStorage', () => {
     expect(globalSessionStorage.getStorageSync('restore_test')).toBe(
       'restore_value',
     )
+  })
+
+  test('should retry quota exceeded writes once and keep cache consistent', () => {
+    const storage = new WebSessionStorage({
+      enableCache: true,
+    })
+    const originalSetItem = sessionStorage.setItem.bind(sessionStorage)
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const setItemSpy = vi.spyOn(sessionStorage, 'setItem')
+    let attemptCount = 0
+
+    setItemSpy.mockImplementation((key: string, value: string) => {
+      if (attemptCount === 0) {
+        attemptCount += 1
+        throw new Error('QuotaExceededError')
+      }
+
+      attemptCount += 1
+      originalSetItem(key, value)
+    })
+
+    storage.setStorageSync('quota_retry', {
+      ok: true,
+    })
+
+    sessionStorage.removeItem('quota_retry')
+
+    expect(storage.getStorageSync('quota_retry')).toEqual({
+      ok: true,
+    })
+    expect(setItemSpy).toHaveBeenCalledTimes(2)
+    expect(errorSpy).toHaveBeenCalledTimes(1)
+  })
+
+  test('should throw when quota retry also fails', () => {
+    const storage = new WebSessionStorage({
+      enableCache: true,
+    })
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const setItemSpy = vi
+      .spyOn(sessionStorage, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('QuotaExceededError')
+      })
+
+    expect(() => {
+      storage.setStorageSync('quota_throw', 'value')
+    }).toThrow('QuotaExceededError')
+    expect(setItemSpy).toHaveBeenCalledTimes(2)
+    expect(errorSpy).toHaveBeenCalledTimes(1)
+    expect(warnSpy).toHaveBeenCalledTimes(1)
+  })
+
+  test('should restore all prefixed keys from localStorage when keys are omitted', () => {
+    const storage = new WebSessionStorage({
+      prefix: 'restore_',
+      enableCache: true,
+    })
+
+    localStorage.setItem('restore_name', '"mudssky"')
+    localStorage.setItem('restore_theme', '"light"')
+
+    storage.restoreFromLocalStorage()
+
+    expect(storage.getStorageSync('name')).toBe('mudssky')
+    expect(storage.getStorageSync('theme')).toBe('light')
+  })
+
+  test('should ignore non-prefixed keys when restoring without explicit keys', () => {
+    const storage = new WebSessionStorage({
+      prefix: 'restore_',
+      enableCache: true,
+    })
+
+    localStorage.setItem('restore_name', '"mudssky"')
+    localStorage.setItem('other_name', '"ignored"')
+
+    storage.restoreFromLocalStorage()
+
+    expect(storage.getStorageSync('name')).toBe('mudssky')
+    expect(storage.getStorageSync('other_name')).toBe(null)
   })
 
   test('session clearStorageSync without prefix should still clear all keys', () => {
