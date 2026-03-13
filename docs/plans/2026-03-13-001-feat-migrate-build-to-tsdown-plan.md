@@ -1,7 +1,7 @@
 ---
 title: 'feat: 迁移构建系统从 Rollup 到 tsdown'
 type: feat
-status: active
+status: completed
 date: 2026-03-13
 origin: docs/brainstorms/2026-03-13-migrate-to-tsdown-brainstorm.md
 ---

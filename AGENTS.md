@@ -23,9 +23,9 @@ and `vitedocs/`.
 
 Use `pnpm` for all local work.
 
-- `pnpm build` builds `dist/` with Rollup after cleaning artifacts and copying
+- `pnpm build` builds `dist/` with tsdown after cleaning artifacts and copying
   styles.
-- `pnpm dev` builds the development bundle once; `pnpm dev:watch` rebuilds on
+- `pnpm dev` builds using tsdown once; `pnpm dev:watch` rebuilds on
   file changes.
 - `pnpm test` runs Vitest in run mode with type-aware checks.
 - `pnpm test:silent` is the fast dot-reporter variant used by `pnpm qa`.
