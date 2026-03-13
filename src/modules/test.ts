@@ -13,7 +13,7 @@ interface TestCase<INPUT = any, EXPECT = any> {
 function tableTest<INPUT = any, EXPECT = any>(
   testCases: TestCase<INPUT, EXPECT>[],
   checkFn: (testCase: TestCase<INPUT, EXPECT>) => any,
-) {
+): void {
   for (const testCase of testCases) {
     checkFn(testCase)
   }

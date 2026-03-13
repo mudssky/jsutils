@@ -87,10 +87,10 @@ abstract class AbstractStorage<T extends string = string> {
    */
   abstract getStorageInfo(): Promise<StorageInfo>
 
-  stringify(value: unknown) {
+  stringify(value: unknown): string {
     return JSON.stringify(value)
   }
-  parse(value: string) {
+  parse(value: string): unknown {
     try {
       return JSON.parse(value)
     } catch {
@@ -140,7 +140,7 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
   /**
    * @deprecated 使用 getKeys() 替代
    */
-  Keys() {
+  Keys(): T[] {
     return this.getKeys()
   }
 
@@ -154,7 +154,7 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
     }
     return keys
   }
-  async getStorageInfo() {
+  async getStorageInfo(): Promise<StorageInfo> {
     return this.getStorageInfoSync()
   }
 
@@ -162,14 +162,14 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
    * 异步清理localStorage；配置 prefix 时只清当前命名空间，否则清空整个存储区。
    * @returns Promise 对象，完成后无返回值
    */
-  async clearStorage() {
+  async clearStorage(): Promise<void> {
     this.clearStorageSync()
   }
   /**
    * 同步清理localStorage；配置 prefix 时只清当前命名空间，否则清空整个存储区，并清理缓存。
    * @returns 无返回值
    */
-  clearStorageSync() {
+  clearStorageSync(): void {
     if (this.enableCache) {
       this.cache.clear()
     }
@@ -182,13 +182,13 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
     }
     localStorage.removeItem(fullKey)
   }
-  async removeStorage(key: T) {
+  async removeStorage(key: T): Promise<void> {
     this.removeStorageSync(key)
   }
-  async setStorage(key: T, value: unknown) {
+  async setStorage(key: T, value: unknown): Promise<void> {
     this.setStorageSync(key, value)
   }
-  async getStorage(key: T) {
+  async getStorage(key: T): Promise<unknown> {
     return this.getStorageSync(key)
   }
 
@@ -199,7 +199,7 @@ class WebLocalStorage<T extends string = string> extends AbstractStorage<T> {
     }
     localStorage.setItem(fullKey, this.stringify(value))
   }
-  getStorageSync(key: T) {
+  getStorageSync(key: T): unknown {
     const fullKey = this.getFullKey(key)
     if (this.enableCache && this.cache.has(fullKey)) {
       return this.cache.get(fullKey)
@@ -244,26 +244,26 @@ class TaroStorage<T extends string = string> extends AbstractStorage {
     return this.Taro.getStorageInfoSync()
   }
 
-  async getStorageInfo() {
+  async getStorageInfo(): Promise<StorageInfo> {
     return this.getStorageInfoSync()
   }
 
-  async clearStorage() {
+  async clearStorage(): Promise<void> {
     this.clearStorageSync()
   }
-  clearStorageSync() {
+  clearStorageSync(): void {
     this.Taro.clearStorageSync()
   }
   removeStorageSync(key: T): void {
     this.Taro.removeStorageSync(key)
   }
-  async removeStorage(key: T) {
+  async removeStorage(key: T): Promise<void> {
     this.removeStorageSync(key)
   }
-  async getStorage(key: T) {
+  async getStorage(key: T): Promise<unknown> {
     return this.getStorageSync(key)
   }
-  async setStorage(key: T, data: unknown) {
+  async setStorage(key: T, data: unknown): Promise<void> {
     this.setStorageSync(key, data)
   }
   getStorageSync(key: T): unknown {
@@ -298,13 +298,13 @@ class UniStorage<T extends string = string> extends AbstractStorage {
   getStorageInfoSync(): StorageInfo {
     return this.Uni.getStorageInfoSync()
   }
-  async getStorageInfo() {
+  async getStorageInfo(): Promise<StorageInfo> {
     return this.getStorageInfoSync()
   }
-  async clearStorage() {
+  async clearStorage(): Promise<void> {
     this.clearStorageSync()
   }
-  clearStorageSync() {
+  clearStorageSync(): void {
     this.Uni.clearStorageSync()
   }
 
@@ -312,14 +312,14 @@ class UniStorage<T extends string = string> extends AbstractStorage {
     this.Uni.removeStorageSync(key)
   }
 
-  async removeStorage(key: T) {
+  async removeStorage(key: T): Promise<void> {
     this.removeStorageSync(key)
   }
 
-  async getStorage(key: T) {
+  async getStorage(key: T): Promise<unknown> {
     return this.getStorageSync(key)
   }
-  async setStorage(key: T, data: unknown) {
+  async setStorage(key: T, data: unknown): Promise<void> {
     this.setStorageSync(key, data)
   }
   getStorageSync(key: T): unknown {
@@ -347,7 +347,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
     this.setupSessionListeners()
   }
 
-  private setupSessionListeners() {
+  private setupSessionListeners(): void {
     // 检查是否在浏览器环境中
     if (!isBrowser()) {
       return
@@ -413,7 +413,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
     return keys
   }
 
-  async getStorageInfo() {
+  async getStorageInfo(): Promise<StorageInfo> {
     return this.getStorageInfoSync()
   }
 
@@ -421,7 +421,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
    * 异步清理sessionStorage；配置 prefix 时只清当前命名空间，否则清空整个存储区。
    * @returns Promise 对象，完成后无返回值
    */
-  async clearStorage() {
+  async clearStorage(): Promise<void> {
     this.clearStorageSync()
   }
 
@@ -429,7 +429,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
    * 同步清理sessionStorage；配置 prefix 时只清当前命名空间，否则清空整个存储区，并清理缓存。
    * @returns 无返回值
    */
-  clearStorageSync() {
+  clearStorageSync(): void {
     if (this.enableCache) {
       this.cache.clear()
     }
@@ -444,15 +444,15 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
     sessionStorage.removeItem(fullKey)
   }
 
-  async removeStorage(key: T) {
+  async removeStorage(key: T): Promise<void> {
     this.removeStorageSync(key)
   }
 
-  async setStorage(key: T, value: unknown) {
+  async setStorage(key: T, value: unknown): Promise<void> {
     this.setStorageSync(key, value)
   }
 
-  async getStorage(key: T) {
+  async getStorage(key: T): Promise<unknown> {
     return this.getStorageSync(key)
   }
 
@@ -471,7 +471,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
     }
   }
 
-  getStorageSync(key: T) {
+  getStorageSync(key: T): unknown {
     const fullKey = this.getFullKey(key)
     if (this.enableCache && this.cache.has(fullKey)) {
       return this.cache.get(fullKey)
@@ -490,7 +490,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
   /**
    * 处理存储空间不足的情况
    */
-  private handleQuotaExceeded(key: T, value: unknown) {
+  private handleQuotaExceeded(key: T, value: unknown): void {
     try {
       const fullKey = this.getFullKey(key)
       // 清理缓存，释放一些空间
@@ -516,7 +516,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
   /**
    * 与 localStorage 同步数据
    */
-  syncToLocalStorage(keys?: T[]) {
+  syncToLocalStorage(keys?: T[]): void {
     const keysToSync = keys || this.getKeys()
     keysToSync.forEach((key) => {
       const value = this.getStorageSync(key)
@@ -529,7 +529,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
   /**
    * 从 localStorage 恢复数据
    */
-  restoreFromLocalStorage(keys?: T[]) {
+  restoreFromLocalStorage(keys?: T[]): void {
     if (!keys) {
       // 获取localStorage中所有匹配前缀的key
       const allKeys = []
@@ -553,7 +553,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
   /**
    * 表单数据自动保存
    */
-  autoSaveForm(formId: string, interval: number = 5000) {
+  autoSaveForm(formId: string, interval: number = 5000): () => void {
     // 检查是否在浏览器环境中
     if (!isBrowser() || !isDocumentAvailable()) {
       // eslint-disable-next-line no-console
@@ -590,7 +590,7 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
   /**
    * 页面状态快照
    */
-  createSnapshot(snapshotId: string, state: Record<string, unknown>) {
+  createSnapshot(snapshotId: string, state: Record<string, unknown>): void {
     this.setStorageSync(`snapshot_${snapshotId}` as T, {
       ...state,
       timestamp: Date.now(),
@@ -600,14 +600,14 @@ class WebSessionStorage<T extends string = string> extends AbstractStorage<T> {
   /**
    * 恢复页面状态快照
    */
-  restoreSnapshot(snapshotId: string) {
+  restoreSnapshot(snapshotId: string): unknown {
     return this.getStorageSync(`snapshot_${snapshotId}` as T)
   }
 
   /**
    * 清理过期的快照数据
    */
-  cleanExpiredSnapshots(maxAge: number = 24 * 60 * 60 * 1000) {
+  cleanExpiredSnapshots(maxAge: number = 24 * 60 * 60 * 1000): void {
     const keys = this.getKeys()
     const now = Date.now()
 

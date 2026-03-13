@@ -133,7 +133,12 @@ export interface PerformanceDecoratorOptions extends PerformanceTestOptions {
  * }
  * ```
  */
-export function performanceMonitor(options: PerformanceDecoratorOptions = {}) {
+export function performanceMonitor(
+  options: PerformanceDecoratorOptions = {},
+): (
+  originalMethod: AnyFunction,
+  context: ClassMethodDecoratorContext,
+) => AnyFunction {
   return function (
     originalMethod: AnyFunction,
     context: ClassMethodDecoratorContext,
@@ -239,7 +244,10 @@ export function performanceMonitor(options: PerformanceDecoratorOptions = {}) {
  */
 export function performanceBenchmark(
   options: PerformanceDecoratorOptions = {},
-) {
+): (
+  originalMethod: AnyFunction,
+  context: ClassMethodDecoratorContext,
+) => AnyFunction {
   const defaultOptions: PerformanceDecoratorOptions = {
     iterations: 100,
     warmupIterations: 10,

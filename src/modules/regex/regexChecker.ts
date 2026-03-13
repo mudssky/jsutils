@@ -9,35 +9,35 @@ class RegexChecker {
    * 用户名正则
    * 数字字母，连接符，下划线
    */
-  readonly usernamePattern = /^[a-zA-Z0-9_-]{4,16}$/
+  readonly usernamePattern: RegExp = /^[a-zA-Z0-9_-]{4,16}$/
   /**
    *正数
    */
-  readonly positivePattern = /^\d*\.?\d+$/
+  readonly positivePattern: RegExp = /^\d*\.?\d+$/
 
   /**
    * 负数
    */
-  readonly negativePattern = /^-\d*\.?\d+$/
+  readonly negativePattern: RegExp = /^-\d*\.?\d+$/
 
   /**
    * 邮箱,允许中文邮箱
    */
-  readonly emailPatternCN =
+  readonly emailPatternCN: RegExp =
     /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
-  readonly emailPattern =
+  readonly emailPattern: RegExp =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
   /**
    *手机号码
    */
-  readonly mobilePattern = /^1[34578]\d{9}$/
+  readonly mobilePattern: RegExp = /^1[34578]\d{9}$/
 }
 /**
  * @public
  */
-const regexChecker = new RegexChecker()
+const regexChecker: RegexChecker = new RegexChecker()
 
 /**
  * @public
@@ -50,7 +50,7 @@ interface PasswordStrengthRule {
 /**
  * @public
  */
-const passwordStrengthRule = [
+const passwordStrengthRule: readonly PasswordStrengthRule[] = [
   {
     key: 'minLength',
     regex: /(?=.{8,}).*/,
@@ -99,7 +99,7 @@ type AnalyzePasswordStrenthOptions = {
 function analyzePasswordStrength(
   password: Nullable<string>,
   options?: AnalyzePasswordStrenthOptions,
-) {
+): Record<PasswordStrengthRuleKey, boolean> {
   const { minLength = 8 } = options || {}
   const res: Record<PasswordStrengthRuleKey, boolean> = {
     minLength: false,
@@ -170,7 +170,7 @@ type CalculatePasswordStrengthLevelOptions = {
 function calculatePasswordStrengthLevel(
   password: string,
   options?: CalculatePasswordStrengthLevelOptions,
-) {
+): number {
   const {
     strategy = passwordStrengthLevelStrategys['default'],
     ...restOptions

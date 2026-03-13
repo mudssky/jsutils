@@ -16,7 +16,7 @@ import { isArray, isFunction } from './typed'
  * ```
  * @public
  */
-function range(start: number, end?: number, step = 1) {
+function range(start: number, end?: number, step = 1): number[] {
   return Array.from(rangeIter(start, end, step))
 }
 
@@ -34,7 +34,7 @@ function range(start: number, end?: number, step = 1) {
  * ```
  * @public
  */
-function* rangeIter(start: number, end?: number, step = 1) {
+function* rangeIter(start: number, end?: number, step = 1): Generator<number> {
   let actualStart = start
   let actualEnd = end
   // 判断只有一个参数的情况，区间从0到start
@@ -89,16 +89,16 @@ class Query<T extends object> extends Array<T> {
     }
   }
 
-  where(filter: Filter<T>) {
+  where(filter: Filter<T>): Query<T> {
     this.filters.push(filter)
     return this
   }
 
-  sortBy(key: keyof T) {
+  sortBy(key: keyof T): Query<T> {
     this.sortKeys.push(key)
     return this
   }
-  groupBy(key: keyof T) {
+  groupBy(key: keyof T): Query<T> {
     this.groupByKey = key
     return this
   }
@@ -135,7 +135,7 @@ class Query<T extends object> extends Array<T> {
 /**
  * @public
  */
-function createQuery<T extends object>(list: T[]) {
+function createQuery<T extends object>(list: T[]): Query<T> {
   return new Query<T>(list)
 }
 
@@ -148,7 +148,7 @@ type SortDirection = 'asc' | 'desc' | 'none'
  * @public
  */
 type CompareFunction<T> = (a: T, b: T) => number
-const defaultAsc = <T = any>(a: T, b: T) => {
+const defaultAsc = <T = any>(a: T, b: T): number => {
   const astr = String(a)
   const bstr = String(b)
   if (astr === bstr) {
@@ -164,9 +164,12 @@ const defaultAsc = <T = any>(a: T, b: T) => {
  * sort策略是 a-b的逻辑，如果返回负数比如-1，说明递增，或者a\>b
  * @public
  */
-const sortStrategies = {
-  defaultAsc,
-  defaultDesc: <T = any>(a: T, b: T) => -defaultAsc(a, b),
+const sortStrategies: {
+  defaultAsc: <T = any>(a: T, b: T) => number
+  defaultDesc: <T = any>(a: T, b: T) => number
+} = {
+  defaultAsc: defaultAsc,
+  defaultDesc: <T = any>(a: T, b: T): number => -defaultAsc(a, b),
 }
 
 /**
@@ -204,7 +207,7 @@ const alphabetical = <T>(
   array: readonly T[],
   getter: (item: T) => string,
   dir: 'asc' | 'desc' = 'asc',
-) => {
+): T[] => {
   if (!array) return []
   const asc = (a: T, b: T) => `${getter(a)}`.localeCompare(getter(b))
   const dsc = (a: T, b: T) => `${getter(b)}`.localeCompare(getter(a))
@@ -219,7 +222,10 @@ const alphabetical = <T>(
  * Ex. const greatest = () =\> boil(numbers, (a, b) =\> a \> b)
  * @public
  */
-const boil = <T>(array: readonly T[], compareFunc: (a: T, b: T) => T) => {
+const boil = <T>(
+  array: readonly T[],
+  compareFunc: (a: T, b: T) => T,
+): T | null => {
   if (!array || (array.length ?? 0) === 0) return null
   return array.reduce(compareFunc)
 }
@@ -290,7 +296,7 @@ const diff = <T>(
 const first = <T>(
   array: readonly T[],
   defaultValue: T | null | undefined = undefined,
-) => {
+): T | null | undefined => {
   return array?.length > 0 ? array[0] : defaultValue
 }
 
@@ -301,7 +307,7 @@ const first = <T>(
 const last = <T>(
   array: readonly T[],
   defaultValue: T | null | undefined = undefined,
-) => {
+): T | null | undefined => {
   return array?.length > 0 ? array[array.length - 1] : defaultValue
 }
 
@@ -417,7 +423,7 @@ const toggle = <T>(
   options?: {
     strategy?: 'prepend' | 'append'
   },
-) => {
+): T[] => {
   if (!list && !item) return []
   if (!list) return [item]
   if (!item) return [...list]

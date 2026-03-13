@@ -12,7 +12,7 @@ import { AnyObject, ObjectIterator, PropertyName } from '@/types'
 function pick<T extends object, K extends keyof T>(
   obj: T | undefined | null,
   keys: K[],
-) {
+): Pick<T, K> {
   const result: Partial<Pick<T, K>> = {}
   if (obj === null || obj === undefined) {
     return result as Pick<T, K>
@@ -36,7 +36,7 @@ function pick<T extends object, K extends keyof T>(
 function pickBy<T extends object, K extends keyof T>(
   obj: T | undefined | null,
   predicate: (value: T[K], key?: K) => boolean = (value: T[K]) => !!value,
-) {
+): Partial<Pick<T, K>> {
   const result: Partial<Pick<T, K>> = {}
   if (obj === null || obj === undefined) {
     return result
@@ -65,7 +65,7 @@ function pickBy<T extends object, K extends keyof T>(
 function omit<T extends object, K extends keyof T>(
   obj: T | null | undefined,
   keys: K[] = [],
-) {
+): Omit<T, K> {
   const result: Partial<Omit<T, K>> = {}
 
   if (obj === null || obj === undefined) {
@@ -94,7 +94,7 @@ function omit<T extends object, K extends keyof T>(
 function omitBy<T extends object, K extends keyof T>(
   obj: T | undefined | null,
   predicate: (value: T[K], key?: K) => boolean = (value: T[K]) => !!value,
-) {
+): Partial<Pick<T, K>> {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return pickBy(obj, (value, key) => !predicate(value, key))
@@ -110,7 +110,7 @@ function omitBy<T extends object, K extends keyof T>(
 function mapKeys<T extends object>(
   obj: T,
   iteratee: ObjectIterator<T, string>,
-) {
+): Record<string, T[keyof T]> {
   const result: Record<string, T[keyof T]> = {}
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -176,7 +176,9 @@ function merge(target: AnyObject, ...sources: AnyObject[]): AnyObject {
  * @returns - 移除不可序列化属性后的对象
  * @public
  */
-function removeNonSerializableProps(obj: Record<any, any> | null | undefined) {
+function removeNonSerializableProps(
+  obj: Record<any, any> | null | undefined,
+): Record<string, unknown> | null | undefined {
   if (obj === null || obj === undefined) {
     return obj
   }

@@ -12,7 +12,7 @@ import { ArgumentError } from './error'
  * randomInt(0,100)
  * ```
  */
-function randomInt(startInt: number, endInt?: number) {
+function randomInt(startInt: number, endInt?: number): number {
   // 只传入一个参数时进行处理
   if (endInt === undefined) {
     endInt = startInt

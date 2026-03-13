@@ -4,7 +4,7 @@
  * 单位转换的字典
  * @public
  */
-const bytesUnitMap = {
+const bytesUnitMap: Record<string, number> = {
   b: 1,
   kb: 1 << 10,
   mb: 1 << 20,
@@ -44,17 +44,17 @@ class Bytes {
    * 也就是说，前面多个3个数字连续，加上非数尾部
    * 多次执行replace，就是不断从后面取3个数，前面加上分隔符
    */
-  readonly formatThousandsRegExp = /\B(?=(\d{3})+(?!\d))/g
+  readonly formatThousandsRegExp: RegExp = /\B(?=(\d{3})+(?!\d))/g
   /**
    *去除小数点后多余的零
    */
-  readonly formatDecimalsRegExp = /(?:\.0*|(\.[^0]+)0+)$/
+  readonly formatDecimalsRegExp: RegExp = /(?:\.0*|(\.[^0]+)0+)$/
   /**
    * 提取正负号，数字，和单位
    */
-  readonly parseRegExp = /^((-|\+)?(\d+(?:\.\d+)?)) *(kb|mb|gb|tb|pb)$/i
+  readonly parseRegExp: RegExp = /^((-|\+)?(\d+(?:\.\d+)?)) *(kb|mb|gb|tb|pb)$/i
 
-  readonly unitMap = bytesUnitMap
+  readonly unitMap: Record<string, number> = bytesUnitMap
 
   constructor() {}
 
@@ -64,7 +64,10 @@ class Bytes {
    * @param options - 转换选项
    * @returns - 转换结果
    */
-  convert(value: number | string, options?: BytesOption) {
+  convert(
+    value: number | string,
+    options?: BytesOption,
+  ): string | number | null | undefined {
     if (typeof value === 'string') {
       return this.parse(value)
     }
@@ -73,7 +76,7 @@ class Bytes {
     }
     // return null
   }
-  parse(val: string) {
+  parse(val: string): number | null {
     // if (typeof val === 'number' && !isNaN(val)) {
     //   return val
     // }
@@ -100,7 +103,7 @@ class Bytes {
 
     return Math.floor(this.unitMap[unit] * floatValue)
   }
-  format(value: number, options?: BytesOption) {
+  format(value: number, options?: BytesOption): string | null {
     if (!Number.isFinite(value)) {
       return null
     }
@@ -157,7 +160,7 @@ class Bytes {
  * Bytes 类的实例
  * @public
  */
-const bytesInstance = new Bytes()
+const bytesInstance: Bytes = new Bytes()
 
 /**
  * 字节转换函数
@@ -166,7 +169,10 @@ const bytesInstance = new Bytes()
  * @returns - 转换结果
  * @public
  */
-function bytes(value: number | string, options?: BytesOption) {
+function bytes(
+  value: number | string,
+  options?: BytesOption,
+): string | number | null | undefined {
   return bytesInstance.convert(value, options)
 }
 

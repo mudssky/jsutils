@@ -196,4 +196,4 @@ export class DOMHelper {
  * jQuery 风格的 DOM 选择器函数
  * @public
  */
-export const $ = DOMHelper.$
+export const $: (selector: string) => DOMHelper = DOMHelper.$

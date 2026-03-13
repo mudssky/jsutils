@@ -229,6 +229,6 @@ export class ConsoleLogger extends AbstractLogger {
  * @param options - 日志器配置选项。
  * @returns ConsoleLogger 实例。
  */
-export function createLogger(options: LoggerOptions) {
+export function createLogger(options: LoggerOptions): ConsoleLogger {
   return new ConsoleLogger(options)
 }

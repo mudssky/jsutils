@@ -47,7 +47,10 @@ function compose<OUT = any>(...functions: AnyFunction[]) {
  * @public
  */
 // TODO 暂时能力不足，curry的ts类型留到以后补上。
-function curry(func: (...args: any) => any, arity = func.length) {
+function curry(
+  func: (...args: any) => any,
+  arity: number = func.length,
+): (...args: any[]) => any {
   // 定义一个递归式 generateCurried
   function generateCurried(...prevArgs: any[]) {
     // generateCurried 函数必定返回一层嵌套
@@ -74,7 +77,7 @@ function curry(func: (...args: any) => any, arity = func.length) {
  * @returns 传入的值
  * @public
  */
-function identity<T>(x: T) {
+function identity<T>(x: T): T {
   return x
 }
 
@@ -100,11 +103,11 @@ class Monad<T = any> extends AbstractMonad<T> {
     this.val = x
   }
 
-  static of<U = any>(val: U) {
+  static of<U = any>(val: U): Monad<U> {
     return new Monad<U>(val)
   }
 
-  map(f: (arg: T) => any) {
+  map(f: (arg: T) => any): Monad<any> {
     return Monad.of(f(this.val))
   }
   /**
@@ -112,11 +115,11 @@ class Monad<T = any> extends AbstractMonad<T> {
    * @param f - 映射函数
    * @returns 展平后的结果
    */
-  flatMap(f: (arg0: T) => any) {
+  flatMap(f: (arg0: T) => any): any {
     return this.map(f).valueOf()
   }
 
-  valueOf() {
+  valueOf(): T {
     return this.val
   }
   /**

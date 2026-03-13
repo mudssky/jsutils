@@ -464,7 +464,9 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * // [\{ id: 1, name: '启用' \}, \{ id: 0, name: '禁用' \}]
    * ```
    */
-  getKeyMappedList(mapDictionary: Record<string, string>) {
+  getKeyMappedList(
+    mapDictionary: Record<string, string>,
+  ): Record<string, unknown>[] {
     return [...this.getKeyMappedIter(mapDictionary)]
   }
   /**
@@ -505,7 +507,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * const values = enumArray.getValues() // [1, 0]
    * ```
    */
-  getValues() {
+  getValues(): ValueOf<T>[] {
     return Array.from(this, (item) => item.value) as ValueOf<T>[]
   }
 
@@ -854,7 +856,9 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * @param mapDictionary - 键映射字典
    * @returns 映射后对象的迭代器
    */
-  getKeyMappedIter(mapDictionary: Record<string, string>) {
+  getKeyMappedIter(
+    mapDictionary: Record<string, string>,
+  ): IterableIterator<Record<string, unknown>> {
     return this.map((item) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return mapKeys(item as any, (value: any, key: any) => {
@@ -872,7 +876,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
    * @deprecated 该方法功能特殊，建议在外部通过 map 方法实现: myEnum.map(item =\> (\{ ...item, value: item.label \}))
    * @returns 所有项的label作为value的新数组
    */
-  getAllLabelList() {
+  getAllLabelList(): EnumArrayObj[] {
     return this.toList().map((item) => {
       return {
         ...item,
@@ -1113,7 +1117,7 @@ class EnumArray<T extends readonly EnumArrayObj[]> extends Array<EnumArrayObj> {
 function createEnum<T extends readonly EnumArrayObj[]>(
   enumsTuple: T,
   options?: EnumCreationOptions,
-) {
+): Readonly<EnumArray<T>> {
   return Object.freeze(new EnumArray(enumsTuple, options))
 }
 

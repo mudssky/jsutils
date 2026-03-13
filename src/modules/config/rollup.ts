@@ -14,7 +14,7 @@ export const vendorRollupOption = {
     entryFileNames: 'js/[name]-[hash].js', // 指定 chunks 的入口文件匹配模式
     assetFileNames: '[ext]/[name]-[hash].[ext]', // 自定义构建结果中的静态资源名称，资源文件像 字体，图片等
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    manualChunks(id: any) {
+    manualChunks(id: any): string | undefined {
       if (id.includes('node_modules')) {
         return 'vendor'
       }

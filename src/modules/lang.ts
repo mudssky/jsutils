@@ -6,7 +6,7 @@
  * @returns 类型标签字符串
  * @public
  */
-function getTag(value: any) {
+function getTag(value: any): string {
   const toString = Object.prototype.toString
   if (value == null) {
     return value === undefined ? '[object Undefined]' : '[object Null]'

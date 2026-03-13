@@ -2,6 +2,34 @@ import { AnyFunction } from '@/types'
 import { sleepAsync } from './async'
 
 /**
+ * 防抖函数接口，包含取消、刷新和待定状态查询方法
+ * @public
+ */
+export interface DebouncedFunction {
+  /** 调用防抖后的函数 */
+  (this: unknown, ...args: unknown[]): unknown | undefined
+  /** 取消延迟的函数调用 */
+  cancel: () => void
+  /** 查询是否有待执行的定时器 */
+  pending: () => boolean
+  /** 立即执行待处理的函数调用 */
+  flush: () => unknown
+}
+
+/**
+ * 节流函数接口，包含取消和刷新方法
+ * @public
+ */
+export interface ThrottledFunction {
+  /** 调用节流后的函数 */
+  (this: unknown, ...args: unknown[]): void
+  /** 取消延迟的函数调用 */
+  cancel: () => void
+  /** 立即执行待处理的函数调用 */
+  flush: () => unknown
+}
+
+/**
  * 创建一个防抖函数，该函数会从上一次被调用后，延迟 wait 毫秒后调用 func 方法。debounced函数提供一个cancel方法，
  * 以及flush方法立即调用。
  * options选项中，可以设置options.leading 与|或 options.trailing 决定延迟前后如何触发
@@ -22,7 +50,7 @@ function debounce(
     leading: false,
     trailing: true,
   },
-) {
+): DebouncedFunction {
   let timerId: ReturnType<typeof setTimeout> | undefined
   // 判断leading是否执行过了
   let isLeadingExecuted = false
@@ -169,7 +197,7 @@ function throttle(
     leading: false,
     trailing: true,
   },
-) {
+): ThrottledFunction {
   let timerId: ReturnType<typeof setTimeout> | null = null
 
   // 记录闭包函数的参数，用于在外层执行函数
@@ -238,9 +266,36 @@ function throttle(
 }
 
 /**
- * 轮询配置选项接口
+ * 轮询状态信息接口
  * @public
  */
+export interface PollingStatus<T> {
+  /** 轮询配置选项 */
+  options: PollingOptions<T>
+  /** 当前轮询状态 */
+  status: 'running' | 'stopped'
+  /** 重试次数 */
+  retryCount: number
+  /** 已执行次数 */
+  executeCount: number
+  /** 最近一次执行结果 */
+  lastResult: T | undefined
+  /** 最近一次执行错误 */
+  lastError: unknown
+}
+
+/**
+ * 轮询控制器接口
+ * @public
+ */
+export interface PollingController<T> {
+  /** 启动轮询 */
+  start: () => void
+  /** 停止轮询 */
+  stop: () => void
+  /** 获取轮询状态 */
+  status: () => PollingStatus<T>
+}
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface PollingOptions<T = any> {
   task: () => Promise<T>
@@ -271,7 +326,9 @@ export interface PollingOptions<T = any> {
  * poller.start();
  * @public
  */
-export function createPolling<T>(options: PollingOptions<T>) {
+export function createPolling<T>(
+  options: PollingOptions<T>,
+): PollingController<T> {
   const {
     task,
     stopCondition = () => false,
@@ -318,7 +375,7 @@ export function createPolling<T>(options: PollingOptions<T>) {
   }
 
   return {
-    start: () => {
+    start: (): void => {
       isActive = true
       if (immediate) {
         executePoll()
@@ -326,18 +383,18 @@ export function createPolling<T>(options: PollingOptions<T>) {
         timeoutId = setTimeout(executePoll, interval)
       }
     },
-    stop: () => {
+    stop: (): void => {
       isActive = false
       if (timeoutId) clearTimeout(timeoutId)
     },
-    status: () => {
+    status: (): PollingStatus<T> => {
       return {
-        options,
+        options: options,
         status: isActive ? 'running' : 'stopped',
-        retryCount,
+        retryCount: retryCount,
         executeCount: executionCount,
-        lastResult,
-        lastError,
+        lastResult: lastResult,
+        lastError: lastError,
       }
     },
   }

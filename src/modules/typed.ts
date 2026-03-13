@@ -11,7 +11,7 @@ export const isSymbol = (value: any): value is symbol => {
 /**
  * @public
  */
-export const isArray = Array.isArray
+export const isArray: (arg: any) => arg is any[] = Array.isArray
 
 /**
  * @public
@@ -99,7 +99,7 @@ export const isPromise = (value: any): value is Promise<any> => {
 /**
  * @public
  */
-export const isEmpty = (value: any) => {
+export const isEmpty = (value: any): boolean => {
   if (value === true || value === false) return true
   if (value === null || value === undefined) return true
   if (isNumber(value)) return value === 0

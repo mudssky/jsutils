@@ -85,11 +85,26 @@ export function isSessionStorageAvailable(): boolean {
 }
 
 /**
+ * 环境信息接口
+ * @public
+ */
+interface EnvironmentInfo {
+  isBrowser: boolean
+  isNode: boolean
+  isWebWorker: boolean
+  isDocumentAvailable: boolean
+  isLocalStorageAvailable: boolean
+  isSessionStorageAvailable: boolean
+  userAgent: string | undefined
+  platform: string | undefined
+}
+
+/**
  * 获取当前运行环境信息
  * @returns - 环境信息对象
  * @public
  */
-export function getEnvironmentInfo() {
+export function getEnvironmentInfo(): EnvironmentInfo {
   return {
     isBrowser: isBrowser(),
     isNode: isNode(),

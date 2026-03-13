@@ -47,7 +47,7 @@ function genAllCasesCombination(str: string): string[] {
  * @returns - UUID字符串
  * @public
  */
-function generateUUID() {
+function generateUUID(): string {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0 // 生成一个随机整数，范围在 0 到 15 之间
     const v = c === 'x' ? r : (r & 0x3) | 0x8 // 如果字符是 'x'，则保持随机数的值；如果是 'y'，则根据规范设置为 4
@@ -65,7 +65,7 @@ const base62Chars =
  * @returns - base62随机字符串
  * @public
  */
-function generateBase62Code(len = 6) {
+function generateBase62Code(len = 6): string {
   if (len < 0) {
     throw new Error('len must be greater than 0')
   }
@@ -85,7 +85,7 @@ function generateBase62Code(len = 6) {
  * @returns - 是否匹配
  * @public
  */
-function fuzzyMatch(searchValue: string, targetString: string) {
+function fuzzyMatch(searchValue: string, targetString: string): boolean {
   const pattern = new RegExp(searchValue, 'i')
   return pattern.test(targetString)
 }
@@ -123,7 +123,7 @@ function getFileExtension(filename: string): string {
  * @public
  * @deprecated 使用 getFileExtension 代替
  */
-function getFileExt(fileName: string) {
+function getFileExt(fileName: string): string {
   return getFileExtension(fileName)
 }
 
@@ -270,8 +270,8 @@ const parseTemplate = (
   str: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: Record<string, any>,
-  regex = /\{\{(.+?)\}\}/g,
-) => {
+  regex: RegExp = /\{\{(.+?)\}\}/g,
+): string => {
   return Array.from(str.matchAll(regex)).reduce((acc, match) => {
     return acc.replace(match[0], data[match[1]])
   }, str)
@@ -292,7 +292,7 @@ const parseTemplate = (
  * ```
  * @public
  */
-const trim = (str: Nullable<string>, charsToTrim: string = ' ') => {
+const trim = (str: Nullable<string>, charsToTrim: string = ' '): string => {
   if (!str) return ''
   // 转义替换字符串中的特殊字符
   const toTrim = charsToTrim.replace(/[\W]{1}/g, '\\$&')
@@ -316,7 +316,10 @@ const trim = (str: Nullable<string>, charsToTrim: string = ' ') => {
  * ```
  * @public
  */
-const trimStart = (str: Nullable<string>, charsToTrim: string = ' ') => {
+const trimStart = (
+  str: Nullable<string>,
+  charsToTrim: string = ' ',
+): string => {
   if (!str) return ''
   const toTrim = charsToTrim.replace(/[\W]{1}/g, '\\$&')
   const regex = new RegExp(`^[${toTrim}]+`, 'g')
@@ -338,7 +341,7 @@ const trimStart = (str: Nullable<string>, charsToTrim: string = ' ') => {
  * ```
  * @public
  */
-const trimEnd = (str: Nullable<string>, charsToTrim: string = ' ') => {
+const trimEnd = (str: Nullable<string>, charsToTrim: string = ' '): string => {
   if (!str) return ''
   const toTrim = charsToTrim.replace(/[\W]{1}/g, '\\$&')
   const regex = new RegExp(`[${toTrim}]+$`, 'g')
