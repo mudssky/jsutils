@@ -32,10 +32,11 @@ Use `pnpm` for all local work.
 - `pnpm test:types` runs Vitest type tests for `test/types/*.test-d.ts`.
 - `pnpm typecheck`, `pnpm lint`, and `pnpm biome:check` validate TypeScript,
   ESLint, and formatting rules.
-- `pnpm qa` is the local fast gate: typecheck, lint fix, runtime tests, and
-  type tests.
-- `pnpm ci:strict` is the PR gate: `pnpm qa` plus coverage validation.
-- `pnpm release:check` is the pre-release gate: `pnpm ci:strict` plus build and
+- `pnpm qa` is the local fast gate: typecheck, lint (check-only), runtime
+  tests, and type tests — all four run in parallel via `run-p`.
+- `pnpm ci:strict` is the PR gate: `pnpm qa`, coverage validation, build,
+  and smoke test (`test:smoke`).
+- `pnpm release:check` is the pre-release gate: `pnpm ci:strict` plus
   Typedoc generation.
 - `pnpm docs:dev` starts the local VitePress site.
 

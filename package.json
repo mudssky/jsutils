@@ -70,7 +70,7 @@
     "prepare": "husky",
     "prepublishOnly": "pnpm build",
     "push": "pnpm commit&&git push",
-    "qa": "pnpm typecheck && pnpm lint:fix && pnpm test:silent && pnpm test:types",
+    "qa": "run-p typecheck lint test:silent test:types",
     "release:check": "pnpm ci:strict && pnpm typedoc:gen",
     "test": "vitest --run --typecheck",
     "test:coverage": "vitest --run --coverage",
@@ -84,11 +84,6 @@
     "typedoc:gen": "typedoc src/index.ts --out typedoc",
     "typedoc:json": "typedoc src/index.ts --json typedoc/typedoc.json",
     "typedoc:watch": "pwsh -File scripts.ps1 -JobType WatchTypedoc"
-  },
-  "config": {
-    "commitizen": {
-      "path": "git-cz"
-    }
   },
   "dependencies": {
     "clsx": "^2.1.1",
