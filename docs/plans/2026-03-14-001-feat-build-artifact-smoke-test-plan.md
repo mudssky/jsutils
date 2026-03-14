@@ -1,7 +1,7 @@
 ---
 title: 'feat: Add build artifact smoke test'
 type: feat
-status: active
+status: completed
 date: 2026-03-14
 origin: docs/brainstorms/2026-03-14-build-artifact-smoke-test-brainstorm.md
 ---
@@ -14,19 +14,19 @@ origin: docs/brainstorms/2026-03-14-build-artifact-smoke-test-brainstorm.md
 
 ## Acceptance Criteria
 
-- [ ] 创建 `scripts/smoke-test.mjs`，使用纯 Node.js API（`import()`, `createRequire`, `fs`, `assert`），零新依赖
-- [ ] 验证 ESM：动态 `import()` 加载 `dist/esm/index.js`，检查 6 个核心导出存在且为函数
-- [ ] 验证 CJS：`createRequire` 加载 `dist/cjs/index.cjs`，检查 6 个核心导出存在且为函数
-- [ ] 验证 UMD：`createRequire` 加载 `dist/umd/index.umd.js`，检查导出对象非空
-- [ ] 验证类型声明：`dist/esm/index.d.ts` 和 `dist/cjs/index.d.cts` 存在且非空
-- [ ] 验证 exports 路径：解析 `package.json` 的 `exports` 字段，确认所有路径指向存在的文件
-- [ ] 对简单函数做一次基本调用断言（如 `isString('hello') === true`、`chunk([1,2,3], 2)` 长度正确）
-- [ ] 新增 `pnpm test:smoke` 脚本（`node scripts/smoke-test.mjs`）
-- [ ] 修改 `ci:strict` 为 `pnpm qa && pnpm test:coverage && pnpm build && pnpm test:smoke`
-- [ ] 修改 `release:check` 为 `pnpm ci:strict && pnpm typedoc:gen`（避免重复 build）
-- [ ] 脚本执行时间 < 3 秒
-- [ ] `pnpm qa` 通过
-- [ ] `pnpm ci:strict` 通过（含新的 smoke test）
+- [x] 创建 `scripts/smoke-test.mjs`，使用纯 Node.js API（`import()`, `createRequire`, `fs`, `assert`），零新依赖
+- [x] 验证 ESM：动态 `import()` 加载 `dist/esm/index.js`，检查 6 个核心导出存在且为函数
+- [x] 验证 CJS：`createRequire` 加载 `dist/cjs/index.cjs`，检查 6 个核心导出存在且为函数
+- [x] 验证 UMD：`vm.runInNewContext` 加载 `dist/umd/index.umd.js`，检查 globalThis.utils 非空
+- [x] 验证类型声明：`dist/esm/index.d.ts` 和 `dist/cjs/index.d.cts` 存在且非空
+- [x] 验证 exports 路径：解析 `package.json` 的 `exports` 字段，确认所有路径指向存在的文件
+- [x] 对简单函数做一次基本调用断言（如 `isString('hello') === true`、`chunk([1,2,3], 2)` 长度正确）
+- [x] 新增 `pnpm test:smoke` 脚本（`node scripts/smoke-test.mjs`）
+- [x] 修改 `ci:strict` 为 `pnpm qa && pnpm test:coverage && pnpm build && pnpm test:smoke`
+- [x] 修改 `release:check` 为 `pnpm ci:strict && pnpm typedoc:gen`（避免重复 build）
+- [x] 脚本执行时间 < 3 秒
+- [x] `pnpm qa` 通过
+- [x] `pnpm ci:strict` 通过（含新的 smoke test）
 
 ## Context
 

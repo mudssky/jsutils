@@ -25,7 +25,18 @@ export default tseslint.config(
     },
   },
 
-  // 3. 针对特定配置文件的特殊处理 (例如 CommonJS)
+  // 3. scripts 目录的 Node.js 脚本配置
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+  },
+
+  // 4. 针对特定配置文件的特殊处理 (例如 CommonJS)
   {
     files: [
       '**/.prettierrc.{js,cjs}',
@@ -45,7 +56,7 @@ export default tseslint.config(
     },
   },
 
-  // 4. 针对 src 和 test 目录的通用规则
+  // 5. 针对 src 和 test 目录的通用规则
   {
     files: ['src/**/*.ts', '**/test/**'],
     rules: {
@@ -53,7 +64,7 @@ export default tseslint.config(
     },
   },
 
-  // 5. 仅针对 test 目录的规则覆盖
+  // 6. 仅针对 test 目录的规则覆盖
   {
     files: ['**/test/**'],
     rules: {
