@@ -9,8 +9,6 @@ updates:
           interval: "monthly"
       # 单次最多打开的PR数量，默认5，可按需调高
       open-pull-requests-limit: 20
-      # 版本策略：increase 保持语义化版本升级
-      versioning-strategy: increase
 
       # 【关键批量优化】分组升级，避免一个Action一个PR
       groups:
