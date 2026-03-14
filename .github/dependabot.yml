@@ -21,3 +21,26 @@ updates:
           actions-major:
               update-types:
                   - "major"
+    - package-ecosystem: "npm"
+        # 使用 directories + 通配符一次性匹配所有包 (2024+ 新特性)
+      directories:
+        - "/"                # 根目录
+      schedule:
+        interval: "weekly"
+        time: "09:00"
+        timezone: "Asia/Shanghai"
+      # 分组策略：大幅减少 PR 数量
+      groups:
+        # 策略A: 所有非破坏性更新(minor/patch)合为一个 PR
+        non-breaking:
+          patterns:
+            - "*"
+          update-types:
+           - "minor"
+           - "patch"
+        # 策略B: 也可以按功能分组 (可选)
+        linting:
+          patterns:
+          - "eslint*"
+          - "prettier*"
+  
