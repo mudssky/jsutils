@@ -1,9 +1,6 @@
 name: sync-release-artifacts
 
 on:
-  release:
-    types:
-      - published
   workflow_dispatch:
     inputs:
       tag:
@@ -15,12 +12,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: release-sync-${{ github.event.release.tag_name || inputs.tag || github.run_id }}
+  group: release-sync-${{ inputs.tag || github.run_id }}
   cancel-in-progress: false
 
 jobs:
   sync-release-artifacts:
-    if: ${{ github.event_name == 'workflow_dispatch' || (!github.event.release.draft && !github.event.release.prerelease) }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -41,11 +37,11 @@ jobs:
 
       - name: sync release artifacts
         env:
-          # 默认使用 GITHUB_TOKEN 回写，避免同步提交再次触发 release workflow。
+          # 由 release workflow 显式调度，手动补跑时也复用同一入口。
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_API_URL: ${{ github.api_url }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ inputs.tag }}
         run: node scripts/sync-release-artifacts.mjs
 
       - name: configure git
@@ -55,7 +51,7 @@ jobs:
 
       - name: commit synced artifacts
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ inputs.tag }}
         run: |
           git add package.json CHANGELOG.md
 
