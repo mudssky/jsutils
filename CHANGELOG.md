@@ -1,3 +1,9 @@
+## [1.34.1](https://github.com/mudssky/jsutils/compare/v1.34.0...v1.34.1) (2026-03-14)
+
+### Bug Fixes
+
+- 为PowerShell脚本添加-NoProfile参数以提高安全性 ([647cb7e](https://github.com/mudssky/jsutils/commit/647cb7ee76e9760abe50d5373f3432a57aa6764e))
+
 # [1.34.0](https://github.com/mudssky/jsutils/compare/v1.33.0...v1.34.0) (2026-03-14)
 
 ### Features
