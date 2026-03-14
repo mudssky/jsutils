@@ -28,12 +28,14 @@ Use `pnpm` for all local work.
 - `pnpm dev` builds using tsdown once; `pnpm dev:watch` rebuilds on
   file changes.
 - `pnpm test` runs Vitest in run mode with type-aware checks.
-- `pnpm test:silent` is the fast dot-reporter variant used by `pnpm qa`.
+- `pnpm test:run` runs Vitest in run mode (no typecheck, no watch), used by
+  `pnpm qa`.
 - `pnpm test:types` runs Vitest type tests for `test/types/*.test-d.ts`.
 - `pnpm typecheck`, `pnpm lint`, and `pnpm biome:check` validate TypeScript,
   ESLint, and formatting rules.
 - `pnpm qa` is the local fast gate: typecheck, lint (check-only), runtime
-  tests, and type tests — all four run in parallel via `run-p`.
+  tests, and type tests — all four run in parallel via `concurrently --group`
+  (buffered, grouped output per task).
 - `pnpm ci:strict` is the PR gate: `pnpm qa`, coverage validation, build,
   and smoke test (`test:smoke`).
 - `pnpm release:check` is the pre-release gate: `pnpm ci:strict` plus
