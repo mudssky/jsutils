@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+concurrency:
+  group: release-and-publish-npm-main
+  cancel-in-progress: false
 
 permissions:
   contents: write # for checkout
@@ -11,6 +16,7 @@ permissions:
 
 jobs:
   release-and-publish-npm:
+    if: ${{ github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore(release-sync):') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write # to be able to publish a GitHub release
