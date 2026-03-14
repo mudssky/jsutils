@@ -11,6 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
+  actions: write
   contents: write # for checkout
   id-token: write # 允许 OIDC 令牌生成 (最重要)
 
@@ -19,6 +20,7 @@ jobs:
     if: ${{ github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore(release-sync):') }}
     runs-on: ubuntu-latest
     permissions:
+      actions: write # to be able to dispatch the sync workflow
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
@@ -45,3 +47,31 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: pnpm semantic-release
+      - name: detect published release
+        id: detect_release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          latest_release_json=$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" 2>/dev/null || true)
+
+          if [ -z "$latest_release_json" ]; then
+            echo "released=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          latest_tag=$(printf '%s' "$latest_release_json" | jq -r '.tag_name')
+          latest_tag_sha=$(git rev-list -n 1 "$latest_tag" 2>/dev/null || true)
+
+          if [ "$latest_tag_sha" = "$GITHUB_SHA" ]; then
+            echo "released=true" >> "$GITHUB_OUTPUT"
+            echo "tag=$latest_tag" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "released=false" >> "$GITHUB_OUTPUT"
+      - name: dispatch release sync
+        if: ${{ steps.detect_release.outputs.released == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.detect_release.outputs.tag }}
+        run: gh workflow run release-sync.yml --ref main -f tag="$RELEASE_TAG"
