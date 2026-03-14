@@ -1,3 +1,9 @@
+# [1.33.0](https://github.com/mudssky/jsutils/compare/v1.32.1...v1.33.0) (2026-03-14)
+
+### Features
+
+- **ci:** 添加构建产物冒烟测试 ([948ebeb](https://github.com/mudssky/jsutils/commit/948ebebd3ac14eb40fb30c5aad459278f3ab5d21))
+
 ## [1.32.1](https://github.com/mudssky/jsutils/compare/v1.32.0...v1.32.1) (2026-03-11)
 
 ### Bug Fixes
