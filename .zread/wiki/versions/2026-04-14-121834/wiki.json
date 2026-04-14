@@ -1,0 +1,204 @@
+{
+  "id": "2026-04-14-121834",
+  "generated_at": "2026-04-14T04:18:34.139483Z",
+  "language": "zh",
+  "pages": [
+    {
+      "slug": "1-xiang-mu-zong-lan-tong-yong-typescript-gong-ju-han-shu-ku-de-she-ji-zhe-xue-yu-he-xin-jie-zhi",
+      "title": "项目总览：通用 TypeScript 工具函数库的设计哲学与核心价值",
+      "file": "1-xiang-mu-zong-lan-tong-yong-typescript-gong-ju-han-shu-ku-de-she-ji-zhe-xue-yu-he-xin-jie-zhi.md",
+      "section": "快速入门",
+      "level": "Beginner"
+    },
+    {
+      "slug": "2-kuai-su-kai-shi-an-zhuang-yin-ru-yu-an-xu-shi-yong",
+      "title": "快速开始：安装、引入与按需使用",
+      "file": "2-kuai-su-kai-shi-an-zhuang-yin-ru-yu-an-xu-shi-yong.md",
+      "section": "快速入门",
+      "level": "Beginner"
+    },
+    {
+      "slug": "3-xiang-mu-jie-gou-yu-mo-kuai-di-tu",
+      "title": "项目结构与模块地图",
+      "file": "3-xiang-mu-jie-gou-yu-mo-kuai-di-tu.md",
+      "section": "快速入门",
+      "level": "Beginner"
+    },
+    {
+      "slug": "4-shu-zu-cao-zuo-range-chunk-pai-xu-ju-he-yu-ji-he-yun-suan",
+      "title": "数组操作：range、chunk、排序、聚合与集合运算",
+      "file": "4-shu-zu-cao-zuo-range-chunk-pai-xu-ju-he-yu-ji-he-yun-suan.md",
+      "section": "深入指南",
+      "group": "核心工具函数",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "5-zi-fu-chuan-chu-li-da-xiao-xie-zhuan-huan-mo-ban-jie-xi-uuid-sheng-cheng-yu-shu-zi-zhuan-wen-zi",
+      "title": "字符串处理：大小写转换、模板解析、UUID 生成与数字转文字",
+      "file": "5-zi-fu-chuan-chu-li-da-xiao-xie-zhuan-huan-mo-ban-jie-xi-uuid-sheng-cheng-yu-shu-zi-zhuan-wen-zi.md",
+      "section": "深入指南",
+      "group": "核心工具函数",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "6-dui-xiang-cao-zuo-pick-omit-mapkeys-mapvalues-shen-du-he-bing-yu-xu-lie-hua-qing-li",
+      "title": "对象操作：pick/omit、mapKeys/mapValues、深度合并与序列化清理",
+      "file": "6-dui-xiang-cao-zuo-pick-omit-mapkeys-mapvalues-shen-du-he-bing-yu-xu-lie-hua-qing-li.md",
+      "section": "深入指南",
+      "group": "核心工具函数",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "7-han-shu-zeng-qiang-fang-dou-debounce-yu-jie-liu-throttle-de-wan-zheng-shi-xian",
+      "title": "函数增强：防抖（debounce）与节流（throttle）的完整实现",
+      "file": "7-han-shu-zeng-qiang-fang-dou-debounce-yu-jie-liu-throttle-de-wan-zheng-shi-xian.md",
+      "section": "深入指南",
+      "group": "核心工具函数",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "8-lei-xing-shou-wei-ti-xi-isstring-isequal-isempty-deng-yun-xing-shi-lei-xing-pan-duan",
+      "title": "类型守卫体系：isString、isEqual、isEmpty 等运行时类型判断",
+      "file": "8-lei-xing-shou-wei-ti-xi-isstring-isequal-isempty-deng-yun-xing-shi-lei-xing-pan-duan.md",
+      "section": "深入指南",
+      "group": "核心工具函数",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "9-han-shu-shi-bian-cheng-gong-ju-pipe-compose-curry-yu-monad-han-zi",
+      "title": "函数式编程工具：pipe、compose、curry 与 Monad 函子",
+      "file": "9-han-shu-shi-bian-cheng-gong-ju-pipe-compose-curry-yu-monad-han-zi.md",
+      "section": "深入指南",
+      "group": "核心工具函数",
+      "level": "Advanced"
+    },
+    {
+      "slug": "10-zeng-qiang-mei-ju-xi-tong-createenum-o-1-cha-zhao-yu-lian-shi-pi-pei",
+      "title": "增强枚举系统：createEnum、O(1) 查找与链式匹配",
+      "file": "10-zeng-qiang-mei-ju-xi-tong-createenum-o-1-cha-zhao-yu-lian-shi-pi-pei.md",
+      "section": "深入指南",
+      "group": "领域功能模块",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "11-cun-chu-chou-xiang-ceng-weblocalstorage-websessionstorage-yu-qian-zhui-ming-ming-kong-jian",
+      "title": "存储抽象层：WebLocalStorage/WebSessionStorage 与前缀命名空间",
+      "file": "11-cun-chu-chou-xiang-ceng-weblocalstorage-websessionstorage-yu-qian-zhui-ming-ming-kong-jian.md",
+      "section": "深入指南",
+      "group": "领域功能模块",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "12-ri-zhi-xi-tong-fen-ji-guo-lu-ge-shi-hua-shu-chu-yu-shang-xia-wen-zhu-ru",
+      "title": "日志系统：分级过滤、格式化输出与上下文注入",
+      "file": "12-ri-zhi-xi-tong-fen-ji-guo-lu-ge-shi-hua-shu-chu-yu-shang-xia-wen-zhu-ru.md",
+      "section": "深入指南",
+      "group": "领域功能模块",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "13-zheng-ze-biao-da-shi-gong-ju-chang-yong-mo-shi-xiao-yan-mi-ma-qiang-du-fen-xi-yu-zi-fu-zhuan-yi",
+      "title": "正则表达式工具：常用模式校验、密码强度分析与字符转义",
+      "file": "13-zheng-ze-biao-da-shi-gong-ju-chang-yong-mo-shi-xiao-yan-mi-ma-qiang-du-fen-xi-yu-zi-fu-zhuan-yi.md",
+      "section": "深入指南",
+      "group": "领域功能模块",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "14-zi-jie-dan-wei-zhuan-huan-bytes-lei-de-shuang-xiang-ge-shi-hua-yu-jie-xi",
+      "title": "字节单位转换：Bytes 类的双向格式化与解析",
+      "file": "14-zi-jie-dan-wei-zhuan-huan-bytes-lei-de-shuang-xiang-ge-shi-hua-yu-jie-xi.md",
+      "section": "深入指南",
+      "group": "领域功能模块",
+      "level": "Beginner"
+    },
+    {
+      "slug": "15-huan-jing-jian-ce-liu-lan-qi-node-js-web-worker-pan-duan-yu-an-quan-zhi-xing-bao-zhuang",
+      "title": "环境检测：浏览器/Node.js/Web Worker 判断与安全执行包装",
+      "file": "15-huan-jing-jian-ce-liu-lan-qi-node-js-web-worker-pan-duan-yu-an-quan-zhi-xing-bao-zhuang.md",
+      "section": "深入指南",
+      "group": "领域功能模块",
+      "level": "Beginner"
+    },
+    {
+      "slug": "16-dom-cao-zuo-fu-zhu-domhelper-lian-shi-api-yu-shi-jian-guan-li",
+      "title": "DOM 操作辅助：DOMHelper 链式 API 与事件管理",
+      "file": "16-dom-cao-zuo-fu-zhu-domhelper-lian-shi-api-yu-shi-jian-guan-li.md",
+      "section": "深入指南",
+      "group": "浏览器与 DOM",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "17-wen-ben-gao-liang-qi-highlighter-duo-guan-jian-ci-pi-pei-dao-hang-yu-gun-dong-ding-wei",
+      "title": "文本高亮器：Highlighter 多关键词匹配、导航与滚动定位",
+      "file": "17-wen-ben-gao-liang-qi-highlighter-duo-guan-jian-ci-pi-pei-dao-hang-yu-gun-dong-ding-wei.md",
+      "section": "深入指南",
+      "group": "浏览器与 DOM",
+      "level": "Advanced"
+    },
+    {
+      "slug": "18-css-lei-ming-he-bing-cn-han-shu-yu-tailwind-css-ji-cheng",
+      "title": "CSS 类名合并：cn() 函数与 Tailwind CSS 集成",
+      "file": "18-css-lei-ming-he-bing-cn-han-shu-yu-tailwind-css-ji-cheng.md",
+      "section": "深入指南",
+      "group": "浏览器与 DOM",
+      "level": "Beginner"
+    },
+    {
+      "slug": "19-typescript-zhuang-shi-qi-debouncemethod-yu-performancemonitor",
+      "title": "TypeScript 装饰器：debounceMethod 与 performanceMonitor",
+      "file": "19-typescript-zhuang-shi-qi-debouncemethod-yu-performancemonitor.md",
+      "section": "深入指南",
+      "group": "高级特性",
+      "level": "Advanced"
+    },
+    {
+      "slug": "20-xing-neng-jian-kong-qi-performancemonitor-die-dai-ce-shi-nei-cun-zhui-zong-yu-dui-bi-ji-zhun",
+      "title": "性能监控器：PerformanceMonitor 迭代测试、内存追踪与对比基准",
+      "file": "20-xing-neng-jian-kong-qi-performancemonitor-die-dai-ce-shi-nei-cun-zhui-zong-yu-dui-bi-ji-zhun.md",
+      "section": "深入指南",
+      "group": "高级特性",
+      "level": "Advanced"
+    },
+    {
+      "slug": "21-proxy-gong-ju-singletonproxy-dan-li-gou-zao-qi-bao-zhuang",
+      "title": "Proxy 工具：singletonProxy 单例构造器包装",
+      "file": "21-proxy-gong-ju-singletonproxy-dan-li-gou-zao-qi-bao-zhuang.md",
+      "section": "深入指南",
+      "group": "高级特性",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "22-gou-jian-yu-da-bao-tsdown-duo-ge-shi-shu-chu-esm-cjs-umd-pei-zhi-xiang-jie",
+      "title": "构建与打包：tsdown 多格式输出（ESM / CJS / UMD）配置详解",
+      "file": "22-gou-jian-yu-da-bao-tsdown-duo-ge-shi-shu-chu-esm-cjs-umd-pei-zhi-xiang-jie.md",
+      "section": "深入指南",
+      "group": "工程化体系",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "23-ce-shi-ti-xi-vitest-dan-yuan-ce-shi-lei-xing-ce-shi-yu-gou-jian-chan-wu-mou-yan-ce-shi",
+      "title": "测试体系：Vitest 单元测试、类型测试与构建产物冒烟测试",
+      "file": "23-ce-shi-ti-xi-vitest-dan-yuan-ce-shi-lei-xing-ce-shi-yu-gou-jian-chan-wu-mou-yan-ce-shi.md",
+      "section": "深入指南",
+      "group": "工程化体系",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "24-dai-ma-zhi-liang-yu-ci-cd-eslint-biome-husky-semantic-release-liu-shui-xian",
+      "title": "代码质量与 CI/CD：ESLint + Biome + Husky + Semantic Release 流水线",
+      "file": "24-dai-ma-zhi-liang-yu-ci-cd-eslint-biome-husky-semantic-release-liu-shui-xian.md",
+      "section": "深入指南",
+      "group": "工程化体系",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "25-lei-xing-xi-tong-she-ji-gong-ju-lei-xing-ding-yi-yu-typescript-lei-xing-ce-shi-zui-jia-shi-jian",
+      "title": "类型系统设计：工具类型定义与 TypeScript 类型测试最佳实践",
+      "file": "25-lei-xing-xi-tong-she-ji-gong-ju-lei-xing-ding-yi-yu-typescript-lei-xing-ce-shi-zui-jia-shi-jian.md",
+      "section": "深入指南",
+      "group": "工程化体系",
+      "level": "Advanced"
+    }
+  ]
+}
