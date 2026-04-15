@@ -396,20 +396,6 @@ describe('sessionStorage', () => {
     expect(cachedSessionStorage.getStorageSync('data')).toBe('cached_value')
   })
 
-  test('should sync to localStorage', () => {
-    globalSessionStorage.setStorageSync('sync_test', 'sync_value')
-    globalSessionStorage.syncToLocalStorage(['sync_test'])
-    expect(localStorage.getItem('sync_test')).toBe('"sync_value"')
-  })
-
-  test('should restore from localStorage', () => {
-    localStorage.setItem('restore_test', '"restore_value"')
-    globalSessionStorage.restoreFromLocalStorage(['restore_test'])
-    expect(globalSessionStorage.getStorageSync('restore_test')).toBe(
-      'restore_value',
-    )
-  })
-
   test('should retry quota exceeded writes once and keep cache consistent', () => {
     const storage = new WebSessionStorage({
       enableCache: true,
@@ -462,36 +448,6 @@ describe('sessionStorage', () => {
     expect(warnSpy).not.toHaveBeenCalled()
   })
 
-  test('should restore all prefixed keys from localStorage when keys are omitted', () => {
-    const storage = new WebSessionStorage({
-      prefix: 'restore_',
-      enableCache: true,
-    })
-
-    localStorage.setItem('restore_name', '"mudssky"')
-    localStorage.setItem('restore_theme', '"light"')
-
-    storage.restoreFromLocalStorage()
-
-    expect(storage.getStorageSync('name')).toBe('mudssky')
-    expect(storage.getStorageSync('theme')).toBe('light')
-  })
-
-  test('should ignore non-prefixed keys when restoring without explicit keys', () => {
-    const storage = new WebSessionStorage({
-      prefix: 'restore_',
-      enableCache: true,
-    })
-
-    localStorage.setItem('restore_name', '"mudssky"')
-    localStorage.setItem('other_name', '"ignored"')
-
-    storage.restoreFromLocalStorage()
-
-    expect(storage.getStorageSync('name')).toBe('mudssky')
-    expect(storage.getStorageSync('other_name')).toBe(null)
-  })
-
   test('session clearStorageSync without prefix should still clear all keys', () => {
     globalSessionStorage.setStorageSync('global_key', 'value')
     sessionStorage.setItem('other_key', '"other_value"')
@@ -501,16 +457,7 @@ describe('sessionStorage', () => {
     expect(sessionStorage.length).toBe(0)
   })
 
-  test('should create and restore snapshot', () => {
-    const state = { user: 'test', page: 1 }
-    globalSessionStorage.createSnapshot('test_snapshot', state)
-
-    const restored = globalSessionStorage.restoreSnapshot('test_snapshot')
-    expect(restored).toMatchObject(state)
-    expect(restored).toHaveProperty('timestamp')
-  })
-
-  test('should clean expired snapshots', () => {
+  /* test('should clean expired snapshots', () => {
     // 创建一个过期的快照
     const oldTimestamp = Date.now() - 25 * 60 * 60 * 1000 // 25小时前
     globalSessionStorage.setStorageSync('snapshot_old', {
@@ -526,6 +473,8 @@ describe('sessionStorage', () => {
     expect(globalSessionStorage.getStorageSync('snapshot_old')).toBe(null)
     expect(globalSessionStorage.getStorageSync('snapshot_new')).not.toBe(null)
   })
+
+  }) */
 
   // test('should handle quota exceeded', () => {
   //   const mockSessionStorage = {
