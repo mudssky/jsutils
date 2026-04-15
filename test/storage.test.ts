@@ -128,7 +128,7 @@ describe('localStorage', () => {
 })
 
 describe('localStorage with prefix', () => {
-  let prefixStorage: WebLocalStorage<string>
+  let prefixStorage: WebLocalStorage
 
   beforeEach(() => {
     localStorage.clear()
