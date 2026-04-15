@@ -29,7 +29,6 @@ export class WebSessionStorage<
 
   /**
    * 绑定 sessionStorage 事件监听。
-   * @param 无参数
    * @returns 无返回值。
    */
   private setupSessionListeners(): void {
@@ -67,7 +66,6 @@ export class WebSessionStorage<
 
   /**
    * 获取存储信息。
-   * @param 无参数
    * @returns 存储信息摘要。
    */
   getStorageInfoSync(): StorageInfo {
@@ -76,7 +74,6 @@ export class WebSessionStorage<
 
   /**
    * 获取当前命名空间下的 key 列表。
-   * @param 无参数
    * @returns key 列表。
    */
   getKeys(): StorageKey<Schema>[] {
@@ -85,7 +82,6 @@ export class WebSessionStorage<
 
   /**
    * 同步清空存储。
-   * @param 无参数
    * @returns 无返回值。
    */
   clearStorageSync(): void {

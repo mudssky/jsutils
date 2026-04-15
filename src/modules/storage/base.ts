@@ -201,7 +201,6 @@ export abstract class AbstractStorage<
 
   /**
    * 异步清空存储。
-   * @param 无参数
    * @returns 无返回值。
    */
   async clearStorage(): Promise<void> {
@@ -210,7 +209,6 @@ export abstract class AbstractStorage<
 
   /**
    * 异步获取存储信息。
-   * @param 无参数
    * @returns 存储信息摘要。
    */
   async getStorageInfo(): Promise<StorageInfo> {
@@ -219,7 +217,6 @@ export abstract class AbstractStorage<
 
   /**
    * 获取当前命名空间下的 key 列表。
-   * @param 无参数
    * @returns key 列表。
    */
   abstract getKeys(): StorageKey<Schema>[]
@@ -249,13 +246,11 @@ export abstract class AbstractStorage<
   abstract removeStorageSync<Key extends StorageKey<Schema>>(key: Key): void
   /**
    * 同步清空存储。
-   * @param 无参数
    * @returns 无返回值。
    */
   abstract clearStorageSync(): void
   /**
    * 同步获取存储信息。
-   * @param 无参数
    * @returns 存储信息摘要。
    */
   abstract getStorageInfoSync(): StorageInfo

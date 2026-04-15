@@ -68,7 +68,6 @@ export interface NativeStorageBridge {
   setStorageSync(key: string, data: unknown): void
   /**
    * 同步清空存储。
-   * @param 无参数
    * @returns 无返回值。
    */
   clearStorageSync(): void
@@ -80,7 +79,6 @@ export interface NativeStorageBridge {
   removeStorageSync(key: string): void
   /**
    * 获取存储信息。
-   * @param 无参数
    * @returns 存储信息摘要。
    */
   getStorageInfoSync(): StorageInfo
