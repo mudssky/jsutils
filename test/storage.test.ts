@@ -88,6 +88,12 @@ describe('localStorage', () => {
     expect(res.currentSize).toEqual(38)
   })
 
+  test('getStorageInfo should not expose cacheInfo', async () => {
+    const info = await globalStorage.getStorageInfo()
+
+    expect(info).not.toHaveProperty('cacheInfo')
+  })
+
   test('removeStorage', async () => {
     globalStorage.removeStorage('122')
     globalStorage.setStorageSync('toBeRemove', 'test')
@@ -433,7 +439,7 @@ describe('sessionStorage', () => {
       ok: true,
     })
     expect(setItemSpy).toHaveBeenCalledTimes(2)
-    expect(errorSpy).toHaveBeenCalledTimes(1)
+    expect(errorSpy).not.toHaveBeenCalled()
   })
 
   test('should throw when quota retry also fails', () => {
@@ -452,8 +458,8 @@ describe('sessionStorage', () => {
       storage.setStorageSync('quota_throw', 'value')
     }).toThrow('QuotaExceededError')
     expect(setItemSpy).toHaveBeenCalledTimes(2)
-    expect(errorSpy).toHaveBeenCalledTimes(1)
-    expect(warnSpy).toHaveBeenCalledTimes(1)
+    expect(errorSpy).not.toHaveBeenCalled()
+    expect(warnSpy).not.toHaveBeenCalled()
   })
 
   test('should restore all prefixed keys from localStorage when keys are omitted', () => {
