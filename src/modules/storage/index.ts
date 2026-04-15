@@ -1,0 +1,6 @@
+export { TaroStorage } from './adapters/taro'
+export { UniStorage } from './adapters/uni'
+export { WebLocalStorage } from './adapters/web-local'
+export { WebSessionStorage } from './adapters/web-session'
+export { AbstractStorage } from './base'
+export type * from './types'
