@@ -466,9 +466,9 @@ describe('sessionStorage', () => {
     })
 
     // 创建一个未过期的快照
-    globalSessionStorage.createSnapshot('new', { data: 'new' })
+    globalSessionStorage.createSessionSnapshot('new', { data: 'new' })
 
-    globalSessionStorage.cleanExpiredSnapshots(24 * 60 * 60 * 1000) // 24小时
+    globalSessionStorage.cleanExpiredSessionSnapshots(24 * 60 * 60 * 1000) // 24小时
 
     expect(globalSessionStorage.getStorageSync('snapshot_old')).toBe(null)
     expect(globalSessionStorage.getStorageSync('snapshot_new')).not.toBe(null)

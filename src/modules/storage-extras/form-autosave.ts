@@ -56,7 +56,6 @@ export function bindFormAutoSave<
 
   /**
    * 保存表单数据。
-   * @param 无参数
    * @returns 无返回值。
    */
   const saveFormData = () => {

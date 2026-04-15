@@ -27,7 +27,6 @@ export class WebLocalStorage<
 
   /**
    * 获取存储信息。
-   * @param 无参数
    * @returns 存储信息摘要。
    */
   getStorageInfoSync(): StorageInfo {
@@ -36,7 +35,6 @@ export class WebLocalStorage<
 
   /**
    * 获取当前命名空间下的 key 列表。
-   * @param 无参数
    * @returns key 列表。
    */
   getKeys(): StorageKey<Schema>[] {
@@ -45,7 +43,6 @@ export class WebLocalStorage<
 
   /**
    * 兼容旧版的 key 列表方法。
-   * @param 无参数
    * @returns key 列表。
    * @deprecated 使用 getKeys() 替代。
    */
@@ -55,7 +52,6 @@ export class WebLocalStorage<
 
   /**
    * 同步清空存储。
-   * @param 无参数
    * @returns 无返回值。
    */
   clearStorageSync(): void {
