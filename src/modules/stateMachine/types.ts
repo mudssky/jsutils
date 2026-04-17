@@ -39,6 +39,22 @@ export interface MachineTransitionArgs<
 }
 
 /**
+ * 进入或离开状态钩子拿到的参数。
+ *
+ * @typeParam TState - 状态字面量联合类型
+ * @typeParam TContext - 上下文对象类型
+ * @typeParam TEvent - 触发本次变化的事件类型
+ * @public
+ */
+export interface MachineHookArgs<
+  TState extends string,
+  TContext,
+  TEvent extends { type: string },
+> extends MachineSnapshot<TState, TContext> {
+  event: TEvent
+}
+
+/**
  * 单条事件转移配置。
  *
  * @typeParam TState - 状态字面量联合类型
@@ -105,6 +121,8 @@ export interface MachineStateConfig<
   TEvent extends { type: string },
 > {
   on?: MachineTransitions<TState, TContext, TEvent>
+  onEnter?: (args: MachineHookArgs<TState, TContext, TEvent>) => void
+  onExit?: (args: MachineHookArgs<TState, TContext, TEvent>) => void
 }
 
 /**
@@ -137,4 +155,37 @@ export interface MachineTransitionResult<TState extends string, TContext> {
   changed: boolean
   stateChanged: boolean
   snapshot: MachineSnapshot<TState, TContext>
+}
+
+/**
+ * 状态机快照变更监听器。
+ *
+ * @typeParam TState - 状态字面量联合类型
+ * @typeParam TContext - 上下文对象类型
+ * @public
+ */
+export type MachineListener<TState extends string, TContext> = (
+  snapshot: MachineSnapshot<TState, TContext>,
+) => void
+
+/**
+ * 状态机实例公开接口。
+ *
+ * @typeParam TState - 状态字面量联合类型
+ * @typeParam TContext - 上下文对象类型
+ * @typeParam TEvent - 事件联合类型
+ * @public
+ */
+export interface MachineInstance<
+  TState extends string,
+  TContext,
+  TEvent extends { type: string },
+> {
+  getState: () => TState
+  getContext: () => TContext
+  getSnapshot: () => MachineSnapshot<TState, TContext>
+  send: (event: TEvent) => MachineSnapshot<TState, TContext>
+  can: (event: TEvent) => boolean
+  matches: (state: TState) => boolean
+  subscribe: (listener: MachineListener<TState, TContext>) => () => void
 }
