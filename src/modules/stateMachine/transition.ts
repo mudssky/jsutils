@@ -9,7 +9,7 @@ import type {
 /**
  * 计算一次事件触发后的状态机快照变化。
  *
- * @typeParam TState - 状态字面量联合类型
+ * @typeParam TValue - 状态值字面量联合类型
  * @typeParam TContext - 上下文对象类型
  * @typeParam TEvent - 事件联合类型
  * @param config - 状态机配置
@@ -19,18 +19,18 @@ import type {
  * @public
  */
 export function transition<
-  TState extends string,
+  TValue extends string,
   TContext,
   TEvent extends { type: string },
 >(
-  config: MachineConfig<TState, TContext, TEvent>,
-  snapshot: MachineSnapshot<TState, TContext>,
+  config: MachineConfig<TValue, TContext, TEvent>,
+  snapshot: MachineSnapshot<TValue, TContext>,
   event: TEvent,
-): MachineTransitionResult<TState, TContext> {
-  const stateConfig = config.states[snapshot.state]
+): MachineTransitionResult<TValue, TContext> {
+  const stateConfig = config.states[snapshot.value]
   const transitionConfig =
     stateConfig?.on?.[
-      event.type as keyof MachineTransitions<TState, TContext, TEvent>
+      event.type as keyof MachineTransitions<TValue, TContext, TEvent>
     ]
 
   if (!transitionConfig) {
@@ -42,8 +42,8 @@ export function transition<
     }
   }
 
-  const args: MachineTransitionArgs<TState, TContext, TEvent> = {
-    state: snapshot.state,
+  const args: MachineTransitionArgs<TValue, TContext, TEvent> = {
+    value: snapshot.value,
     context: snapshot.context,
     event,
   }
@@ -57,17 +57,23 @@ export function transition<
     }
   }
 
-  const nextContext = transitionConfig.reduce
-    ? transitionConfig.reduce(args as never)
+  const assignedContext = transitionConfig.assign
+    ? transitionConfig.assign(args as never)
+    : ({} as Partial<TContext>)
+  const nextContext = transitionConfig.assign
+    ? ({
+        ...snapshot.context,
+        ...assignedContext,
+      } as TContext)
     : snapshot.context
-  const nextState = transitionConfig.target
+  const nextValue = transitionConfig.target
 
   return {
     status: 'matched',
-    changed: nextState !== snapshot.state || nextContext !== snapshot.context,
-    stateChanged: nextState !== snapshot.state,
+    changed: nextValue !== snapshot.value || nextContext !== snapshot.context,
+    stateChanged: nextValue !== snapshot.value,
     snapshot: {
-      state: nextState,
+      value: nextValue,
       context: nextContext,
     },
   }
