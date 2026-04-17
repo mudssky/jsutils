@@ -318,7 +318,7 @@ const machine = createMachine({
 为了帮助用户快速理解，首版至少提供以下示例文档：
 
 ```txt
-examples/
+src/modules/stateMachine/examples/
   state-machine-basic-example.md
   state-machine-dialog-example.md
   state-machine-wizard-example.md
