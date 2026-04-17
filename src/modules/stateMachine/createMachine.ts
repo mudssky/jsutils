@@ -10,7 +10,7 @@ import type {
 /**
  * 根据配置创建一个带内部快照和订阅能力的状态机实例。
  *
- * @typeParam TState - 状态字面量联合类型
+ * @typeParam TValue - 状态值字面量联合类型
  * @typeParam TContext - 上下文对象类型
  * @typeParam TEvent - 事件联合类型
  * @param config - 状态机配置
@@ -18,17 +18,17 @@ import type {
  * @public
  */
 export function createMachine<
-  TState extends string,
+  TValue extends string,
   TContext,
   TEvent extends { type: string },
 >(
-  config: MachineConfig<TState, TContext, TEvent>,
-): MachineInstance<TState, TContext, TEvent> {
-  let snapshot: MachineSnapshot<TState, TContext> = {
-    state: config.initial,
+  config: MachineConfig<TValue, TContext, TEvent>,
+): MachineInstance<TValue, TContext, TEvent> {
+  let snapshot: MachineSnapshot<TValue, TContext> = {
+    value: config.initial,
     context: config.context,
   }
-  const listeners = new Set<MachineListener<TState, TContext>>()
+  const listeners = new Set<MachineListener<TValue, TContext>>()
 
   /**
    * 构建钩子执行时需要的参数对象，保证退出和进入钩子拿到的是对应阶段的快照。
@@ -38,10 +38,10 @@ export function createMachine<
    * @returns 返回钩子参数对象
    */
   const createHookArgs = (
-    current: MachineSnapshot<TState, TContext>,
+    current: MachineSnapshot<TValue, TContext>,
     event: TEvent,
-  ): MachineHookArgs<TState, TContext, TEvent> => ({
-    state: current.state,
+  ): MachineHookArgs<TValue, TContext, TEvent> => ({
+    value: current.value,
     context: current.context,
     event,
   })
@@ -56,7 +56,7 @@ export function createMachine<
   }
 
   return {
-    getState: () => snapshot.state,
+    getValue: () => snapshot.value,
     getContext: () => snapshot.context,
     getSnapshot: () => snapshot,
     send: (event) => {
@@ -68,7 +68,7 @@ export function createMachine<
       }
 
       if (result.stateChanged) {
-        config.states[currentSnapshot.state]?.onExit?.(
+        config.states[currentSnapshot.value]?.exit?.(
           createHookArgs(currentSnapshot, event),
         )
       }
@@ -76,16 +76,14 @@ export function createMachine<
       snapshot = result.snapshot
 
       if (result.stateChanged) {
-        config.states[snapshot.state]?.onEnter?.(
-          createHookArgs(snapshot, event),
-        )
+        config.states[snapshot.value]?.entry?.(createHookArgs(snapshot, event))
       }
 
       notify()
       return snapshot
     },
     can: (event) => transition(config, snapshot, event).status === 'matched',
-    matches: (state) => snapshot.state === state,
+    matches: (value) => snapshot.value === value,
     subscribe: (listener) => {
       listeners.add(listener)
 

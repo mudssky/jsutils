@@ -6,6 +6,7 @@ import { assertType, test } from 'vitest'
 type State = 'idle' | 'loading' | 'success'
 type Context = {
   count: number
+  label: string
 }
 type Event = { type: 'START' } | { type: 'RESOLVE'; payload: number }
 
@@ -13,6 +14,7 @@ const config: MachineConfig<State, Context, Event> = {
   initial: 'idle',
   context: {
     count: 0,
+    label: 'ready',
   },
   states: {
     idle: {
@@ -26,7 +28,7 @@ const config: MachineConfig<State, Context, Event> = {
       on: {
         RESOLVE: {
           target: 'success',
-          reduce: ({ context, event }) => ({
+          assign: ({ context, event }) => ({
             count: context.count + event.payload,
           }),
         },
@@ -39,9 +41,10 @@ const config: MachineConfig<State, Context, Event> = {
 const machine = createMachine(config)
 
 test('state machine public api types', () => {
-  assertType<State>(machine.getState())
+  assertType<State>(machine.getValue())
   assertType<Context>(machine.getContext())
   assertType<MachineSnapshot<State, Context>>(machine.getSnapshot())
+  assertType<State>(machine.getSnapshot().value)
   assertType<boolean>(machine.can({ type: 'START' }))
   assertType<boolean>(machine.matches('idle'))
   assertType<MachineSnapshot<State, Context>>(
@@ -59,6 +62,7 @@ const invalidInitial: MachineConfig<State, Context, Event> = {
   initial: 'missing',
   context: {
     count: 0,
+    label: 'ready',
   },
   states: {
     idle: {},
@@ -71,6 +75,7 @@ const invalidTarget: MachineConfig<State, Context, Event> = {
   initial: 'idle',
   context: {
     count: 0,
+    label: 'ready',
   },
   states: {
     idle: {
@@ -88,3 +93,9 @@ const invalidTarget: MachineConfig<State, Context, Event> = {
 
 // @ts-expect-error invalid state for matches
 machine.matches('error')
+
+// @ts-expect-error snapshot should use value instead of state
+machine.getSnapshot().state
+
+// @ts-expect-error instance should use getValue instead of getState
+machine.getState()

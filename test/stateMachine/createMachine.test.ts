@@ -33,36 +33,33 @@ const createConfig = (
       on: {
         RESOLVE: {
           target: 'success',
-          reduce: ({ context }) => ({
-            ...context,
+          assign: () => ({
             message: 'done',
           }),
         },
         FAIL: {
           target: 'error',
           guard: ({ event }) => Boolean(event.payload),
-          reduce: ({ context, event }) => ({
-            ...context,
+          assign: ({ context, event }) => ({
             retryCount: context.retryCount + 1,
             message: event.payload ?? null,
           }),
         },
       },
-      onExit: ({ state, event }) => {
-        sequence.push(`exit:${state}:${event.type}`)
+      exit: ({ value, event }) => {
+        sequence.push(`exit:${value}:${event.type}`)
       },
     },
     success: {
-      onEnter: ({ state, context }) => {
-        sequence.push(`enter:${state}:${context.message}`)
+      entry: ({ value, context }) => {
+        sequence.push(`entry:${value}:${context.message}`)
       },
     },
     error: {
       on: {
         RESET: {
           target: 'idle',
-          reduce: ({ context }) => ({
-            ...context,
+          assign: () => ({
             message: null,
           }),
         },
@@ -75,13 +72,13 @@ describe('createMachine', () => {
   test('initializes with the configured snapshot', () => {
     const machine = createMachine(createConfig())
 
-    expect(machine.getState()).toBe('idle')
+    expect(machine.getValue()).toBe('idle')
     expect(machine.getContext()).toEqual({
       retryCount: 0,
       message: null,
     })
     expect(machine.getSnapshot()).toEqual({
-      state: 'idle',
+      value: 'idle',
       context: {
         retryCount: 0,
         message: null,
@@ -89,7 +86,7 @@ describe('createMachine', () => {
     })
   })
 
-  test('runs exit, commit, enter, subscribe in order', () => {
+  test('runs exit, commit, entry, subscribe in order', () => {
     const sequence: string[] = []
     const machine = createMachine(createConfig(sequence))
 
@@ -97,13 +94,13 @@ describe('createMachine', () => {
     sequence.length = 0
 
     machine.subscribe((snapshot) => {
-      sequence.push(`subscribe:${snapshot.state}:${snapshot.context.message}`)
+      sequence.push(`subscribe:${snapshot.value}:${snapshot.context.message}`)
     })
 
     const nextSnapshot = machine.send({ type: 'RESOLVE' })
 
     expect(nextSnapshot).toEqual({
-      state: 'success',
+      value: 'success',
       context: {
         retryCount: 0,
         message: 'done',
@@ -111,7 +108,7 @@ describe('createMachine', () => {
     })
     expect(sequence).toEqual([
       'exit:loading:RESOLVE',
-      'enter:success:done',
+      'entry:success:done',
       'subscribe:success:done',
     ])
   })
@@ -126,7 +123,7 @@ describe('createMachine', () => {
     const nextSnapshot = machine.send({ type: 'FAIL' })
 
     expect(nextSnapshot).toEqual({
-      state: 'loading',
+      value: 'loading',
       context: {
         retryCount: 0,
         message: null,

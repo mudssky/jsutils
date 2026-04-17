@@ -32,16 +32,14 @@ const config: MachineConfig<RequestState, RequestContext, RequestEvent> = {
       on: {
         RESOLVE: {
           target: 'success',
-          reduce: ({ context }) => ({
-            ...context,
+          assign: () => ({
             message: 'done',
           }),
         },
         REJECT: {
           target: 'error',
           guard: ({ event }) => Boolean(event.payload),
-          reduce: ({ context, event }) => ({
-            ...context,
+          assign: ({ context, event }) => ({
             retryCount: context.retryCount + 1,
             message: event.payload ?? null,
           }),
@@ -53,9 +51,7 @@ const config: MachineConfig<RequestState, RequestContext, RequestEvent> = {
       on: {
         RETRY: {
           target: 'loading',
-          reduce: ({ context }) => ({
-            ...context,
-            retryCount: context.retryCount + 1,
+          assign: () => ({
             message: null,
           }),
         },
@@ -67,7 +63,7 @@ const config: MachineConfig<RequestState, RequestContext, RequestEvent> = {
 describe('transition', () => {
   test('returns ignored result when event is not configured', () => {
     const snapshot: MachineSnapshot<RequestState, RequestContext> = {
-      state: 'idle',
+      value: 'idle',
       context: {
         retryCount: 0,
         message: null,
@@ -83,7 +79,7 @@ describe('transition', () => {
 
   test('returns blocked result when guard returns false', () => {
     const snapshot: MachineSnapshot<RequestState, RequestContext> = {
-      state: 'loading',
+      value: 'loading',
       context: {
         retryCount: 0,
         message: null,
@@ -97,9 +93,9 @@ describe('transition', () => {
     expect(result.changed).toBe(false)
   })
 
-  test('returns next snapshot when reduce updates context', () => {
+  test('returns next snapshot when assign shallow merges context', () => {
     const snapshot: MachineSnapshot<RequestState, RequestContext> = {
-      state: 'error',
+      value: 'error',
       context: {
         retryCount: 1,
         message: 'boom',
@@ -111,9 +107,9 @@ describe('transition', () => {
     expect(result.status).toBe('matched')
     expect(result.stateChanged).toBe(true)
     expect(result.snapshot).toEqual({
-      state: 'loading',
+      value: 'loading',
       context: {
-        retryCount: 2,
+        retryCount: 1,
         message: null,
       },
     })
