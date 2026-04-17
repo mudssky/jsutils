@@ -28,12 +28,16 @@ const requestMachine = createMachine<State, Context, Event>({
     },
     loading: {
       on: {
-        RESOLVE: { target: 'success' },
+        RESOLVE: {
+          target: 'success',
+          assign: () => ({
+            message: 'done',
+          }),
+        },
         REJECT: {
           target: 'error',
           guard: ({ event }) => Boolean(event.payload),
-          reduce: ({ context, event }) => ({
-            ...context,
+          assign: ({ context, event }) => ({
             retryCount: context.retryCount + 1,
             message: event.payload ?? null,
           }),
@@ -45,9 +49,7 @@ const requestMachine = createMachine<State, Context, Event>({
       on: {
         RETRY: {
           target: 'loading',
-          reduce: ({ context }) => ({
-            ...context,
-            retryCount: context.retryCount + 1,
+          assign: () => ({
             message: null,
           }),
         },
@@ -64,5 +66,5 @@ console.log(requestMachine.getSnapshot())
 这个例子适合表达最常见的请求阶段流转，同时演示：
 
 - `guard` 如何阻止无效失败事件
-- `reduce` 如何同步更新重试计数和错误消息
+- `assign` 如何同步更新重试计数和错误消息
 - `getSnapshot()` 如何统一拿到最终状态和上下文

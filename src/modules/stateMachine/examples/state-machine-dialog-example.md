@@ -30,17 +30,22 @@ const dialogMachine = createMachine<State, Context, Event>({
       },
     },
     open: {
+      exit: ({ value }) => {
+        console.log('leaving', value)
+      },
       on: {
         CLOSE: {
           target: 'closing',
-          reduce: ({ context, event }) => ({
-            ...context,
+          assign: ({ event }) => ({
             lastReason: event.payload ?? 'manual close',
           }),
         },
       },
     },
     closing: {
+      entry: ({ value, context }) => {
+        console.log(value, context.lastReason)
+      },
       on: {
         CLOSED: { target: 'closed' },
       },
