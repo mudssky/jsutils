@@ -26,8 +26,7 @@ const wizardMachine = createMachine<State, Context, Event>({
         NEXT_FROM_STEP1: {
           target: 'step2',
           guard: ({ event }) => event.payload.name.trim().length > 0,
-          reduce: ({ context, event }) => ({
-            ...context,
+          assign: ({ event }) => ({
             name: event.payload.name,
           }),
         },
@@ -38,8 +37,7 @@ const wizardMachine = createMachine<State, Context, Event>({
         NEXT_FROM_STEP2: {
           target: 'confirm',
           guard: ({ event }) => event.payload.email.includes('@'),
-          reduce: ({ context, event }) => ({
-            ...context,
+          assign: ({ event }) => ({
             email: event.payload.email,
           }),
         },
@@ -65,7 +63,8 @@ wizardMachine.send({
   payload: { email: 'mudssky@example.com' },
 })
 wizardMachine.send({ type: 'SUBMIT' })
-console.log(wizardMachine.getSnapshot())
+console.log(wizardMachine.getSnapshot().value)
+console.log(wizardMachine.getSnapshot().context)
 ```
 
 这个例子适合把多步骤校验、回退和最终确认放到同一个状态图里，避免把步骤流

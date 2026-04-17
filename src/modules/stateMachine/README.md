@@ -41,26 +41,35 @@ const machine = createMachine<RequestState, RequestContext, RequestEvent>({
     },
     loading: {
       on: {
-        RESOLVE: { target: 'success' },
+        RESOLVE: {
+          target: 'success',
+          assign: () => ({
+            message: 'done',
+          }),
+        },
         REJECT: {
           target: 'error',
           guard: ({ event }) => Boolean(event.payload),
-          reduce: ({ context, event }) => ({
-            ...context,
+          assign: ({ context, event }) => ({
             retryCount: context.retryCount + 1,
             message: event.payload ?? null,
           }),
         },
       },
+      exit: ({ value, event }) => {
+        console.log('exit', value, event.type)
+      },
     },
-    success: {},
+    success: {
+      entry: ({ value, context }) => {
+        console.log('entry', value, context.message)
+      },
+    },
     error: {
       on: {
         RETRY: {
           target: 'loading',
-          reduce: ({ context }) => ({
-            ...context,
-            retryCount: context.retryCount + 1,
+          assign: () => ({
             message: null,
           }),
         },
@@ -76,31 +85,34 @@ console.log(machine.getSnapshot())
 
 ## 核心概念
 
-- `state`：当前流程阶段。
+- `value`：当前流程阶段。
 - `event`：触发状态变化的事件对象，至少包含 `type`。
 - `context`：和流程紧密相关的小块业务数据。
 - `guard`：跳转前的同步校验，返回 `false` 时阻止状态变化。
-- `reduce`：跳转时计算新的 `context`。
-- `onEnter` / `onExit`：真正发生状态切换时执行的同步副作用。
+- `assign`：跳转时返回要更新的上下文字段，内部做浅合并。
+- `entry` / `exit`：真正发生状态切换时执行的同步副作用。
 
 ## 实例 API
 
-- `getState()`：获取当前状态。
+- `getValue()`：获取当前状态值。
 - `getContext()`：获取当前上下文。
-- `getSnapshot()`：一次性获取 `{ state, context }`。
+- `getSnapshot()`：一次性获取 `{ value, context }`。
 - `send(event)`：发送事件并返回提交后的快照。
 - `can(event)`：判断当前状态下该事件是否可进入有效转移。
-- `matches(state)`：判断当前是否处于指定状态。
+- `matches(value)`：判断当前是否处于指定状态值。
 - `subscribe(listener)`：订阅快照变更，返回取消订阅函数。
 
 ## 与前端状态管理结合
 
 - 组件内局部流程：用 `subscribe()` 把 snapshot 同步到组件状态。
 - 全局 store：在 action 中调用 `send(event)`，再把 snapshot 写回 store。
-- 可序列化 store：只在 store 中保存 `{ state, context }`，让状态机负责流转规则。
+- 可序列化 store：只在 store 中保存 `{ value, context }`，让状态机负责流转规则。
 
 不建议把整个业务 store 都放进 machine context。状态机更适合做“流程约束层”，
 而不是“状态存储层”。
+
+当前模块采用更接近 XState 的配置词汇与 snapshot 形态，但仍保持轻量同步核心，
+并未引入 `createActor()`、`start()` 等 actor 运行时模型。
 
 ## 设计边界
 
