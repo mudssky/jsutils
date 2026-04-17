@@ -1,5 +1,5 @@
-import { createMachine } from '@/modules/stateMachine/createMachine'
-import type { MachineConfig } from '@/modules/stateMachine/types'
+import type { MachineConfig } from '@mudssky/jsutils'
+import { createMachine } from '@mudssky/jsutils'
 import { describe, expect, test, vi } from 'vitest'
 
 type FlowState = 'idle' | 'loading' | 'success' | 'error'
