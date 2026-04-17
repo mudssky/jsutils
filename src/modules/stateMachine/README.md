@@ -115,6 +115,6 @@ console.log(machine.getSnapshot())
 
 ## 示例
 
-- [基础请求流](../../../examples/state-machine-basic-example.md)
-- [对话框流程](../../../examples/state-machine-dialog-example.md)
-- [多步骤流程](../../../examples/state-machine-wizard-example.md)
+- [基础请求流](./examples/state-machine-basic-example.md)
+- [对话框流程](./examples/state-machine-dialog-example.md)
+- [多步骤流程](./examples/state-machine-wizard-example.md)

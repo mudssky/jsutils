@@ -188,4 +188,4 @@ const keywords = highlighter.getCurrentKeywords()
 
 ## 示例页面
 
-查看 `examples/highlighter-multiple-keywords.html` 文件，了解完整的交互式示例。
+查看 `src/modules/dom/examples/highlighter-multiple-keywords.html` 文件，了解完整的交互式示例。
