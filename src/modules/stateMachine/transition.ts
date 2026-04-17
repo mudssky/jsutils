@@ -3,6 +3,7 @@ import type {
   MachineSnapshot,
   MachineTransitionArgs,
   MachineTransitionResult,
+  MachineTransitions,
 } from './types'
 
 /**
@@ -27,7 +28,10 @@ export function transition<
   event: TEvent,
 ): MachineTransitionResult<TState, TContext> {
   const stateConfig = config.states[snapshot.state]
-  const transitionConfig = stateConfig?.on?.[event.type]
+  const transitionConfig =
+    stateConfig?.on?.[
+      event.type as keyof MachineTransitions<TState, TContext, TEvent>
+    ]
 
   if (!transitionConfig) {
     return {
