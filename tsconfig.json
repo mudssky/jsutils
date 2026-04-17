@@ -33,18 +33,19 @@
     "module": "ES2022" /* Specify what module code is generated. */,
     // "rootDir": "./",                                  /* Specify the root folder within your source files. */
     "moduleResolution": "Bundler" /* Specify how TypeScript looks up a file from a given module specifier. */,
-    "baseUrl": "." /* Specify the base directory to resolve non-relative module names. */,
     "paths": {
       //   "@mudssky/jsutils": ["."],
       "@mudssky/jsutils": ["./src/index.ts"],
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
       // "*": ["src/types/*.d.ts"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [
     //   "src/types"
     // ] /* Specify multiple folders that act like './node_modules/@types'. */,
-    // "types": ["src/types"] /* Specify type package names to be included without being referenced in a source file. */,
+    "types": [
+      "node"
+    ] /* 显式注入 Node 全局类型，避免测试里的 process/global 在类型检查时丢失。 */,
     // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
     // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
     // "allowImportingTsExtensions": true,               /* Allow imports to include TypeScript file extensions. Requires '--moduleResolution bundler' and either '--noEmit' or '--emitDeclarationOnly' to be set. */
