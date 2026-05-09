@@ -275,10 +275,13 @@ describe('debounceMethod decorator', () => {
 
   it('should throw error if not decorating a method', () => {
     expect(() => {
-      debounceMethod(100)(undefined as any, {
-        kind: 'field',
-        name: 'notAMethod',
-      } as any)
+      debounceMethod(100)(
+        undefined as any,
+        {
+          kind: 'field',
+          name: 'notAMethod',
+        } as any,
+      )
     }).toThrow(TypeError)
   })
 })
