@@ -1,12 +1,6 @@
-# Backend Development Guidelines
+# 核心库开发规范
 
-> Best practices for backend development in this project.
-
----
-
-## Overview
-
-This directory contains guidelines for backend development. Fill in each file with your project's specific conventions.
+> `@mudssky/jsutils` — TypeScript 工具库的开发约定。
 
 ---
 
@@ -14,25 +8,8 @@ This directory contains guidelines for backend development. Fill in each file wi
 
 | Guide | Description | Status |
 |-------|-------------|--------|
-| [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
-| [Database Guidelines](./database-guidelines.md) | ORM patterns, queries, migrations | To fill |
-| [Error Handling](./error-handling.md) | Error types, handling strategies | To fill |
-| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | To fill |
-| [Logging Guidelines](./logging-guidelines.md) | Structured logging, log levels | To fill |
-
----
-
-## How to Fill These Guidelines
-
-For each guideline file:
-
-1. Document your project's **actual conventions** (not ideals)
-2. Include **code examples** from your codebase
-3. List **forbidden patterns** and why
-4. Add **common mistakes** your team has made
-
-The goal is to help AI assistants and new team members understand how YOUR project works.
-
----
-
-**Language**: All documentation should be written in **English**.
+| [Directory Structure](./directory-structure.md) | 模块组织、文件布局 | Done |
+| [Database Guidelines](./database-guidelines.md) | 不适用（纯工具库无数据库） | N/A |
+| [Error Handling](./error-handling.md) | ArgumentError、优雅降级模式 | Done |
+| [Quality Guidelines](./quality-guidelines.md) | linting、提交规范、禁止模式 | Done |
+| [Logging Guidelines](./logging-guidelines.md) | Logger 模块使用 | Done |
