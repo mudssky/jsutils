@@ -9,6 +9,60 @@ import {
   performanceMonitor,
 } from '../src/modules/decorator'
 
+type TestMethod = (this: unknown, ...args: any[]) => any
+
+type Stage3MethodDecorator = (
+  originalMethod: TestMethod,
+  context: ClassMethodDecoratorContext<unknown, TestMethod>,
+) => TestMethod | void
+
+/**
+ * 手动应用 Stage 3 方法装饰器，避免测试文件保留运行时尚不支持的 @ 语法。
+ *
+ * @param target - 包含待装饰方法的原型对象
+ * @param methodName - 待装饰的方法名
+ * @param decorator - 要应用的方法装饰器
+ * @returns 无返回值
+ */
+function applyMethodDecorator<T extends object>(
+  target: T,
+  methodName: string & keyof T,
+  decorator: Stage3MethodDecorator,
+): void {
+  const descriptor = Object.getOwnPropertyDescriptor(target, methodName)
+  const originalMethod = descriptor?.value
+
+  if (typeof originalMethod !== 'function') {
+    throw new TypeError('The decorated member must be a method.')
+  }
+
+  const context = {
+    kind: 'method',
+    name: methodName,
+    static: false,
+    private: false,
+    access: {
+      has(object: unknown) {
+        return Object(object) === object && methodName in (object as object)
+      },
+      get(object: unknown) {
+        return (object as T)[methodName] as TestMethod
+      },
+    },
+    addInitializer() {
+      throw new Error('测试辅助函数不支持 initializer。')
+    },
+    metadata: {},
+  } satisfies ClassMethodDecoratorContext<unknown, TestMethod>
+
+  const decoratedMethod = decorator(originalMethod as TestMethod, context)
+
+  Object.defineProperty(target, methodName, {
+    ...descriptor,
+    value: decoratedMethod ?? originalMethod,
+  })
+}
+
 describe('debounceMethod decorator', () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -18,11 +72,11 @@ describe('debounceMethod decorator', () => {
     const mockFn = vi.fn()
 
     class TestClass {
-      @debounceMethod(100)
       testMethod(...args: any[]) {
         mockFn(...args)
       }
     }
+    applyMethodDecorator(TestClass.prototype, 'testMethod', debounceMethod(100))
 
     const instance = new TestClass()
 
@@ -44,11 +98,15 @@ describe('debounceMethod decorator', () => {
     const mockFn = vi.fn()
 
     class TestClass {
-      @debounceMethod(100, { leading: true, trailing: false })
       testMethod(...args: any[]) {
         mockFn(...args)
       }
     }
+    applyMethodDecorator(
+      TestClass.prototype,
+      'testMethod',
+      debounceMethod(100, { leading: true, trailing: false }),
+    )
 
     const instance = new TestClass()
 
@@ -69,11 +127,15 @@ describe('debounceMethod decorator', () => {
     const mockFn = vi.fn()
 
     class TestClass {
-      @debounceMethod(100, { trailing: true, leading: false })
       testMethod(...args: any[]) {
         mockFn(...args)
       }
     }
+    applyMethodDecorator(
+      TestClass.prototype,
+      'testMethod',
+      debounceMethod(100, { trailing: true, leading: false }),
+    )
 
     const instance = new TestClass()
 
@@ -95,11 +157,15 @@ describe('debounceMethod decorator', () => {
     const mockFn = vi.fn()
 
     class TestClass {
-      @debounceMethod(100, { leading: true, trailing: true })
       testMethod(...args: any[]) {
         mockFn(...args)
       }
     }
+    applyMethodDecorator(
+      TestClass.prototype,
+      'testMethod',
+      debounceMethod(100, { leading: true, trailing: true }),
+    )
 
     const instance = new TestClass()
 
@@ -132,11 +198,11 @@ describe('debounceMethod decorator', () => {
     const mockFn = vi.fn()
 
     class TestClass {
-      @debounceMethod(100)
       testMethod(...args: any[]) {
         mockFn(...args)
       }
     }
+    applyMethodDecorator(TestClass.prototype, 'testMethod', debounceMethod(100))
 
     const instance = new TestClass()
     // Type assertion to access cancel, as it's added by the debounce function
@@ -157,12 +223,12 @@ describe('debounceMethod decorator', () => {
     const mockFn = vi.fn()
 
     class TestClass {
-      @debounceMethod(100)
       testMethod(...args: any[]) {
         mockFn(...args)
         return args[0] // Return something to check flush's return value
       }
     }
+    applyMethodDecorator(TestClass.prototype, 'testMethod', debounceMethod(100))
 
     const instance = new TestClass()
     const debouncedTestMethod = instance.testMethod as unknown as {
@@ -187,11 +253,11 @@ describe('debounceMethod decorator', () => {
     const mockFn = vi.fn()
 
     class TestClass {
-      @debounceMethod(100)
       testMethod(...args: any[]) {
         mockFn(...args)
       }
     }
+    applyMethodDecorator(TestClass.prototype, 'testMethod', debounceMethod(100))
 
     const instance = new TestClass()
     const debouncedTestMethod = instance.testMethod as unknown as {
@@ -209,17 +275,11 @@ describe('debounceMethod decorator', () => {
 
   it('should throw error if not decorating a method', () => {
     expect(() => {
-      class TestClass {
-        // @ts-expect-error: Testing invalid usage
-        @debounceMethod(100)
-        public notAMethod: string = 'test'
-      }
-      new TestClass()
+      debounceMethod(100)(undefined as any, {
+        kind: 'field',
+        name: 'notAMethod',
+      } as any)
     }).toThrow(TypeError)
-    // Note: The actual error might be thrown during class instantiation or when the property is accessed,
-    // depending on how decorators are transpiled and applied. Vitest might not catch errors thrown
-    // directly during class definition time in this manner for property decorators.
-    // A more robust test might involve checking the descriptor modification.
   })
 })
 
@@ -239,7 +299,6 @@ describe('Performance Decorators', () => {
   describe('performanceMonitor', () => {
     it('should monitor method performance', async () => {
       class TestClass {
-        @performanceMonitor()
         simpleMethod() {
           let sum = 0
           for (let i = 0; i < 1000; i++) {
@@ -248,6 +307,11 @@ describe('Performance Decorators', () => {
           return sum
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'simpleMethod',
+        performanceMonitor(),
+      )
 
       const instance = new TestClass()
       const result = await instance.simpleMethod()
@@ -258,11 +322,15 @@ describe('Performance Decorators', () => {
 
     it('should log results when enabled', async () => {
       class TestClass {
-        @performanceMonitor({ logResult: true })
         loggedMethod(multiplier: number) {
           return Array.from({ length: 100 }, (_, i) => i * multiplier)
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'loggedMethod',
+        performanceMonitor({ logResult: true }),
+      )
 
       const instance = new TestClass()
       await instance.loggedMethod(2)
@@ -276,11 +344,15 @@ describe('Performance Decorators', () => {
 
     it('should handle async methods', async () => {
       class TestClass {
-        @performanceMonitor()
         async asyncMethod() {
           return Promise.resolve('done')
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'asyncMethod',
+        performanceMonitor(),
+      )
 
       const instance = new TestClass()
       const result = await instance.asyncMethod()
@@ -290,11 +362,15 @@ describe('Performance Decorators', () => {
 
     it('should handle methods that throw errors', async () => {
       class TestClass {
-        @performanceMonitor()
         errorMethod() {
           throw new Error('Test error')
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'errorMethod',
+        performanceMonitor(),
+      )
 
       const instance = new TestClass()
 
@@ -305,11 +381,15 @@ describe('Performance Decorators', () => {
   describe('performanceBenchmark', () => {
     it('should benchmark method performance', async () => {
       class TestClass {
-        @performanceBenchmark({ timeLimit: 100 })
         benchmarkMethod() {
           return Math.sqrt(Math.random() * 1000)
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'benchmarkMethod',
+        performanceBenchmark({ timeLimit: 100 }),
+      )
 
       const instance = new TestClass()
       const result = await instance.benchmarkMethod()
@@ -319,7 +399,6 @@ describe('Performance Decorators', () => {
 
     it('should log benchmark results when enabled', async () => {
       class TestClass {
-        @performanceBenchmark({ iterations: 10, logResult: true })
         loggedBenchmark() {
           let sum = 0
           for (let i = 0; i < 50; i++) {
@@ -328,6 +407,11 @@ describe('Performance Decorators', () => {
           return sum
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'loggedBenchmark',
+        performanceBenchmark({ iterations: 10, logResult: true }),
+      )
 
       const instance = new TestClass()
       await instance.loggedBenchmark()
@@ -343,18 +427,26 @@ describe('Performance Decorators', () => {
   describe('performanceCompare', () => {
     it('should collect performance data for comparison', async () => {
       class TestClass {
-        @performanceCompare('compareGroup')
         mapMethod() {
           return [1, 2, 3, 4, 5].map((x) => x * 2)
         }
 
-        @performanceCompare('compareGroup')
         forEachMethod() {
           const result: number[] = []
           ;[1, 2, 3, 4, 5].forEach((x) => result.push(x * 2))
           return result
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'mapMethod',
+        performanceCompare('compareGroup'),
+      )
+      applyMethodDecorator(
+        TestClass.prototype,
+        'forEachMethod',
+        performanceCompare('compareGroup'),
+      )
 
       const instance = new TestClass()
       const result1 = await instance.mapMethod()
@@ -377,11 +469,15 @@ describe('Performance Decorators', () => {
 
     it('should return formatted report with data', async () => {
       class TestClass {
-        @performanceCompare('testGroup')
         testMethod() {
           return Array.from({ length: 100 }, (_, i) => i * 2)
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'testMethod',
+        performanceCompare('testGroup'),
+      )
 
       const instance = new TestClass()
       await instance.testMethod()
@@ -395,11 +491,15 @@ describe('Performance Decorators', () => {
   describe('clearPerformanceData', () => {
     it('should clear all performance data', async () => {
       class TestClass {
-        @performanceCompare('testGroup')
         testMethod() {
           return 42
         }
       }
+      applyMethodDecorator(
+        TestClass.prototype,
+        'testMethod',
+        performanceCompare('testGroup'),
+      )
 
       const instance = new TestClass()
       await instance.testMethod()
