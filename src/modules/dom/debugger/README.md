@@ -15,19 +15,23 @@
 ### 函数式 API
 
 ```typescript
-import { debugSelectors, diagnoseSelectors, formatDiagnostics } from '@mudssky/jsutils'
+import {
+  debugSelectors,
+  diagnoseSelectors,
+  formatDiagnostics,
+} from '@mudssky/jsutils'
 
 // 基础检测
 const results = debugSelectors({
   toolbar: '.bar-top',
   table: '.art-table',
-  customPanel: (root) => root.querySelector('[data-role="panel"]')
+  customPanel: (root) => root.querySelector('[data-role="panel"]'),
 })
 
 // 完整诊断（含排障建议和 DOM 上下文）
 const diagnostics = diagnoseSelectors({
   toolbar: '.bar-top',
-  table: '.art-table'
+  table: '.art-table',
 })
 
 // 格式化文本输出
@@ -46,7 +50,7 @@ import { DomDebugger } from '@mudssky/jsutils'
 
 const dbg = new DomDebugger({
   toolbar: '.bar-top',
-  table: '.art-table'
+  table: '.art-table',
 })
 
 // 同步检测
@@ -70,30 +74,30 @@ dbg.removeSelectors('table')
 
 ### 函数
 
-| 函数 | 说明 |
-|------|------|
-| `debugSelectors(selectors, options?)` | 纯函数，返回检测结果数组 |
+| 函数                                     | 说明                                                |
+| ---------------------------------------- | --------------------------------------------------- |
+| `debugSelectors(selectors, options?)`    | 纯函数，返回检测结果数组                            |
 | `diagnoseSelectors(selectors, options?)` | 纯函数，返回诊断报告数组（含排障建议和 DOM 上下文） |
-| `formatDiagnostics(diagnostics)` | 将诊断报告格式化为多行文本 |
-| `isValidSelector(selector)` | 校验 CSS 选择器语法是否合法 |
+| `formatDiagnostics(diagnostics)`         | 将诊断报告格式化为多行文本                          |
+| `isValidSelector(selector)`              | 校验 CSS 选择器语法是否合法                         |
 
 ### DomDebugger 类
 
-| 方法 | 说明 |
-|------|------|
-| `check()` | 执行检测，返回 `SelectorResult[]` |
-| `diagnose()` | 生成诊断报告，返回 `SelectorDiagnostic[]` |
-| `diagnoseText()` | 生成格式化文本，返回 `string` |
-| `waitFor(name, options?)` | 异步等待选择器匹配，返回 `Promise<WaitForResult>` |
-| `addSelectors(selectors)` | 添加选择器 |
-| `removeSelectors(...names)` | 移除选择器 |
+| 方法                        | 说明                                              |
+| --------------------------- | ------------------------------------------------- |
+| `check()`                   | 执行检测，返回 `SelectorResult[]`                 |
+| `diagnose()`                | 生成诊断报告，返回 `SelectorDiagnostic[]`         |
+| `diagnoseText()`            | 生成格式化文本，返回 `string`                     |
+| `waitFor(name, options?)`   | 异步等待选择器匹配，返回 `Promise<WaitForResult>` |
+| `addSelectors(selectors)`   | 添加选择器                                        |
+| `removeSelectors(...names)` | 移除选择器                                        |
 
 ### 未匹配原因
 
-| 枚举值 | 说明 |
-|--------|------|
-| `NOT_FOUND` | 选择器未匹配到任何元素 |
-| `INVALID_SELECTOR` | 选择器语法非法 |
-| `HIDDEN` | 元素存在但不可见 |
-| `SHADOW_DOM` | 元素在 Shadow DOM 内 |
-| `IFRAME` | 元素在 iframe 内 |
+| 枚举值             | 说明                   |
+| ------------------ | ---------------------- |
+| `NOT_FOUND`        | 选择器未匹配到任何元素 |
+| `INVALID_SELECTOR` | 选择器语法非法         |
+| `HIDDEN`           | 元素存在但不可见       |
+| `SHADOW_DOM`       | 元素在 Shadow DOM 内   |
+| `IFRAME`           | 元素在 iframe 内       |

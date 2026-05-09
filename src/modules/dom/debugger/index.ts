@@ -1,8 +1,4 @@
-import {
-  debugSelectors,
-  diagnoseSelectors,
-  formatDiagnostics,
-} from './core'
+import { debugSelectors, diagnoseSelectors, formatDiagnostics } from './core'
 import type {
   DebugOptions,
   SelectorDiagnostic,
@@ -251,8 +247,8 @@ export {
   debugSelectors,
   diagnoseSelectors,
   formatDiagnostics,
+  isValidSelector,
 } from './core'
-export { isValidSelector } from './core'
 
 export type {
   DebugOptions,

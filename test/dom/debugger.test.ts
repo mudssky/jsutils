@@ -45,10 +45,7 @@ describe('debugSelectors', () => {
   })
 
   test('匹配已存在的选择器', () => {
-    const results = debugSelectors(
-      { toolbar: '.bar-top' },
-      { root: container },
-    )
+    const results = debugSelectors({ toolbar: '.bar-top' }, { root: container })
     expect(results).toHaveLength(1)
     expect(results[0].name).toBe('toolbar')
     expect(results[0].matched).toBe(true)
@@ -65,10 +62,7 @@ describe('debugSelectors', () => {
   })
 
   test('非法选择器返回 INVALID_SELECTOR', () => {
-    const results = debugSelectors(
-      { bad: '[invalid' },
-      { root: container },
-    )
+    const results = debugSelectors({ bad: '[invalid' }, { root: container })
     expect(results[0].matched).toBe(false)
     expect(results[0].reason).toBe(FailReason.INVALID_SELECTOR)
   })
@@ -83,10 +77,7 @@ describe('debugSelectors', () => {
   })
 
   test('自定义断言函数未匹配', () => {
-    const results = debugSelectors(
-      { custom: () => null },
-      { root: container },
-    )
+    const results = debugSelectors({ custom: () => null }, { root: container })
     expect(results[0].matched).toBe(false)
     expect(results[0].reason).toBe(FailReason.NOT_FOUND)
   })
@@ -213,10 +204,7 @@ describe('DomDebugger', () => {
   })
 
   test('diagnose() 返回诊断报告', () => {
-    const dbg = new DomDebugger(
-      { toolbar: '.bar-top' },
-      { root: container },
-    )
+    const dbg = new DomDebugger({ toolbar: '.bar-top' }, { root: container })
     const diagnostics = dbg.diagnose()
 
     expect(diagnostics).toHaveLength(1)
@@ -224,10 +212,7 @@ describe('DomDebugger', () => {
   })
 
   test('diagnoseText() 返回格式化文本', () => {
-    const dbg = new DomDebugger(
-      { toolbar: '.bar-top' },
-      { root: container },
-    )
+    const dbg = new DomDebugger({ toolbar: '.bar-top' }, { root: container })
     const text = dbg.diagnoseText()
 
     expect(typeof text).toBe('string')
@@ -235,10 +220,7 @@ describe('DomDebugger', () => {
   })
 
   test('addSelectors 添加新选择器', () => {
-    const dbg = new DomDebugger(
-      { toolbar: '.bar-top' },
-      { root: container },
-    )
+    const dbg = new DomDebugger({ toolbar: '.bar-top' }, { root: container })
     dbg.addSelectors({ table: '.art-table' })
 
     expect(dbg.getSelectorNames()).toEqual(['toolbar', 'table'])
@@ -255,10 +237,7 @@ describe('DomDebugger', () => {
   })
 
   test('getLastResults 返回最后一次检测的结果', () => {
-    const dbg = new DomDebugger(
-      { toolbar: '.bar-top' },
-      { root: container },
-    )
+    const dbg = new DomDebugger({ toolbar: '.bar-top' }, { root: container })
 
     expect(dbg.getLastResults()).toHaveLength(0)
     dbg.check()
@@ -266,10 +245,7 @@ describe('DomDebugger', () => {
   })
 
   test('waitFor 立即匹配到已存在的元素', async () => {
-    const dbg = new DomDebugger(
-      { toolbar: '.bar-top' },
-      { root: container },
-    )
+    const dbg = new DomDebugger({ toolbar: '.bar-top' }, { root: container })
     const result = await dbg.waitFor('toolbar', { timeout: 100 })
 
     expect(result.matched).toBe(true)
@@ -286,10 +262,7 @@ describe('DomDebugger', () => {
   })
 
   test('waitFor 超时返回未匹配', async () => {
-    const dbg = new DomDebugger(
-      { missing: '.never-here' },
-      { root: container },
-    )
+    const dbg = new DomDebugger({ missing: '.never-here' }, { root: container })
     const result = await dbg.waitFor('missing', { timeout: 200, interval: 50 })
 
     expect(result.matched).toBe(false)
@@ -297,10 +270,7 @@ describe('DomDebugger', () => {
   })
 
   test('waitFor 在 DOM 变化后匹配成功', async () => {
-    const dbg = new DomDebugger(
-      { dynamic: '.dynamic-el' },
-      { root: container },
-    )
+    const dbg = new DomDebugger({ dynamic: '.dynamic-el' }, { root: container })
 
     // 延迟添加元素
     setTimeout(() => {

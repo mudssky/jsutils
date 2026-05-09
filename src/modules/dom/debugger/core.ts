@@ -170,7 +170,10 @@ function collectContext(
 
   const parent = nearestElement?.parentElement
   const nearbyHtmlSnippet = nearestElement?.parentElement
-    ? truncateHtml(nearestElement.parentElement.outerHTML, HTML_SNIPPET_MAX_LENGTH)
+    ? truncateHtml(
+        nearestElement.parentElement.outerHTML,
+        HTML_SNIPPET_MAX_LENGTH,
+      )
     : null
 
   return {
@@ -295,9 +298,7 @@ export function formatDiagnostics(diagnostics: SelectorDiagnostic[]): string {
       }
       if (d.context) {
         if (d.context.nearestMatchedAncestor) {
-          lines.push(
-            `  最近匹配祖先: ${d.context.nearestMatchedAncestor}`,
-          )
+          lines.push(`  最近匹配祖先: ${d.context.nearestMatchedAncestor}`)
         }
         if (d.context.parentTag) {
           const classStr =
