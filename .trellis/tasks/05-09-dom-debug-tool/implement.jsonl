@@ -1,0 +1,6 @@
+{"file": ".trellis/tasks/05-09-dom-debug-tool/prd.md", "reason": "完整需求文档，API 设计决策和验收标准"}
+{"file": "src/modules/dom/domHelper.ts", "reason": "现有 DOMHelper 类，了解模块风格和代码模式"}
+{"file": "src/modules/dom/index.ts", "reason": "dom 模块导出入口，新模块需从此导出"}
+{"file": "src/modules/dom/highlighter/index.ts", "reason": "同级模块参考，了解模块内部组织方式"}
+{"file": "src/modules/dom/highlighter/type.ts", "reason": "同级模块类型定义参考"}
+{"file": "package.json", "reason": "项目构建配置和依赖约束"}
