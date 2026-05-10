@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WebSessionStorage } from '../../src/modules/storage'
+import { bindFormAutoSave } from '../../src/modules/storage-extras'
 
 const browserGlobalKeys = ['window', 'document'] as const
 
@@ -63,40 +64,38 @@ describe('storage dom branches', () => {
     }
   })
 
-  test('autoSaveForm should no-op outside browser-compatible setup', () => {
+  test('bindFormAutoSave should return DOCUMENT_UNAVAILABLE outside browser setup', () => {
     Reflect.deleteProperty(globalThis, 'window')
     Reflect.deleteProperty(globalThis, 'document')
 
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const storage = new WebSessionStorage({
+    const storage = new WebSessionStorage<
+      Record<`form_${string}`, Record<string, FormDataEntryValue>>
+    >({
       enableCache: true,
     })
 
-    const disposer = storage.autoSaveForm('profile')
+    const result = bindFormAutoSave(storage, 'profile')
 
-    expect(typeof disposer).toBe('function')
-    expect(warnSpy).toHaveBeenCalledWith(
-      'autoSaveForm is only available in browser environment',
-    )
-    expect(() => disposer()).not.toThrow()
+    expect(result.ok).toBe(false)
+    expect(result.code).toBe('DOCUMENT_UNAVAILABLE')
+    expect(typeof result.dispose).toBe('function')
   })
 
-  test('autoSaveForm should warn and return disposer when form is missing', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const storage = new WebSessionStorage({
+  test('bindFormAutoSave should return FORM_NOT_FOUND when form is missing', () => {
+    const storage = new WebSessionStorage<
+      Record<`form_${string}`, Record<string, FormDataEntryValue>>
+    >({
       enableCache: true,
     })
 
-    const disposer = storage.autoSaveForm('missing-form')
+    const result = bindFormAutoSave(storage, 'missing-form')
 
-    expect(typeof disposer).toBe('function')
-    expect(warnSpy).toHaveBeenCalledWith(
-      "Form with id 'missing-form' not found",
-    )
-    expect(() => disposer()).not.toThrow()
+    expect(result.ok).toBe(false)
+    expect(result.code).toBe('FORM_NOT_FOUND')
+    expect(typeof result.dispose).toBe('function')
   })
 
-  test('autoSaveForm should persist form data and remove listeners on disposer', () => {
+  test('bindFormAutoSave should persist form data and remove listeners on dispose', () => {
     document.body.innerHTML = `
       <form id="profile-form">
         <input name="name" value="mudssky">
@@ -105,12 +104,15 @@ describe('storage dom branches', () => {
     `
 
     const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener')
-    const storage = new WebSessionStorage({
+    const storage = new WebSessionStorage<
+      Record<`form_${string}`, Record<string, FormDataEntryValue>>
+    >({
       enableCache: true,
     })
 
-    const disposer = storage.autoSaveForm('profile-form', 50)
+    const result = bindFormAutoSave(storage, 'profile-form', 50)
 
+    expect(result.ok).toBe(true)
     vi.advanceTimersByTime(50)
 
     expect(storage.getStorageSync('form_profile-form')).toEqual({
@@ -120,7 +122,7 @@ describe('storage dom branches', () => {
     ;(document.querySelector('[name="name"]') as HTMLInputElement).value =
       'next'
 
-    disposer()
+    result.dispose()
     vi.advanceTimersByTime(50)
 
     expect(storage.getStorageSync('form_profile-form')).toEqual({
