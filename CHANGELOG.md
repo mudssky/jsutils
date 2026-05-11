@@ -1,3 +1,24 @@
+# [1.35.0](https://github.com/mudssky/jsutils/compare/v1.34.1...v1.35.0) (2026-05-10)
+
+# [1.35.0](https://github.com/mudssky/jsutils/compare/v1.34.1...v1.35.0) (2026-05-10)
+
+
+### Features
+
+* **.serena:** 添加项目配置选项 ([24dfbda](https://github.com/mudssky/jsutils/commit/24dfbda7a181576b90fe8e6b2d771eee77e2bbd2))
+* **.serena:** 添加项目配置选项 ([d9dd3fb](https://github.com/mudssky/jsutils/commit/d9dd3fbc5793beae9003f6f2b397db49e7a9499d))
+* add state machine instance api ([ed0ccf6](https://github.com/mudssky/jsutils/commit/ed0ccf6b62b6cf945996c09457288d9293485b59))
+* add state machine instance api ([1744309](https://github.com/mudssky/jsutils/commit/1744309ee1a7ca739610dd1e773b26698df91d1b))
+* add state machine transition core ([6f02761](https://github.com/mudssky/jsutils/commit/6f027610aa307102f539e734eaf9301d96d50e22))
+* add state machine transition core ([bb7dd0c](https://github.com/mudssky/jsutils/commit/bb7dd0c2cf56af55281ebb81187823fa4ded778f))
+* **dom:** 添加 DOM Debugger 选择器检测与诊断模块 ([64e235b](https://github.com/mudssky/jsutils/commit/64e235b61a8fd0f56deff04f8a78955975fcd3aa))
+* export state machine module ([332d11e](https://github.com/mudssky/jsutils/commit/332d11e5c026e593c2c5b72af59ce127033f6461))
+* export state machine module ([101ed45](https://github.com/mudssky/jsutils/commit/101ed450af7e3fddbf553ca90d3306069f3ae4d6))
+* **lint-staged:** 添加文件路径过滤功能以排除AI配置目录 ([205966b](https://github.com/mudssky/jsutils/commit/205966bffe99b3fbb16da4b04e22f13a52a2a39d))
+* move storage scenarios into extras helpers ([0dadb4f](https://github.com/mudssky/jsutils/commit/0dadb4f2434240d320c1e65ac79bff241b77e815))
+* move storage scenarios into extras helpers ([9379820](https://github.com/mudssky/jsutils/commit/93798206381504bacbfc6b26a6e370e455fcff9f))
+* 添加多个新技能文档 ([a2b311a](https://github.com/mudssky/jsutils/commit/a2b311a5262e0e63fceaaceb15cd7b0877f1e097))
+
 ## [1.34.1](https://github.com/mudssky/jsutils/compare/v1.34.0...v1.34.1) (2026-03-14)
 
 ### Bug Fixes
@@ -21,24 +42,6 @@
 ### Bug Fixes
 
 - scope prefixed storage clear ([109e812](https://github.com/mudssky/jsutils/commit/109e812fc2e750acebade7f37392ef045236ec4d))
-
-# [1.32.0](https://github.com/mudssky/jsutils/compare/v1.31.0...v1.32.0) (2025-12-17)
-
-### Bug Fixes
-
-- **enum:** 修复类型断言导致的潜在类型安全问题 ([0f7ab97](https://github.com/mudssky/jsutils/commit/0f7ab979f8130b37bb042261f7f0a75367c140f8))
-- **enum:** 修复类型断言导致的潜在类型安全问题 ([29d6b03](https://github.com/mudssky/jsutils/commit/29d6b030578ae14516468a1c37a9ddf568e05435))
-- **enum:** 修复类型断言导致的潜在类型安全问题 ([357481e](https://github.com/mudssky/jsutils/commit/357481e8c0a8611d8dd28fe3685cb15efef1282e))
-- 更新测试配置并修正文档注释 ([6a8014b](https://github.com/mudssky/jsutils/commit/6a8014b0533906c19edc92766a427f2cd9cd3472))
-
-### Features
-
-- **array:** 添加 includeIf 函数用于条件包含数组元素 ([67d951c](https://github.com/mudssky/jsutils/commit/67d951c73aab0ac1780dd8939dd1253e54012758))
-- **array:** 添加 includeIf 函数用于条件包含数组元素 ([04dc2f1](https://github.com/mudssky/jsutils/commit/04dc2f1f1668d92a05275dd138a876435197656e))
-- **array:** 添加 includeIf 函数用于条件包含数组元素 ([adf5a8b](https://github.com/mudssky/jsutils/commit/adf5a8b6e2f031910d0706530aab32f992cea274))
-- **enum:** 添加getAttrMatcher方法用于属性匹配链式调用 ([b8a8d0a](https://github.com/mudssky/jsutils/commit/b8a8d0a5d73292a7aba3e5fa3f2dbb918028d5db))
-- **enum:** 添加getAttrMatcher方法用于属性匹配链式调用 ([d95f60c](https://github.com/mudssky/jsutils/commit/d95f60c76acdf35351553d0a8cd48b1d2f0f04e0))
-- **enum:** 添加getAttrMatcher方法用于属性匹配链式调用 ([1bba113](https://github.com/mudssky/jsutils/commit/1bba113a27573786845ae52d8e2a76f472047016))
 
 # [1.32.0](https://github.com/mudssky/jsutils/compare/v1.31.0...v1.32.0) (2025-12-17)
 
