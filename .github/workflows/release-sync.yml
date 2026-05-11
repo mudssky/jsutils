@@ -24,6 +24,7 @@ jobs:
       - name: checkout main
         uses: actions/checkout@v6
         with:
+          token: ${{ secrets.DEPENDABOT_TOKEN }}
           fetch-depth: 0
           ref: main
 
@@ -33,7 +34,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v6
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
 
       - name: sync release artifacts
         env:
