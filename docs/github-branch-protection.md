@@ -44,10 +44,13 @@ Bypass list 中添加了 **Repository owner**（`mudssky`），使得：
 
 经典 Branch Protection 没有 bypass list 功能，无法让特定 actor（如 CI bot）绕过保护。迁移到 Rulesets 后可以精确控制谁可以绕过规则。
 
-**Q: push 被拦截报 `GH006: Protected branch update failed`？**
+**Q: push 被拦截报 `GH013: Repository rule violations found`？**
 
 检查：
 
 1. Ruleset 的 bypass list 是否包含你的用户名
-2. Workflow 的 checkout 是否使用了 PAT（而非默认 token）
-3. PAT 是否有 `Contents: write` 权限且未过期
+2. Workflow 的 checkout 是否使用了 PAT（而非默认 `GITHUB_TOKEN`）
+3. **PAT 的 Resource owner 必须是 bypass list 中的用户**（例如创建 Fine-grained PAT 时选 `mudssky`，不能选其他 identity）
+4. PAT 是否有 `Contents: write` 权限且未过期
+
+> **踩坑记录**：Fine-grained PAT 的 Resource owner 决定了推送时的身份。如果创建时选错了 owner（如选了 organization 而非个人账号），即使 token 有仓库写入权限，push 时也不会被识别为 bypass list 中的用户，导致 Ruleset 拦截。正确做法：创建 Fine-grained PAT 时 Resource owner 选择 `mudssky`。
