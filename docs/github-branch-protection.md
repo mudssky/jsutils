@@ -10,10 +10,10 @@ Settings → Rules → Rulesets
 
 ### 规则内容
 
-| 规则 | 说明 |
-|------|------|
-| Require a pull request before merging | 所有变更必须通过 PR |
-| Require status checks to pass | PR 必须通过 `pr-check` 检查 |
+| 规则                                  | 说明                        |
+| ------------------------------------- | --------------------------- |
+| Require a pull request before merging | 所有变更必须通过 PR         |
+| Require status checks to pass         | PR 必须通过 `pr-check` 检查 |
 
 ### Bypass 配置
 
@@ -47,6 +47,7 @@ Bypass list 中添加了 **Repository owner**（`mudssky`），使得：
 **Q: push 被拦截报 `GH006: Protected branch update failed`？**
 
 检查：
+
 1. Ruleset 的 bypass list 是否包含你的用户名
 2. Workflow 的 checkout 是否使用了 PAT（而非默认 token）
 3. PAT 是否有 `Contents: write` 权限且未过期
